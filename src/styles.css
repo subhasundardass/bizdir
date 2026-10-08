@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============ shadcn tokens (values tuned to your brand) ============ */
+:root {
+  --background: #ffffff;
+  --foreground: #181818;
+  --card: #ffffff;
+  --card-foreground: #181818;
+  --popover: #ffffff;
+  --popover-foreground: #181818;
+  --primary: #ff6b00;
+  --primary-foreground: #ffffff;
+  --secondary: #f9fafc;
+  --secondary-foreground: #181818;
+  --muted: #f9fafc;
+  --muted-foreground: #5e6f7e;
+  --accent: #fff4ec;
+  --accent-foreground: #e05a00;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #eef1f5;
+  --input: #e3e8ee;
+  --ring: #ff6b00;
+  --radius: 0.75rem;
+  --chart-1: #ff6b00;
+  --chart-2: #3b82f6;
+  --chart-3: #22c55e;
+  --chart-4: #ffb800;
+  --chart-5: #9aa6b2;
+}
+
+/* Maps the tokens above to utilities: bg-background, border-border, ring-ring... */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ============ Brand tokens ============ */
+@theme {
+  /* Brand */
+  --color-jd-orange: #ff6b00;
+  --color-jd-hover: #e05a00;
+  --color-jd-light: #fff4ec;
+  --color-jd-border: #ffd9c2;
+
+  /* Text and surfaces
+     (renamed: "secondary" and "muted" collide with shadcn's tokens) */
+  --color-ink: #181818;
+  --color-sub: #5e6f7e;     /* was secondary */
+  --color-faint: #9aa6b2;   /* was muted */
+  --color-line: #eef1f5;
+  --color-alt: #f9fafc;
+
+  /* Status */
+  --color-rating: #ffb800;
+  --color-success: #22c55e;
+  --color-trust: #3b82f6;
+  --color-danger: #dc2626;
+
+  --font-sans: 'Inter', 'Segoe UI', Arial, sans-serif;
+
+  --shadow-soft: 0 8px 30px rgba(24, 24, 24, 0.07);
+  --shadow-card: 0 8px 24px rgba(24, 24, 24, 0.06);
+  --shadow-orange: 0 12px 30px rgba(255, 107, 0, 0.13);
+}
+
+/* ============ Base ============ */
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-alt);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d7dde3;
+    border-radius: 999px;
+  }
+}
+
+/* ============ Layout ============ */
+.page-wrap {
+  width: min(1080px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+/* ============ Components (in a layer so Tailwind utilities can override) ============ */
+@layer components {
+  .jd-logo-mark {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px 6px 14px 6px;
+    background: linear-gradient(135deg, #ff8a2b 0%, #ff6b00 55%, #e85d00 100%);
+    color: #fff;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.05em;
+    box-shadow: 0 6px 16px rgba(255, 107, 0, 0.2);
+  }
+
+  /* Cards and forms */
+  .card {
+    border: 1px solid var(--color-line);
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  .label .req {
+    color: var(--color-jd-orange);
+  }
+  .hint {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--color-faint);
+  }
+  .err {
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-danger);
+  }
+  .field {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid #e3e8ee;
+    border-radius: 12px;
+    background: #fff;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--color-ink);
+    transition: all 0.2s;
+  }
+  .field::placeholder {
+    color: var(--color-faint);
+  }
+  .field:hover {
+    border-color: var(--color-jd-border);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-jd-orange);
+    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+  }
+  .field[aria-invalid='true'] {
+    border-color: var(--color-danger);
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 0 24px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .btn:focus-visible,
+  .icon-btn:focus-visible,
+  .drop:focus-visible {
+    outline: 2px solid var(--color-jd-orange);
+    outline-offset: 2px;
+  }
+  .btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: var(--color-jd-orange);
+    color: #fff;
+    box-shadow: var(--shadow-orange);
+  }
+  .btn-primary:hover {
+    background: var(--color-jd-hover);
+  }
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+  .btn-outline {
+    border: 1px solid var(--color-jd-orange);
+    color: var(--color-jd-orange);
+    background: #fff;
+    font-weight: 600;
+  }
+  .btn-outline:hover {
+    background: var(--color-jd-orange);
+    color: #fff;
+  }
+  .btn-ghost {
+    color: var(--color-sub);
+    font-weight: 600;
+  }
+  .btn-ghost:hover {
+    background: var(--color-jd-light);
+    color: var(--color-jd-orange);
+  }
+  .icon-btn {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: var(--color-sub);
+    transition: all 0.2s;
+  }
+  .icon-btn:hover {
+    background: var(--color-jd-light);
+    color: var(--color-jd-orange);
+  }
+
+  /* Upload drop zone */
+  .drop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 2px dashed var(--color-jd-border);
+    border-radius: 16px;
+    background: #fff4ec80;
+    padding: 28px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .drop:hover,
+  .drop.is-over {
+    border-color: var(--color-jd-orange);
+    background: var(--color-jd-light);
+  }
+
+  .spin {
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation: none;
+  }
+  * {
+    transition: none !important;
+  }
+}

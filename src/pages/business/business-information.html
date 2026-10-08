@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business information — JustDial Clone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-alt antialiased">
+  <main class="mx-auto max-w-5xl px-4 pt-8 sm:px-6">
+    <p class="text-xs font-bold uppercase tracking-widest text-jd-orange">Step 2 of 6</p>
+    <h1 class="mt-1 text-2xl font-bold tracking-tight text-ink sm:text-3xl">Tell us about your business</h1>
+    <p class="mt-2 max-w-2xl text-sm leading-6 text-secondary">This is what customers see on your listing. You can edit it any time.</p>
+    <div id="banner" class="mt-4" hidden></div>
+
+    <form id="bizForm" novalidate class="mt-6 space-y-6">
+      <section class="card" aria-labelledby="h-basic">
+        <h2 id="h-basic" class="mb-4 text-base font-bold text-ink">Basic information</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+<div data-field class="sm:col-span-2"><label class="label" for="businessName">Business name <span class="req">*</span></label><input class="field" id="businessName" name="businessName" placeholder="e.g. Sharma Family Restaurant" required /></div>
+          <div data-field><label class="label" for="businessType">Business type <span class="req">*</span></label><select class="field" id="businessType" name="businessType" required><option value="">Select type</option><option>Proprietorship</option><option>Partnership</option><option>Private Limited</option><option>LLP</option><option>Other</option></select></div>
+<div data-field class=""><label class="label" for="yearEstablished">Year established</label><input class="field" id="yearEstablished" name="yearEstablished" type="number" min="1900" max="2026" placeholder="e.g. 2012" /></div>
+          <div data-field><label class="label" for="category">Category <span class="req">*</span></label><select class="field" id="category" name="category" required><option value="">Select category</option><option>Restaurants</option><option>Salons &amp; Spas</option><option>Gyms &amp; Fitness</option><option>Doctors &amp; Clinics</option><option>Hotels</option><option>Home Services</option></select></div>
+<div data-field class=""><label class="label" for="subCategory">Sub-category</label><input class="field" id="subCategory" name="subCategory" placeholder="e.g. North Indian, Family dining" /></div>
+<div data-field class="sm:col-span-2"><label class="label" for="shortDescription">Short description <span class="req">*</span></label><input class="field" id="shortDescription" name="shortDescription" maxlength="120" placeholder="One line shown in search results" required /></div>
+          <div data-field class="sm:col-span-2"><label class="label" for="description">Detailed description</label><textarea class="field" id="description" name="description" rows="4" maxlength="1000" placeholder="Tell customers what you offer, what makes you different and who you serve."></textarea><p class="hint">Up to 1000 characters.</p></div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="h-contact">
+        <h2 id="h-contact" class="mb-4 text-base font-bold text-ink">Contact information</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+<div data-field class=""><label class="label" for="businessEmail">Business email <span class="req">*</span></label><input class="field" id="businessEmail" name="businessEmail" type="email" data-rule="email" placeholder="hello@yourbusiness.com" required /></div>
+<div data-field class=""><label class="label" for="phone">Business phone <span class="req">*</span></label><input class="field" id="phone" name="phone" type="tel" data-rule="tel" placeholder="98765 43210" required /></div>
+<div data-field class=""><label class="label" for="alternatePhone">Alternate phone</label><input class="field" id="alternatePhone" name="alternatePhone" type="tel" data-rule="tel" placeholder="Optional" /></div>
+<div data-field class=""><label class="label" for="whatsapp">WhatsApp number</label><input class="field" id="whatsapp" name="whatsapp" type="tel" data-rule="tel" placeholder="Optional" /></div>
+<div data-field class="sm:col-span-2"><label class="label" for="website">Website</label><input class="field" id="website" name="website" type="url" data-rule="url" placeholder="https://www.yourbusiness.com" /></div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="h-addr">
+        <h2 id="h-addr" class="mb-4 text-base font-bold text-ink">Address &amp; location</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+<div data-field class="sm:col-span-2"><label class="label" for="addressLine1">Address line 1 <span class="req">*</span></label><input class="field" id="addressLine1" name="addressLine1" autocomplete="address-line1" placeholder="Shop / building, street" required /></div>
+<div data-field class="sm:col-span-2"><label class="label" for="addressLine2">Address line 2</label><input class="field" id="addressLine2" name="addressLine2" autocomplete="address-line2" placeholder="Landmark, area" /></div>
+<div data-field class=""><label class="label" for="city">City <span class="req">*</span></label><input class="field" id="city" name="city" placeholder="Mumbai" required /></div>
+<div data-field class=""><label class="label" for="state">State <span class="req">*</span></label><input class="field" id="state" name="state" placeholder="Maharashtra" required /></div>
+          <div data-field><label class="label" for="country">Country <span class="req">*</span></label><select class="field" id="country" name="country" required><option>India</option></select></div>
+<div data-field class=""><label class="label" for="pincode">PIN code <span class="req">*</span></label><input class="field" id="pincode" name="pincode" inputmode="numeric" maxlength="6" data-rule="pin" placeholder="400001" required /></div>
+        </div>
+        <div class="mt-5">
+          <div class="flex h-48 items-center justify-center rounded-2xl border border-line bg-alt text-center" role="img" aria-label="Map placeholder">
+            <div><span class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-jd-light text-jd-orange"><i class="fa-solid fa-location-dot"></i></span>
+            <p class="mt-2 text-sm font-semibold text-ink">Pin your exact location</p><p class="text-xs text-secondary">Map integration goes here</p></div>
+          </div>
+          <div class="mt-3 grid gap-4 sm:grid-cols-2">
+<div data-field class=""><label class="label" for="latitude">Latitude</label><input class="field" id="latitude" name="latitude" inputmode="decimal" placeholder="19.0760" /></div>
+<div data-field class=""><label class="label" for="longitude">Longitude</label><input class="field" id="longitude" name="longitude" inputmode="decimal" placeholder="72.8777" /></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="h-hours">
+        <h2 id="h-hours" class="text-base font-bold text-ink">Business hours</h2>
+        <div class="mt-4 divide-y divide-line" id="hours"></div>
+        <button type="button" id="copyHours" class="btn btn-ghost mt-3 !min-h-9 !px-3 text-xs"><i class="fa-regular fa-copy"></i>Copy Monday's hours to all open days</button>
+      </section>
+
+      <section class="card" aria-labelledby="h-ids">
+        <h2 id="h-ids" class="text-base font-bold text-ink">Business identifiers <span class="text-xs font-medium text-muted">(optional)</span></h2>
+        <p class="mb-4 mt-1 text-xs text-secondary">Adds a verified badge to your listing. Not shown publicly.</p>
+        <div class="grid gap-4 sm:grid-cols-3">
+<div data-field class=""><label class="label" for="gstin">GSTIN</label><input class="field" id="gstin" name="gstin" data-rule="gstin" maxlength="15" placeholder="27ABCDE1234F1Z5" /></div>
+<div data-field class=""><label class="label" for="pan">PAN</label><input class="field" id="pan" name="pan" data-rule="pan" maxlength="10" placeholder="ABCDE1234F" /></div>
+<div data-field class=""><label class="label" for="registrationNumber">Registration number</label><input class="field" id="registrationNumber" name="registrationNumber" placeholder="e.g. U74999MH2012PTC123456" /></div>
+        </div>
+      </section>
+
+      <div class="flex flex-col-reverse gap-3 pb-2 sm:flex-row sm:items-center sm:justify-between">
+        <a href="register.html" class="btn btn-ghost"><i class="fa-solid fa-arrow-left"></i>Back</a>
+        <div class="flex flex-col-reverse gap-3 sm:flex-row">
+          <button type="button" id="draft" class="btn btn-outline">Save as draft</button>
+          <button type="submit" class="btn btn-primary">Save &amp; continue</button>
+        </div>
+      </div>
+    </form>
+  </main>
+  <script src="js/app.js"></script>
+  <script>
+    JD.init(2);
+    const form = document.getElementById("bizForm"), banner = document.getElementById("banner"), hoursEl = document.getElementById("hours");
+    const days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    const times = []; for (let m = 0; m < 1440; m += 30) { const h = Math.floor(m / 60), mm = m % 60; times.push([String(h).padStart(2,"0") + ":" + String(mm).padStart(2,"0"), (h % 12 || 12) + ":" + String(mm).padStart(2,"0") + (h < 12 ? " AM" : " PM")]); }
+    const opts = sel => times.map(t => '<option value="' + t[0] + '"' + (t[0] === sel ? " selected" : "") + ">" + t[1] + "</option>").join("");
+    hoursEl.innerHTML = days.map((d, i) => {
+      const open = i < 6, k = d.toLowerCase();
+      return '<div class="flex flex-wrap items-center gap-x-4 gap-y-2 py-3" data-day="' + k + '">' +
+        '<span class="w-24 text-sm font-semibold text-ink">' + d + '</span>' +
+        '<label class="flex cursor-pointer items-center gap-2"><input type="checkbox" name="hours_' + k + '_open" class="h-4 w-4 accent-[#FF6B00]"' + (open ? " checked" : "") + ' /><span class="text-xs font-medium text-secondary w-11">' + (open ? "Open" : "Closed") + '</span></label>' +
+        '<div class="flex flex-1 items-center gap-2 min-w-[240px]"><select class="field !min-h-10 !py-1.5 text-xs" name="hours_' + k + '_from" aria-label="' + d + ' opening time">' + opts("09:00") + '</select><span class="text-muted">—</span>' +
+        '<select class="field !min-h-10 !py-1.5 text-xs" name="hours_' + k + '_to" aria-label="' + d + ' closing time">' + opts("18:00") + '</select></div></div>';
+    }).join("");
+    const syncRow = row => { const o = row.querySelector("[type=checkbox]").checked; row.querySelector("span.w-11").textContent = o ? "Open" : "Closed"; row.querySelectorAll("select").forEach(s => { s.disabled = !o; s.parentElement.style.opacity = o ? 1 : .4; }); };
+    hoursEl.querySelectorAll("[data-day]").forEach(r => { syncRow(r); r.querySelector("[type=checkbox]").addEventListener("change", () => syncRow(r)); });
+    document.getElementById("copyHours").addEventListener("click", () => {
+      const rows = [...hoursEl.querySelectorAll("[data-day]")], [f, t] = rows[0].querySelectorAll("select");
+      rows.slice(1).forEach(r => { if (r.querySelector("[type=checkbox]").checked) { const s = r.querySelectorAll("select"); s[0].value = f.value; s[1].value = t.value; } });
+    });
+
+    const data = () => Object.fromEntries([...new FormData(form)].filter(([k]) => !k.startsWith("hours_")).concat([...form.querySelectorAll("[data-day]")].map(r => ["hours_" + r.dataset.day, [...r.querySelectorAll("input,select")].map(x => x.type === "checkbox" ? x.checked : x.value)])));
+    const saved = JD.store.get("business", null);
+    if (saved) Object.entries(saved).forEach(([k, v]) => { const el = form.elements[k]; if (el && !Array.isArray(v)) el.value = v; });
+    // INTEGRATION POINT: replace store.set with POST/PUT of data() to your business endpoint.
+    document.getElementById("draft").addEventListener("click", () => { JD.store.set("business", data()); JD.banner(banner, "success", "Draft saved. You can pick this up again any time."); scrollTo({ top: 0, behavior: "smooth" }); });
+    JD.liveValidate(form);
+    form.addEventListener("submit", async e => {
+      e.preventDefault(); banner.hidden = true;
+      if (!JD.validateForm(form)) { JD.banner(banner, "error", "Fix the highlighted fields to continue."); return; }
+      const btn = form.querySelector("[type=submit]"); JD.loading(btn, true, "Saving…");
+      await new Promise(r => setTimeout(r, 600));
+      JD.store.set("business", data()); JD.markDone(2); location.href = "business-media.html";
+    });
+  </script>
+</body>
+</html>

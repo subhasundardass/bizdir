@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Certifications — JustDial Clone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-alt antialiased">
+  <main class="mx-auto max-w-5xl px-4 pt-8 sm:px-6">
+    <p class="text-xs font-bold uppercase tracking-widest text-jd-orange">Step 4 of 6</p>
+    <h1 class="mt-1 text-2xl font-bold tracking-tight text-ink sm:text-3xl">Add certifications &amp; licenses</h1>
+    <p class="mt-2 max-w-2xl text-sm leading-6 text-secondary">Certificates build trust and help customers choose you. You can skip this and add them later.</p>
+    <div id="banner" class="mt-4" hidden></div>
+
+    <section class="card mt-6" aria-labelledby="h-form">
+      <h2 id="h-form" class="text-base font-bold text-ink"><span id="formTitle">Add certification</span></h2>
+      <form id="certForm" novalidate class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div data-field class="sm:col-span-2"><label class="label" for="certificationName">Certification / license name <span class="req">*</span></label><input class="field" id="certificationName" name="certificationName" placeholder="e.g. ISO 9001:2015, FSSAI License" required /></div>
+        <div data-field><label class="label" for="issuingOrganization">Issuing organization <span class="req">*</span></label><input class="field" id="issuingOrganization" name="issuingOrganization" placeholder="e.g. Bureau Veritas" required /></div>
+        <div data-field><label class="label" for="certificateNumber">Certificate number <span class="req">*</span></label><input class="field" id="certificateNumber" name="certificateNumber" placeholder="e.g. CERT-12345" required /></div>
+        <div data-field><label class="label" for="issueDate">Issue date <span class="req">*</span></label><input class="field" id="issueDate" name="issueDate" type="date" required /></div>
+        <div data-field><label class="label" for="expiryDate">Expiry date</label><input class="field" id="expiryDate" name="expiryDate" type="date" /><p class="hint">Leave empty if it doesn't expire.</p></div>
+        <div data-field class="sm:col-span-2"><label class="label" for="description">Description</label><textarea class="field" id="description" name="description" rows="3" maxlength="300" placeholder="What does this certification cover?"></textarea></div>
+        <div class="sm:col-span-2">
+          <span class="label">Certificate document</span>
+          <div id="docDrop" class="drop !flex-row !justify-start !gap-4 !p-4 text-left" role="button" tabindex="0" aria-label="Upload certificate"></div>
+          <input type="file" id="docInput" name="certificateFile" accept="application/pdf,image/jpeg,image/png,image/webp" class="sr-only" tabindex="-1" />
+          <p id="docErr" class="err" role="alert"></p>
+        </div>
+        <div class="flex flex-col-reverse gap-3 sm:col-span-2 sm:flex-row sm:justify-end">
+          <button type="button" id="cancel" class="btn btn-ghost" hidden>Cancel</button>
+          <button type="submit" id="submitBtn" class="btn btn-primary"><i class="fa-solid fa-plus"></i>Add certification</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="mt-8" aria-labelledby="h-list">
+      <h2 id="h-list" class="text-base font-bold text-ink">Your certifications <span id="count" class="ml-1 rounded-full bg-jd-light px-2.5 py-0.5 text-xs font-semibold text-jd-orange">0</span></h2>
+      <ul id="list" class="mt-4 grid gap-4 md:grid-cols-2"></ul>
+      <div id="empty" class="rounded-2xl border border-dashed border-jd-border bg-white p-8 text-center"><i class="fa-solid fa-certificate text-2xl text-jd-orange"></i><p class="mt-2 text-sm font-semibold text-ink">No certifications yet</p><p class="text-xs text-secondary">Fill in the form above to add your first one.</p></div>
+    </section>
+
+    <div class="flex flex-col-reverse gap-3 py-6 sm:flex-row sm:items-center sm:justify-between">
+      <a href="business-media.html" class="btn btn-ghost"><i class="fa-solid fa-arrow-left"></i>Back</a>
+      <div class="flex flex-col-reverse gap-3 sm:flex-row"><button type="button" id="skip" class="btn btn-outline">Skip for now</button><button type="button" id="next" class="btn btn-primary">Save &amp; continue</button></div>
+    </div>
+  </main>
+  <script src="js/app.js"></script>
+  <script>
+    JD.init(4);
+    const $ = id => document.getElementById(id), form = $("certForm"), banner = $("banner");
+    let items = JD.store.get("certs", []), editing = null, file = null; // file: { name, url, type }
+    // INTEGRATION POINT: replace items/JD.store with GET/POST/PUT/DELETE calls to your certifications endpoint.
+    const fmt = d => d ? new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "";
+    const drawDoc = () => {
+      $("docDrop").innerHTML = file
+        ? '<span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-jd-orange"><i class="fa-solid fa-file-circle-check"></i></span><span class="min-w-0 flex-1"><span class="block truncate text-sm font-semibold text-ink">' + JD.esc(file.name) + '</span><span class="text-xs text-secondary">Click to replace</span></span><button type="button" id="rmDoc" class="btn btn-ghost !min-h-9 !px-3 text-xs">Remove</button>'
+        : '<span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-jd-orange"><i class="fa-solid fa-cloud-arrow-up"></i></span><span><span class="block text-sm font-semibold text-ink">Upload certificate</span><span class="text-xs text-secondary">PDF, JPG, PNG or WEBP · Max 5 MB</span></span>';
+    };
+    $("docDrop").addEventListener("click", e => { if (e.target.closest("#rmDoc")) { e.stopPropagation(); file = null; drawDoc(); } }, true);
+    JD.picker({ zone: $("docDrop"), input: $("docInput"), accept: ["application/pdf", "image/jpeg", "image/png", "image/webp"], maxMB: 5, label: "PDF, JPG, PNG or WEBP", onError: m => $("docErr").textContent = m,
+      onFiles: async f => { $("docErr").textContent = ""; file = { name: f[0].name, type: f[0].type, url: await JD.readURL(f[0]) }; drawDoc(); } });
+
+    const draw = () => {
+      $("count").textContent = items.length; $("empty").hidden = items.length > 0;
+      $("list").innerHTML = items.map(c => '<li class="card !p-5" data-id="' + c.id + '"><div class="flex items-start gap-3"><span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-jd-light text-jd-orange"><i class="fa-solid fa-award"></i></span>' +
+        '<div class="min-w-0 flex-1"><h3 class="text-sm font-bold text-ink">' + JD.esc(c.certificationName) + '</h3><p class="mt-1 text-xs text-secondary">Issued by: ' + JD.esc(c.issuingOrganization) + '</p><p class="text-xs text-secondary">Certificate no: ' + JD.esc(c.certificateNumber) + '</p>' +
+        '<p class="text-xs text-secondary">' + (c.expiryDate ? "Valid until: " + fmt(c.expiryDate) : "No expiry") + '</p>' +
+        (c.description ? '<p class="line-clamp-2 mt-2 text-xs text-muted">' + JD.esc(c.description) + '</p>' : "") +
+        (c.file ? '<a href="' + (c.file.url || "#") + '" target="_blank" rel="noopener" class="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-jd-orange hover:text-jd-hover"><i class="fa-regular fa-file-lines"></i>View ' + JD.esc(c.file.name) + '</a>' : "") + '</div></div>' +
+        '<div class="mt-4 flex gap-2 border-t border-line pt-3"><button type="button" data-act="edit" class="btn btn-outline !min-h-9 !px-4 text-xs">Edit</button><button type="button" data-act="del" class="btn btn-ghost !min-h-9 !px-4 text-xs hover:!text-danger">Delete</button></div></li>').join("");
+    };
+    const persist = () => JD.store.set("certs", items.map(c => ({ ...c, file: c.file && { name: c.file.name } }))); // file data isn't persisted
+    const reset = () => { editing = null; file = null; form.reset(); $("formTitle").textContent = "Add certification"; $("submitBtn").innerHTML = '<i class="fa-solid fa-plus"></i>Add certification'; $("cancel").hidden = true; form.querySelectorAll(".err").forEach(e => e.remove()); drawDoc(); };
+    form.addEventListener("submit", async e => {
+      e.preventDefault(); if (!JD.validateForm(form)) return;
+      if (form.expiryDate.value && form.expiryDate.value < form.issueDate.value) { JD.setError(form.expiryDate, "Expiry date must be after the issue date."); form.expiryDate.focus(); return; }
+      const d = Object.fromEntries(new FormData(form)); delete d.certificateFile;
+      if (editing) items = items.map(c => c.id === editing ? { ...c, ...d, file } : c); else items.push({ id: "c" + Date.now(), ...d, file });
+      const wasEdit = !!editing; persist(); draw(); reset(); JD.banner(banner, "success", wasEdit ? "Certification updated." : "Certification added."); 
+    });
+    $("list").addEventListener("click", e => {
+      const b = e.target.closest("[data-act]"); if (!b) return; const id = b.closest("li").dataset.id, c = items.find(x => x.id === id);
+      if (b.dataset.act === "del") { if (confirm("Delete “" + c.certificationName + "”?")) { items = items.filter(x => x.id !== id); if (editing === id) reset(); persist(); draw(); } return; }
+      editing = id; file = c.file && c.file.url ? c.file : null;
+      Object.keys(c).forEach(k => { if (form.elements[k] && k !== "certificateFile") form.elements[k].value = c[k]; });
+      $("formTitle").textContent = "Edit certification"; $("submitBtn").textContent = "Save changes"; $("cancel").hidden = false; drawDoc(); form.scrollIntoView({ behavior: "smooth", block: "start" }); form.certificationName.focus();
+    });
+    $("cancel").onclick = reset;
+    const go = () => { JD.markDone(4); location.href = "business-products.html"; };
+    $("next").onclick = go; $("skip").onclick = go;
+    JD.liveValidate(form); drawDoc(); draw();
+  </script>
+</body>
+</html>

@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Spice Symphony | Restaurant in Bandra West, Mumbai</title>
+  <meta
+    name="description"
+    content="View Spice Symphony restaurant details, photos, ratings, reviews, menu, opening hours, contact information and location."
+  />
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+  />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            jd: {
+              orange: "#FF6B00",
+              hover: "#E05A00",
+              light: "#FFF4EC",
+              border: "#FFD9C2",
+            },
+            ink: "#181818",
+            secondary: "#5E6F7E",
+            muted: "#9AA6B2",
+            line: "#EEF1F5",
+            alt: "#F9FAFC",
+            rating: "#FFB800",
+            success: "#22C55E",
+            trust: "#3B82F6",
+          },
+          fontFamily: {
+            sans: ["Inter", "Segoe UI", "Arial", "sans-serif"],
+          },
+          boxShadow: {
+            soft: "0 8px 30px rgba(24,24,24,.07)",
+            card: "0 8px 24px rgba(24,24,24,.06)",
+            orange: "0 10px 30px rgba(255,107,0,.13)",
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      color: #181818;
+    }
+
+    .jd-logo-mark {
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px 6px 14px 6px;
+      background: linear-gradient(135deg, #ff8a2b, #ff6b00 60%, #e85d00);
+      color: white;
+      font-weight: 800;
+      font-size: 17px;
+      letter-spacing: -0.06em;
+      box-shadow: 0 5px 14px rgba(255, 107, 0, 0.18);
+    }
+
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f9fafc;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #d7dde3;
+      border-radius: 999px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b8c0c8;
+    }
+
+    .gallery-img {
+      transition: transform 0.4s ease;
+    }
+
+    .gallery-img:hover {
+      transform: scale(1.04);
+    }
+
+    .star-filled {
+      color: #ffb800;
+    }
+
+    .star-empty {
+      color: #d7dde3;
+    }
+  </style>
+</head>
+
+<body class="bg-jd-alt antialiased">
+
+  <!-- ========================================================= -->
+  <!-- HEADER -->
+  <!-- ========================================================= -->
+
+  <header class="sticky top-0 z-50 border-b border-jd-line bg-white/95 shadow-sm backdrop-blur">
+
+    <div class="mx-auto flex h-16 max-w-[1440px] items-center gap-4 px-4 sm:px-6 lg:px-8">
+
+      <!-- Logo -->
+      <a href="#" class="flex shrink-0 items-center gap-2.5" aria-label="JustDial home">
+        <span class="jd-logo-mark">JD</span>
+
+        <span class="hidden text-[21px] font-extrabold tracking-[-0.055em] sm:block">
+          Just<span class="text-jd-orange">Dial</span>
+        </span>
+      </a>
+
+      <!-- Search -->
+      <div class="flex min-w-0 flex-1 justify-center">
+
+        <div class="flex h-11 w-full max-w-3xl items-center overflow-hidden rounded-full border border-jd-line bg-white shadow-sm">
+
+          <!-- Location -->
+          <button
+            type="button"
+            class="hidden h-full items-center gap-2 border-r border-jd-line px-4 text-left transition-all duration-200 hover:bg-jd-light md:flex md:w-[29%]"
+          >
+            <i class="fa-solid fa-location-dot text-sm text-jd-orange"></i>
+
+            <span class="min-w-0 flex-1">
+              <span class="block truncate text-[11px] font-medium text-muted">
+                Location
+              </span>
+
+              <span class="block truncate text-xs font-semibold text-ink">
+                Mumbai, Maharashtra
+              </span>
+            </span>
+
+            <i class="fa-solid fa-chevron-down text-[9px] text-muted"></i>
+          </button>
+
+          <!-- Search -->
+          <div class="flex min-w-0 flex-1 items-center gap-3 px-4">
+
+            <i class="fa-solid fa-magnifying-glass text-sm text-muted"></i>
+
+            <input
+              type="text"
+              value="Restaurants"
+              aria-label="Search"
+              class="w-full bg-transparent text-sm font-medium text-ink outline-none"
+            />
+
+          </div>
+
+          <button
+            type="button"
+            aria-label="Search"
+            class="mr-1 flex h-9 w-10 shrink-0 items-center justify-center rounded-full bg-jd-orange text-white transition-all duration-200 hover:bg-jd-hover sm:w-auto sm:gap-2 sm:px-5"
+          >
+            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            <span class="hidden text-xs font-bold sm:inline">Search</span>
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- Header actions -->
+      <div class="flex shrink-0 items-center gap-2">
+
+        <button
+          type="button"
+          class="hidden rounded-full border border-jd-orange px-4 py-2 text-xs font-semibold text-jd-orange transition-all duration-200 hover:bg-jd-orange hover:text-white lg:inline-flex"
+        >
+          Login / Sign Up
+        </button>
+
+        <button
+          type="button"
+          aria-label="Shopping bag"
+          class="relative flex h-10 w-10 items-center justify-center rounded-full text-jd-orange transition-all duration-200 hover:bg-jd-light"
+        >
+          <i class="fa-solid fa-bag-shopping"></i>
+
+          <span class="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-jd-orange px-1 text-[9px] font-bold text-white ring-2 ring-white">
+            3
+          </span>
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  <!-- ========================================================= -->
+  <!-- BREADCRUMB -->
+  <!-- ========================================================= -->
+
+  <div class="border-b border-jd-line bg-white">
+
+    <div class="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+
+      <div class="flex min-h-12 items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none">
+
+        <a href="#" class="text-xs text-secondary hover:text-jd-orange">Home</a>
+
+        <i class="fa-solid fa-chevron-right text-[8px] text-muted"></i>
+
+        <a href="#" class="text-xs text-secondary hover:text-jd-orange">Mumbai</a>
+
+        <i class="fa-solid fa-chevron-right text-[8px] text-muted"></i>
+
+        <a href="#" class="text-xs text-secondary hover:text-jd-orange">Restaurants</a>
+
+        <i class="fa-solid fa-chevron-right text-[8px] text-muted"></i>
+
+        <span class="text-xs font-semibold text-ink">Spice Symphony</span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <main>
+
+    <!-- ========================================================= -->
+    <!-- BUSINESS HEADER / HERO -->
+    <!-- ========================================================= -->
+
+    <section class="border-b border-jd-line bg-white">
+
+      <div class="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
+
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+
+          <!-- Left: Business info -->
+          <div class="min-w-0">
+
+            <div class="flex flex-wrap items-start justify-between gap-4">
+
+              <div class="min-w-0">
+
+                <div class="flex flex-wrap items-center gap-3">
+
+                  <h1 class="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+                    Spice Symphony
+                  </h1>
+
+                  <span class="flex items-center gap-1 rounded-full bg-jd-light px-2.5 py-1 text-[10px] font-bold text-jd-orange">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified
+                  </span>
+
+                </div>
+
+                <p class="mt-2 text-sm font-semibold uppercase tracking-wide text-jd-orange">
+                  North Indian Restaurant • Chinese
+                </p>
+
+                <div class="mt-3 flex flex-wrap items-center gap-3">
+
+                  <div class="flex items-center gap-1.5">
+
+                    <div class="flex items-center gap-1 rounded-lg bg-green-600 px-2.5 py-1 text-sm font-bold text-white">
+                      4.7
+                      <i class="fa-solid fa-star text-[10px]"></i>
+                    </div>
+
+                    <span class="text-xs text-secondary">1,842 Reviews</span>
+
+                  </div>
+
+                  <span class="text-xs text-muted">•</span>
+
+                  <span class="flex items-center gap-1.5 text-xs text-secondary">
+                    <i class="fa-solid fa-location-dot text-jd-orange"></i>
+                    Linking Road, Bandra West, Mumbai
+                  </span>
+
+                  <span class="text-xs text-muted">•</span>
+
+                  <span class="flex items-center gap-1.5 text-xs text-success">
+                    <i class="fa-solid fa-circle text-[6px]"></i>
+                    Open Now
+                  </span>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Quick action buttons -->
+            <div class="mt-5 flex flex-wrap gap-3">
+
+              <a
+                href="tel:+912241234567"
+                class="flex items-center gap-2 rounded-full bg-jd-orange px-5 py-2.5 text-sm font-bold text-white transition-all duration-200 hover:bg-jd-hover"
+              >
+                <i class="fa-solid fa-phone"></i>
+                Call Now
+              </a>
+
+              <button
+                type="button"
+                class="flex items-center gap-2 rounded-full border border-jd-orange px-5 py-2.5 text-sm font-bold text-jd-orange transition-all duration-200 hover:bg-jd-light"
+              >
+                <i class="fa-solid fa-directions"></i>
+                Get Directions
+              </button>
+
+              <button
+                type="button"
+                class="flex items-center gap-2 rounded-full border border-jd-line px-5 py-2.5 text-sm font-semibold text-secondary transition-all duration-200 hover:border-jd-border hover:text-jd-orange"
+              >
+                <i class="fa-regular fa-heart"></i>
+                Save
+              </button>
+
+              <button
+                type="button"
+                class="flex items-center gap-2 rounded-full border border-jd-line px-5 py-2.5 text-sm font-semibold text-secondary transition-all duration-200 hover:border-jd-border hover:text-jd-orange"
+              >
+                <i class="fa-solid fa-share-nodes"></i>
+                Share
+              </button>
+
+            </div>
+
+          </div>
+
+          <!-- Right: Quick info card -->
+          <div class="rounded-2xl border border-jd-line bg-white p-5 shadow-sm">
+
+            <h3 class="text-sm font-bold text-ink">
+              Quick Information
+            </h3>
+
+            <div class="mt-4 space-y-4">
+
+              <div class="flex items-start gap-3">
+
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-jd-light text-jd-orange">
+                  <i class="fa-regular fa-clock text-sm"></i>
+                </span>
+
+                <div>
+                  <p class="text-xs font-semibold text-ink">Opening Hours</p>
+                  <p class="mt-0.5 text-[11px] text-secondary">Mon–Sun: 11:00 AM – 11:30 PM</p>
+                  <p class="mt-1 text-[11px] font-semibold text-success">Open Now</p>
+                </div>
+
+              </div>
+
+              <div class="flex items-start gap-3">
+
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-jd-light text-jd-orange">
+                  <i class="fa-solid fa-indian-rupee-sign text-sm"></i>
+                </span>
+
+                <div>
+                  <p class="text-xs font-semibold text-ink">Average Cost</p>
+                  <p class="mt-0.5 text-[11px] text-secondary">₹1,200 for two people</p>
+                </div>
+
+              </div>
+
+              <div class="flex items-start gap-3">
+
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-jd-light text-jd-orange">
+                  <i class="fa-solid fa-utensils text-sm"></i>
+                </span>
+
+                <div>
+                  <p class="text-xs font-semibold text-ink">Cuisines</p>
+                  <p class="mt-0.5 text-[11px] text-secondary">North Indian, Chinese, Mughlai</p>
+                </div>
+
+              </div>
+
+              <div class="flex items-start gap-3">
+
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-jd-light text-jd-orange">
+                  <i class="fa-solid fa-credit-card text-sm"></i>
+                </span>
+
+                <div>
+                  <p class="text-xs font-semibold text-ink">Payment</p>
+                  <p class="mt-0.5 text-[11px] text-secondary">Cash, Cards, UPI accepted</p>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- PHOTO GALLERY -->
+    <!-- ========================================================= -->
+
+    <section class="border-b border-jd-line bg-white py-6">
+
+      <div class="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+
+        <div class="flex items-center justify-between">
+
+          <h2 class="text-lg font-bold text-ink">
+            Photos
+          </h2>
+
+          <button
+            type="button"
+            class="text-xs font-semibold text-jd-orange hover:text-jd-hover"
+          >
+            View All Photos <i class="fa-solid fa-arrow-right ml-1"></i>
+          </button>
+
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+
+          <div class="relative col-span-2 row-span-2 overflow-hidden rounded-xl">
+            <img
+              src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80"
+              alt="Spice Symphony interior"
+              class="gallery-img h-64 w-full object-cover sm:h-80"
+            />
+          </div>
+
+          <div class="overflow-hidden rounded-xl">
+            <img
+              src="https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&auto=format&fit=crop&q=80"
+              alt="Restaurant food"
+              class="gallery-img h-32 w-full object-cover sm:h-[9.5rem]"
+            />
+          </div>
+
+          <div class="overflow-hidden rounded-xl">
+            <img
+              src="https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?w=400&auto=format&fit=crop&q=80"
+              alt="Indian cuisine"
+              class="gallery-img h-32 w-full object-cover sm:h-[9.5rem]"
+            />
+          </div>
+
+          <div class="overflow-hidden rounded-xl">
+            <img
+              src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&auto=format&fit=crop&q=80"
+              alt="Restaurant dish"
+              class="gallery-img h-32 w-full object-cover sm:h-[9.5rem]"
+            />
+          </div>
+
+          <div class="overflow-hidden rounded-xl">
+            <img
+              src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&auto=format&fit=crop&q=80"
+              alt="Fine dining"
+              class="gallery-img h-32 w-full object-cover sm:h-[9.5rem]"
+            />
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- MAIN CONTENT GRID -->
+    <!-- ========================================================= -->
+
+    <section class="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
+
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+
+        <!-- LEFT COLUMN -->
+        <div class="min-w-0 space-y-6">
+
+          <!-- About -->
+          <div class="rounded-2xl border border-jd-line bg-white p-6">
+
+            <h2 class="text-lg font-bold text-ink">
+              About Spice Symphony
+            </h2>
+
+            <p class="mt-3 text-sm leading-7 text-secondary">
+              Spice Symphony is a popular North Indian and Chinese restaurant located in the heart of Bandra West, Mumbai. Known for its authentic flavours, warm ambience, and excellent service, it is a favourite dining destination for families, couples, and food enthusiasts. The restaurant offers a wide range of vegetarian and non-vegetarian dishes prepared with fresh ingredients and traditional spices.
+            </p>
+
+            <p class="mt-3 text-sm leading-7 text-secondary">
+              Whether you are looking for a casual lunch, a romantic dinner, or a celebratory gathering, Spice Symphony provides the perfect setting with comfortable seating, attentive staff, and a menu that caters to every palate.
+            </p>
+
+            <!-- Highlights -->
+            <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+
+              <div class="rounded-xl border border-jd-line bg-jd-alt p-3 text-center">
+                <i class="fa-solid fa-wifi text-lg text-jd-orange"></i>
+                <p class="mt-2 text-[11px] font-semibold text-ink">Free WiFi</p>
+              </div>
+
+              <div class="rounded-xl border border-jd-line bg-jd-alt p-3 text-center">
+                <i class="fa-solid fa-car text-lg text-jd-orange"></i>
+                <p class="mt-2 text-[11px] font-semibold text-ink">Valet Parking</p>
+              </div>
+
+              <div class="rounded-xl border border-jd-line bg-jd-alt p-3 text-center">
+                <i class="fa-solid fa-snowflake text-lg text-jd-orange"></i>
+                <p class="mt-2 text-[11px] font-semibold text-ink">AC Dining</p>
+              </div>
+
+              <div class="rounded-xl border border-jd-line bg-jd-alt p-3 text-center">
+                <i class="fa-solid fa-music text-lg text-jd-orange"></i>
+                <p class="mt-2 text-[11px] font-semibold text-ink">Live Music</p>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Menu Highlights -->
+          <div class="rounded-2xl border border-jd-line bg-white p-6">
+
+            <div class="flex items-center justify-between">
+
+              <h2 class="text-lg font-bold text-ink">
+                Menu Highlights
+              </h2>
+
+              <button
+                type="button"
+                class="text-xs font-semibold text-jd-orange hover:text-jd-hover"
+              >
+                Full Menu <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+
+            </div>
+
+            <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+              <div class="flex items-center gap-3 rounded-xl border border-jd-line p-3">
+                <img
+                  src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=200&auto=format&fit=crop&q=80"
+                  alt="Butter Chicken"
+                  class="h-16 w-16 shrink-0 rounded-lg object-cover"
+                />
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-semibold text-ink">Butter Chicken</p>
+                  <p class="mt-0.5 text-[11px] text-secondary">Creamy tomato gravy</p>
+                  <p class="mt-1 text-xs font-bold text-jd-orange">₹380</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3 rounded-xl border border-jd-line p-3">
+                <img
+                  src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=200&auto=format&fit=crop&q=80"
+                  alt="Paneer Tikka"
+                  class="h-16 w-16 shrink-0 rounded-lg object-cover"
+                />
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-semibold text-ink">Paneer Tikka</p>
+                  <p class="mt-0.5 text-[11px] text-secondary">Char-grilled cottage cheese</p>
+                  <p class="mt-1 text-xs font-bold text-jd-orange">₹320</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3 rounded-xl border border-jd-line p-3">
+                <img
+                  src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=200&auto=format&fit=crop&q=80"
+                  alt="Dal Makhani"
+                  class="h-16 w-16 shrink-0 rounded-lg object-cover"
+                />
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-semibold text-ink">Dal Makhani</p>
+                  <p class="mt-0.5 text-[11px] text-secondary">Slow-cooked black lentils</p>
+                  <p class="mt-1 text-xs font-bold text-jd-orange">₹280</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3 rounded-xl border border-jd-line p-3">
+                <img
+                  src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=200&auto=format&fit=crop&q=80"
+                  alt="Hakka Noodles"
+                  class="h-16 w-16 shrink-0 rounded-lg object-cover"
+                />
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-semibold text-ink">Hakka Noodles</p>
+                  <p class="mt-0.5 text-[11px] text-secondary">Wok-tossed with veggies</p>
+                  <p class="mt-1 text-xs font-bold text-jd-orange">₹260</p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Reviews -->
+          <div class="rounded-2xl border border-jd-line bg-white p-6">
+
+            <div class="flex items-center justify-between">
+
+              <h2 class="text-lg font-bold text-ink">
+                Reviews & Ratings
+              </h2>
+
+              <button
+                type="button"
+                class="text-xs font-semibold text-jd-orange hover:text-jd-hover"
+              >
+                Write a Review
+              </button>
+
+            </div>
+
+            <!-- Rating summary -->
+            <div class="mt-4 flex flex-col gap-5 rounded-xl border border-jd-line bg-jd-alt p-4 sm:flex-row sm:items-center">
+
+              <div class="text-center sm:w-32">
+                <p class="text-4xl font-extrabold text-ink">4.7</p>
+                <div class="mt-1 flex items-center justify-center gap-0.5">
+                  <i class="fa-solid fa-star star-filled text-xs"></i>
+                  <i class="fa-solid fa-star star-filled text-xs"></i>
+                  <i class="fa-solid fa-star star-filled text-xs"></i>
+                  <i class="fa-solid fa-star star-filled text-xs"></i>
+                  <i class="fa-solid fa-star-half-stroke star-filled text-xs"></i>
+                </div>
+                <p class="mt-1 text-[11px] text-secondary">1,842 reviews</p>
+              </div>
+
+              <div class="flex-1 space-y-2">
+
+                <div class="flex items-center gap-2">
+                  <span class="w-8 text-[11px] font-semibold text-secondary">5★</span>
+                  <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div class="h-full w-[68%] rounded-full bg-jd-orange"></div>
+                  </div>
+                  <span class="w-10 text-right text-[11px] text-muted">68%</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="w-8 text-[11px] font-semibold text-secondary">4★</span>
+                  <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div class="h-full w-[22%] rounded-full bg-jd-orange"></div>
+                  </div>
+                  <span class="w-10 text-right text-[11px] text-muted">22%</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="w-8 text-[11px] font-semibold text-secondary">3★</span>
+                  <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div class="h-full w-[6%] rounded-full bg-jd-orange"></div>
+                  </div>
+                  <span class="w-10 text-right text-[11px] text-muted">6%</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="w-8 text-[11px] font-semibold text-secondary">2★</span>
+                  <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div class="h-full w-[3%] rounded-full bg-jd-orange"></div>
+                  </div>
+                  <span class="w-10 text-right text-[11px] text-muted">3%</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="w-8 text-[11px] font-semibold text-secondary">1★</span>
+                  <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div class="h-full w-[1%] rounded-full bg-jd-orange"></div>
+                  </div>
+                  <span class="w-10 text-right text-[11px] text-muted">1%</span>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Individual reviews -->
+            <div class="mt-5 space-y-4">
+
+              <div class="rounded-xl border border-jd-line p-4">
+
+                <div class="flex items-start justify-between gap-3">
+
+                  <div class="flex items-center gap-3">
+
+                    <span class="flex h-10 w-10 items-center justify-center rounded-full bg-jd-light text-sm font-bold text-jd-orange">
+                      R
+                    </span>
+
+                    <div>
+                      <p class="text-sm font-semibold text-ink">Rahul Mehta</p>
+                      <p class="text-[10px] text-muted">2 weeks ago</p>
+                    </div>
+
+                  </div>
+
+                  <div class="flex items-center gap-1 rounded-lg bg-green-600 px-2 py-1 text-[10px] font-bold text-white">
+                    5.0 <i class="fa-solid fa-star text-[8px]"></i>
+                  </div>
+
+                </div>
+
+                <p class="mt-3 text-sm leading-6 text-secondary">
+                  Absolutely loved the food here! The butter chicken was rich and creamy, and the paneer tikka was perfectly charred. The service was prompt and the ambience was very welcoming. Will definitely visit again.
+                </p>
+
+              </div>
+
+              <div class="rounded-xl border border-jd-line p-4">
+
+                <div class="flex items-start justify-between gap-3">
+
+                  <div class="flex items-center gap-3">
+
+                    <span class="flex h-10 w-10 items-center justify-center rounded-full bg-jd-light text-sm font-bold text-jd-orange">
+                      P
+                    </span>
+
+                    <div>
+                      <p class="text-sm font-semibold text-ink">Priya Sharma</p>
+                      <p class="text-[10px] text-muted">1 month ago</p>
+                    </div>
+
+                  </div>
+
+                  <div class="flex items-center gap-1 rounded-lg bg-green-600 px-2 py-1 text-[10px] font-bold text-white">
+                    4.5 <i class="fa-solid fa-star text-[8px]"></i>
+                  </div>
+
+                </div>
+
+                <p class="mt-3 text-sm leading-6 text-secondary">
+                  Great place for family dining. The menu has a good variety of North Indian and Chinese dishes. Portions are generous and prices are reasonable. Only minor issue was the waiting time on a weekend evening.
+                </p>
+
+              </div>
+
+              <div class="rounded-xl border border-jd-line p-4">
+
+                <div class="flex items-start justify-between gap-3">
+
+                  <div class="flex items-center gap-3">
+
+                    <span class="flex h-10 w-10 items-center justify-center rounded-full bg-jd-light text-sm font-bold text-jd-orange">
+                      A
+                    </span>
+
+                    <div>
+                      <p class="text-sm font-semibold text-ink">Amit Verma</p>
+                      <p class="text-[10px] text-muted">1 month ago</p>
+                    </div>
+
+                  </div>
+
+                  <div class="flex items-center gap-1 rounded-lg bg-green-600 px-2 py-1 text-[10px] font-bold text-white">
+                    5.0 <i class="fa-solid fa-star text-[8px]"></i>
+                  </div>
+
+                </div>
+
+                <p class="mt-3 text-sm leading-6 text-secondary">
+                  One of the best restaurants in Bandra. The dal makhani and hakka noodles are a must-try. Staff is courteous and the live music on weekends adds a nice touch.
+                </p>
+
+              </div>
+
+            </div>
+
+            <button
+              type="button"
+              class="mt-5 w-full rounded-full border border-jd-line py-3 text-xs font-semibold text-secondary transition-all duration-200 hover:border-jd-border hover:text-jd-orange"
+            >
+              Load More Reviews
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="space-y-6">
+
+          <!-- Contact Card -->
+          <div class="rounded-2xl border border-jd-line bg-white p-5">
+
+            <h3 class="text-sm font-bold text-ink">
+              Contact Information
+            </h3>
+
+            <div class="mt-4 space-y-4">
+
+              <div class="flex items-start gap-3">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-jd-light text-jd-orange">
+                  <i class="fa-solid fa-phone text-sm"></i>
+                </span>
+                <div>
+                  <p class="text-xs font-semibold text-ink">Phone</p>
+                  <a href="tel:+912241234567" class="mt-0.5 block text-[11px] text-secondary hover:text-jd-orange">
+                    +91 22 4123 4567
+                  </a>
+                  <a href="tel:+919820112233" class="mt-0.5 block text-[11px] text-secondary hover:text-jd-orange">
+                    +91 98201 12233
+                  </a>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-jd-light text-jd-orange">
+                  <i class="fa-solid fa-envelope text-sm"></i>
+                </span>
+                <div>
+                  <p class="text-xs font-semibold text-ink">Email</p>
+                  <a href="mailto:hello@spicesymphony.com" class="mt-0.5 block text-[11px] text-secondary hover:text-jd-orange">
+                    hello@spicesymphony.com
+                  </a>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-jd-light text-jd-orange">
+                  <i class="fa-solid fa-location-dot text-sm"></i>
+                </span>
+                <div>
+                  <p class="text-xs font-semibold text-ink">Address</p>
+                  <p class="mt-0.5 text-[11px] leading-5 text-secondary">
+                    12th Main Road, Linking Road,<br />
+                    Bandra West, Mumbai,<br />
+                    Maharashtra 400050
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="mt-5 flex gap-2">
+
+              <a
+                href="tel:+912241234567"
+                class="flex flex-1 items-center justify-center gap-2 rounded-full bg-jd-orange py-2.5 text-xs font-bold text-white transition-all duration-200 hover:bg-jd-hover"
+              >
+                <i class="fa-solid fa-phone"></i>
+                Call
+              </a>
+
+              <a
+                href="#"
+                class="flex flex-1 items-center justify-center

@@ -1,0 +1,381 @@
+
+types {
+  Point4326 = postgis.Geometry(4326)
+}
+
+model AppUser {
+  id         BigInt                  @id(map: "app_user_pkey") @default(autoincrement())
+  name       String
+  phone      String
+  email      String?
+  role       String                  @default("owner")
+  isActive   Boolean                 @default(true) @map("is_active")
+  createdAt  TimestamptzString       @default(now()) @map("created_at")
+  businesses Business[]
+  creator    Creator?
+  reviews    Review[]
+
+  @@check(expression: "(role = ANY (ARRAY['owner'::text, 'creator'::text, 'admin'::text, 'customer'::text]))", map: "app_user_role_check")
+  @@map("app_user")
+}
+
+model Attribute {
+  id                 Int                 @id(map: "attribute_pkey") @default(autoincrement())
+  slug               String              @unique(map: "attribute_slug_key")
+  name               String
+  isActive           Boolean             @default(true) @map("is_active")
+  businessAttributes BusinessAttribute[]
+
+  @@check(expression: "(slug ~ '^[a-z0-9]+(_[a-z0-9]+)*$'::text)", map: "attribute_slug_check")
+  @@map("attribute")
+}
+
+model Location {
+  id                 Int                                   @id(map: "location_pkey") @default(autoincrement())
+  parentId           Int?                                  @map("parent_id")
+  level              String
+  name               String
+  slug               String
+  geom               Point4326?
+  geomVerified       Boolean                               @default(false) @map("geom_verified")
+  isActive            Boolean                              @default(true) @map("is_active")
+
+  locationAliases    LocationAlias[]
+  searchLogs         SearchLog[]
+  businesses         Business[]                            @relation(name: "business_city_id_fkey")
+  businessesBusiness Business[]                            @relation(name: "business_locality_id_fkey")
+  parent             Location?                             @relation(name: "location_parent_id_fkey", fields: [parentId], references: [id], map: "location_parent_id_fkey")
+  locations          Location[]                            @relation(name: "location_parent_id_fkey")
+
+  @@unique([parentId, slug], map: "location_parent_slug_key")
+  @@index([geom], map: "location_geom_idx", type: "gist")
+  @@index([parentId], map: "location_parent_idx")
+
+  @@check(
+    expression: "(level = ANY (ARRAY['state'::text, 'district'::text, 'city'::text, 'locality'::text, 'landmark'::text]))",
+    map: "location_level_check"
+  )
+
+  @@check(
+    expression: "(slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::text)",
+    map: "location_slug_check"
+  )
+
+  @@map("location")
+}
+
+model Business {
+  id                    BigInt                               @id(map: "business_pkey") @default(autoincrement())
+  slug                  String                               @unique(map: "business_slug_key")
+  name                  String
+  nameNorm              String?                              @map("name_norm")
+  ownerUserId           BigInt?                              @map("owner_user_id")
+  address               String?
+  cityId                Int                                  @map("city_id")
+  localityId            Int?                                 @map("locality_id")
+  pincode               String?
+  geom                  Point4326
+  phone                 String
+  whatsapp              String?
+  email                 String?
+  website               String?
+  description           String?
+  yearEstablished       SmallInt?                            @map("year_established")
+  priceLevel            SmallInt?                            @map("price_level")
+  is24x7                Boolean                              @default(false) @map("is_24x7")
+  verified              Boolean                              @default(false)
+  rating                Numeric(2, 1)                        @default(0)
+  reviewCount           Int                                  @default(0) @map("review_count")
+  status                String                               @default("pending")
+  source                String                               @default("owner")
+  createdAt             TimestamptzString                    @default(now()) @map("created_at")
+  updatedAt             TimestamptzString                    @default(now()) @map("updated_at")
+  businessAttributes    BusinessAttribute[]
+  businessConcepts      BusinessConcept[]
+  businessHours         BusinessHours[]
+  businessMedias        BusinessMedia[]
+  businessSubscriptions BusinessSubscription[]
+  clickLogs             ClickLog[]
+  leads                 Lead[]
+  reviews               Review[]
+  city                  Location                             @relation(name: "business_city_id_fkey", fields: [cityId], references: [id], map: "business_city_id_fkey", index: false)
+  locality              Location?                            @relation(name: "business_locality_id_fkey", fields: [localityId], references: [id], map: "business_locality_id_fkey", index: false)
+  ownerUser             AppUser?                             @relation(fields: [ownerUserId], references: [id], map: "business_owner_user_id_fkey")
+
+  @@index([cityId], map: "business_city_active_idx", where: "(status = 'active'::text)")
+  @@index([geom], map: "business_geom_active_idx", where: "(status = 'active'::text)", type: "gist")
+  @@index([localityId], map: "business_locality_idx", where: "(status = 'active'::text)")
+  @@index([nameNorm], map: "business_name_trgm_idx", type: "gin")
+  @@index([ownerUserId], map: "business_owner_idx")
+  @@index([phone], map: "business_phone_idx")
+  @@check(expression: "(char_length(description) <= 500)", map: "business_description_check")
+  @@check(expression: "(pincode ~ '^[0-9]{6}$'::text)", map: "business_pincode_check")
+  @@check(expression: "((price_level >= 1) AND (price_level <= 3))", map: "business_price_level_check")
+  @@check(expression: "((rating >= (0)::numeric) AND (rating <= (5)::numeric))", map: "business_rating_check")
+  @@check(expression: "(review_count >= 0)", map: "business_review_count_check")
+  @@check(expression: "(slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::text)", map: "business_slug_check")
+  @@check(expression: "(source = ANY (ARRAY['owner'::text, 'team'::text, 'osm'::text, 'import'::text, 'demo'::text]))", map: "business_source_check")
+  @@check(expression: "(status = ANY (ARRAY['pending'::text, 'active'::text, 'suspended'::text, 'deleted'::text]))", map: "business_status_check")
+  @@check(expression: "((year_established >= 1800) AND (year_established <= 2100))", map: "business_year_established_check")
+  @@map("business")
+}
+
+model BusinessAttribute {
+  businessId  BigInt    @map("business_id")
+  attributeId Int       @map("attribute_id")
+  attribute   Attribute @relation(fields: [attributeId], references: [id], map: "business_attribute_attribute_id_fkey")
+  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade, map: "business_attribute_business_id_fkey", index: false)
+
+  @@id([businessId, attributeId], map: "business_attribute_pkey")
+  @@index([attributeId], map: "business_attribute_attr_idx")
+  @@map("business_attribute")
+}
+
+model Concept {
+  id               Int               @id(map: "concept_pkey") @default(autoincrement())
+  slug             String            @unique(map: "concept_slug_key")
+  name             String
+  type             String            @default("category")
+  parentId         Int?              @map("parent_id")
+  sortOrder        Int               @default(0) @map("sort_order")
+  isActive         Boolean           @default(true) @map("is_active")
+  createdAt        TimestamptzString @default(now()) @map("created_at")
+  businessConcepts BusinessConcept[]
+  conceptAliases   ConceptAlias[]
+  parent           Concept?          @relation(name: "concept_parent_id_fkey", fields: [parentId], references: [id], map: "concept_parent_id_fkey")
+  concepts         Concept[]         @relation(name: "concept_parent_id_fkey")
+
+  @@index([parentId], map: "concept_parent_idx")
+  @@check(expression: "(slug ~ '^[a-z0-9]+(_[a-z0-9]+)*$'::text)", map: "concept_slug_check")
+  @@check(expression: "(type = ANY (ARRAY['category'::text, 'service'::text]))", map: "concept_type_check")
+  @@map("concept")
+}
+
+model BusinessConcept {
+  businessId BigInt   @map("business_id")
+  conceptId  Int      @map("concept_id")
+  isPrimary  Boolean  @default(false) @map("is_primary")
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade, map: "business_concept_business_id_fkey", index: false)
+  concept    Concept  @relation(fields: [conceptId], references: [id], map: "business_concept_concept_id_fkey")
+
+  @@id([businessId, conceptId], map: "business_concept_pkey")
+  @@index([conceptId], map: "business_concept_concept_idx")
+  @@index([businessId], map: "business_one_primary_idx", where: "is_primary", unique: true)
+  @@map("business_concept")
+}
+
+model BusinessHours {
+  businessId BigInt     @map("business_id")
+  weekday    SmallInt
+  openTime   TimeString @map("open_time")
+  closeTime  TimeString @map("close_time")
+  business   Business   @relation(fields: [businessId], references: [id], onDelete: Cascade, map: "business_hours_business_id_fkey", index: false)
+
+  @@id([businessId, weekday, openTime], map: "business_hours_pkey")
+  @@check(expression: "(close_time > open_time)", map: "business_hours_check")
+  @@check(expression: "((weekday >= 0) AND (weekday <= 6))", map: "business_hours_weekday_check")
+  @@map("business_hours")
+}
+
+model BusinessMedia {
+  id         BigInt            @id(map: "business_media_pkey") @default(autoincrement())
+  businessId BigInt            @map("business_id")
+  kind       String            @default("photo")
+  url        String
+  sortOrder  Int               @default(0) @map("sort_order")
+  createdAt  TimestamptzString @default(now()) @map("created_at")
+  business   Business          @relation(fields: [businessId], references: [id], onDelete: Cascade, map: "business_media_business_id_fkey", index: false)
+
+  @@index([businessId, kind, sortOrder], map: "business_media_business_idx")
+  @@check(expression: "(kind = ANY (ARRAY['logo'::text, 'photo'::text, 'menu'::text]))", map: "business_media_kind_check")
+  @@map("business_media")
+}
+
+model BusinessSubscription {
+  id         BigInt            @id(map: "business_subscription_pkey") @default(autoincrement())
+  businessId BigInt            @map("business_id")
+  plan       String
+  startsOn   DateString        @map("starts_on")
+  endsOn     DateString        @map("ends_on")
+  amountPaid Numeric(10, 2)    @default(0) @map("amount_paid")
+  paymentRef String?           @map("payment_ref")
+  createdAt  TimestamptzString @default(now()) @map("created_at")
+  business   Business          @relation(fields: [businessId], references: [id], onDelete: Cascade, map: "business_subscription_business_id_fkey", index: false)
+
+  @@index([businessId, endsOn], map: "business_subscription_idx")
+  @@check(expression: "(amount_paid >= (0)::numeric)", map: "business_subscription_amount_paid_check")
+  @@check(expression: "(ends_on >= starts_on)", map: "business_subscription_check")
+  @@check(expression: "(plan = ANY (ARRAY['verified'::text, 'featured'::text, 'premium'::text]))", map: "business_subscription_plan_check")
+  @@map("business_subscription")
+}
+
+model SearchLog {
+  id              BigInt                                @id(map: "search_log_pkey") @default(autoincrement())
+  sessionId       String?                               @map("session_id")
+  rawQuery        String                                @map("raw_query")
+  normalizedQuery String?                               @map("normalized_query")
+  parsed          Jsonb?
+  parserTier      String?                               @map("parser_tier")
+  cityId          Int?                                  @map("city_id")
+  userGeom        Point4326?                            @map("user_geom")
+  resultCount     Int?                                  @map("result_count")
+  tookMs          Int?                                  @map("took_ms")
+  createdAt       TimestamptzString                     @default(now()) @map("created_at")
+  clickLogs       ClickLog[]
+  city            Location?                             @relation(fields: [cityId], references: [id], map: "search_log_city_id_fkey", index: false)
+
+  @@index([createdAt], map: "search_log_created_idx")
+  @@index([normalizedQuery], map: "search_log_query_idx")
+  @@index([createdAt], map: "search_log_zero_idx", where: "(result_count = 0)")
+  @@check(expression: "(parser_tier = ANY (ARRAY['rules'::text, 'fuzzy'::text, 'llm'::text]))", map: "search_log_parser_tier_check")
+  @@map("search_log")
+}
+
+model ClickLog {
+  id         BigInt            @id(map: "click_log_pkey") @default(autoincrement())
+  searchId   BigInt?           @map("search_id")
+  businessId BigInt            @map("business_id")
+  action     String
+  position   SmallInt?
+  sessionId  String?           @map("session_id")
+  createdAt  TimestamptzString @default(now()) @map("created_at")
+  business   Business          @relation(fields: [businessId], references: [id], onDelete: Cascade, map: "click_log_business_id_fkey", index: false)
+  search     SearchLog?        @relation(fields: [searchId], references: [id], onDelete: SetNull, map: "click_log_search_id_fkey")
+
+  @@index([businessId, action, createdAt], map: "click_log_business_idx")
+  @@index([searchId], map: "click_log_search_idx")
+  @@check(expression: "(action = ANY (ARRAY['view'::text, 'call'::text, 'whatsapp'::text, 'direction'::text, 'share'::text, 'enquiry'::text]))", map: "click_log_action_check")
+  @@map("click_log")
+}
+
+model ConceptAlias {
+  id        Int               @id(map: "concept_alias_pkey") @default(autoincrement())
+  conceptId Int               @map("concept_id")
+  text      String            @unique(map: "concept_alias_text_key")
+  kind      String            @default("synonym")
+  createdAt TimestamptzString @default(now()) @map("created_at")
+  concept   Concept           @relation(fields: [conceptId], references: [id], onDelete: Cascade, map: "concept_alias_concept_id_fkey")
+
+  @@index([conceptId], map: "concept_alias_concept_idx")
+  @@index([text], map: "concept_alias_trgm_idx", type: "gin")
+  @@check(expression: "(kind = ANY (ARRAY['main'::text, 'synonym'::text, 'misspelling'::text, 'local'::text, 'abbreviation'::text]))", map: "concept_alias_kind_check")
+  @@check(expression: "(text = norm_text(text))", map: "concept_alias_text_check")
+  @@map("concept_alias")
+}
+
+model Creator {
+  id                   BigInt             @id(map: "creator_pkey") @default(autoincrement())
+  userId               BigInt             @unique(map: "creator_user_id_key") @map("user_id")
+  code                 String             @unique(map: "creator_code_key")
+  displayName          String             @map("display_name")
+  channelUrl           String?            @map("channel_url")
+  commissionPct        Numeric(4, 1)      @default(5) @map("commission_pct")
+  flatFeeInr           Numeric(10, 2)?    @map("flat_fee_inr")
+  status               String             @default("pending")
+  disclosureAcceptedAt TimestamptzString? @map("disclosure_accepted_at")
+  createdAt            TimestamptzString  @default(now()) @map("created_at")
+  leads                Lead[]
+  payouts              Payout[]
+  user                 AppUser            @relation(fields: [userId], references: [id], map: "creator_user_id_fkey")
+
+  @@check(expression: "(code ~ '^[a-z0-9_-]{3,30}$'::text)", map: "creator_code_check")
+  @@check(expression: "((commission_pct >= (0)::numeric) AND (commission_pct <= (100)::numeric))", map: "creator_commission_pct_check")
+  @@check(expression: "(flat_fee_inr >= (0)::numeric)", map: "creator_flat_fee_inr_check")
+  @@check(expression: "(status = ANY (ARRAY['pending'::text, 'active'::text, 'suspended'::text]))", map: "creator_status_check")
+  @@map("creator")
+}
+
+model Payout {
+  id          BigInt             @id(map: "payout_pkey") @default(autoincrement())
+  creatorId   BigInt             @map("creator_id")
+  periodMonth DateString         @map("period_month")
+  amount      Numeric(10, 2)
+  status      String             @default("pending")
+  paidAt      TimestamptzString? @map("paid_at")
+  reference   String?
+  createdAt   TimestamptzString  @default(now()) @map("created_at")
+  leads       Lead[]
+  creator     Creator            @relation(fields: [creatorId], references: [id], map: "payout_creator_id_fkey", index: false)
+
+  @@unique([creatorId, periodMonth], map: "payout_creator_id_period_month_key")
+  @@check(expression: "(amount >= (0)::numeric)", map: "payout_amount_check")
+  @@check(expression: "(EXTRACT(day FROM period_month) = (1)::numeric)", map: "payout_period_month_check")
+  @@check(expression: "(status = ANY (ARRAY['pending'::text, 'paid'::text, 'cancelled'::text]))", map: "payout_status_check")
+  @@map("payout")
+}
+
+model Lead {
+  id               BigInt                  @id(map: "lead_pkey") @default(autoincrement())
+  businessId       BigInt                  @map("business_id")
+  creatorId        BigInt?                 @map("creator_id")
+  customerName     String?                 @map("customer_name")
+  customerPhone    String                  @map("customer_phone")
+  message          String?
+  serviceDate      DateString?             @map("service_date")
+  guests           SmallInt?
+  source           String                  @default("web")
+  consentToShare   Boolean                 @default(false) @map("consent_to_share")
+  status           String                  @default("new")
+  bookingValue     Numeric(10, 2)?         @map("booking_value")
+  commissionAmount Numeric(10, 2)?         @map("commission_amount")
+  payoutId         BigInt?                 @map("payout_id")
+  createdAt        TimestamptzString       @default(now()) @map("created_at")
+  updatedAt        TimestamptzString       @default(now()) @map("updated_at")
+  business         Business                @relation(fields: [businessId], references: [id], map: "lead_business_id_fkey", index: false)
+  creator          Creator?                @relation(fields: [creatorId], references: [id], map: "lead_creator_id_fkey", index: false)
+  payout           Payout?                 @relation(fields: [payoutId], references: [id], map: "lead_payout_id_fkey", index: false)
+
+  @@index([businessId, status, createdAt], map: "lead_business_idx")
+  @@index([creatorId, status], map: "lead_creator_idx", where: "(creator_id IS NOT NULL)")
+  @@index([customerPhone], map: "lead_phone_idx")
+  @@check(expression: "(booking_value >= (0)::numeric)", map: "lead_booking_value_check")
+  @@check(expression: "(commission_amount >= (0)::numeric)", map: "lead_commission_amount_check")
+  @@check(expression: "(guests > 0)", map: "lead_guests_check")
+  @@check(expression: "(source = ANY (ARRAY['web'::text, 'whatsapp'::text, 'missed_call'::text, 'phone'::text, 'creator'::text]))", map: "lead_source_check")
+  @@check(expression: "(status = ANY (ARRAY['new'::text, 'contacted'::text, 'booked'::text, 'lost'::text, 'spam'::text]))", map: "lead_status_check")
+  @@map("lead")
+}
+
+model LocationAlias {
+  locationId Int      @map("location_id")
+  text       String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade, map: "location_alias_location_id_fkey", index: false)
+
+  @@id([locationId, text], map: "location_alias_pkey")
+  @@index([text], map: "location_alias_text_idx")
+  @@index([text], map: "location_alias_trgm_idx", type: "gin")
+  @@check(expression: "(text = norm_text(text))", map: "location_alias_text_check")
+  @@map("location_alias")
+}
+
+model Review {
+  id           BigInt            @id(map: "review_pkey") @default(autoincrement())
+  businessId   BigInt            @map("business_id")
+  userId       BigInt?           @map("user_id")
+  reviewerName String            @map("reviewer_name")
+  rating       SmallInt
+  comment      String?
+  status       String            @default("pending")
+  trust        Numeric(3, 2)     @default(1)
+  createdAt    TimestamptzString @default(now()) @map("created_at")
+  business     Business          @relation(fields: [businessId], references: [id], onDelete: Cascade, map: "review_business_id_fkey", index: false)
+  user         AppUser?          @relation(fields: [userId], references: [id], map: "review_user_id_fkey", index: false)
+
+  @@index([businessId, status, createdAt], map: "review_business_idx")
+  @@check(expression: "(char_length(comment) <= 1000)", map: "review_comment_check")
+  @@check(expression: "((rating >= 1) AND (rating <= 5))", map: "review_rating_check")
+  @@check(expression: "(status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text]))", map: "review_status_check")
+  @@check(expression: "((trust >= (0)::numeric) AND (trust <= (1)::numeric))", map: "review_trust_check")
+  @@map("review")
+}
+
+model SpatialRefSys {
+  srid      Int            @id(map: "spatial_ref_sys_pkey")
+  authName  VarChar(256)?  @map("auth_name")
+  authSrid  Int?           @map("auth_srid")
+  srtext    VarChar(2048)?
+  proj4text VarChar(2048)?
+
+  @@check(expression: "((srid > 0) AND (srid <= 998999))", map: "spatial_ref_sys_srid_check")
+  @@map("spatial_ref_sys")
+}
