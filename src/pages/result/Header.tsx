@@ -41,13 +41,21 @@ export function Header() {
   }
 
   useEffect(() => {
-    // if (search.isSuccess) {
-    //   console.log("🔎 Search result:", search.data);
-    //   console.log("🧠 Parsed search:", search.data.debug?.parsed);
-    // }
-    // if (search.isError) {
-    //   console.error("❌ Search error:", search.error);
-    // }
+    if (search.isSuccess) {
+      console.log("🔎 Search result:", search.data);
+      // console.log("🧠 Parsed search:", search.data.debug?.parsed);
+    }
+    if (search.isError) {
+      console.error("Search error:", search.error);
+      console.error(
+        "Error details:",
+        JSON.stringify(
+          search.error,
+          Object.getOwnPropertyNames(search.error),
+          2,
+        ),
+      );
+    }
   }, [search.data, search.isSuccess, search.isError, search.error]);
 
   return (

@@ -44,15 +44,43 @@ export interface ResolvedLocation {
   ancestors?: ResolvedLocation[];
 }
 
-export interface RankedLocationCandidate {
-  id: bigint;
-  name: string;
-  slug: string;
-  type: LocationType;
-  parentId: bigint | null;
-  isActive: boolean;
-  score: number;
-}
+export type RankedLocationCandidate = ResolvedLocation;
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const LOCATION_TYPES: readonly LocationType[] = [
+  "COUNTRY",
+  "STATE",
+  "DISTRICT",
+  "CITY",
+  "LOCALITY",
+  "LANDMARK",
+];
+
+/** Minimum fuzzy score when matching the full input text. */
+const MIN_SCORE_FULL = 0.45;
+/** Stricter minimum when matching only a fragment of a longer input. */
+const MIN_SCORE_FRAGMENT = 0.7;
+
+/** Filler words stripped when building fragments from long inputs. */
+const STOPWORDS = new Set([
+  "in",
+  "near",
+  "at",
+  "around",
+  "nearby",
+  "of",
+  "the",
+  "to",
+  "from",
+  "by",
+  "and",
+  "or",
+  "for",
+  "on",
+]);
 
 // ---------------------------------------------------------------------------
 // Resolver
@@ -67,58 +95,33 @@ export class LocationResolver {
     const parsed = this.normalizeInput(input);
     if (!parsed) return null;
 
-    // 1. Resolve using the supplied city context.
-    if (parsed.cityId !== undefined) {
-      const ctx = await this.resolveInContext(parsed, parsed.cityId);
+    const variants = this.textVariants(parsed.text);
+    const scopes = this.scopesOf(parsed);
+    const subtreeCache = new Map<string, Set<string>>();
 
-      if (ctx && this.accepts(ctx, parsed)) {
-        return this.hydrate(parsed, ctx);
+    // Longest variant first (the full text), then smaller fragments.
+    for (const variant of variants) {
+      const minScore =
+        variant === parsed.text ? MIN_SCORE_FULL : MIN_SCORE_FRAGMENT;
+
+      // 1. Inside the supplied context (city > district > state > country).
+      for (const scopeId of scopes) {
+        const hit = await this.resolveInScope(
+          variant,
+          parsed,
+          scopeId,
+          minScore,
+          subtreeCache,
+        );
+        if (hit) return this.hydrate(parsed, hit);
       }
+
+      // 2. Globally.
+      const global = await this.resolveGlobal(variant, parsed, minScore);
+      if (global) return this.hydrate(parsed, global);
     }
 
-    // 2. Resolve using the supplied district context.
-    if (parsed.districtId !== undefined) {
-      const ctx = await this.resolveInContext(parsed, parsed.districtId);
-
-      if (ctx && this.accepts(ctx, parsed)) {
-        return this.hydrate(parsed, ctx);
-      }
-    }
-
-    // 3. Exact alias.
-    const aliasHit = await findLocationAlias(parsed.text);
-
-    if (aliasHit && this.accepts(aliasHit, parsed)) {
-      return this.hydrate(parsed, this.toResolved(aliasHit, 1.0));
-    }
-
-    // 4. Exact name.
-    const nameHit = await findLocationByName(parsed.text);
-
-    if (nameHit && this.accepts(nameHit, parsed)) {
-      return this.hydrate(parsed, this.toResolved(nameHit, 1.0));
-    }
-
-    // 5. Exact slug.
-    const slugHit = await findLocationBySlug(parsed.text);
-
-    if (slugHit && this.accepts(slugHit, parsed)) {
-      return this.hydrate(parsed, this.toResolved(slugHit, 0.99));
-    }
-
-    // 6. Fuzzy candidate search.
-    const [best] = await findLocationCandidates(parsed.text, {
-      type: parsed.type,
-      parentId: parsed.cityId ?? parsed.districtId,
-      limit: 1,
-    });
-
-    // Don't accept weak fuzzy matches.
-    if (!best || best.score < 0.45 || !this.accepts(best, parsed)) {
-      return null;
-    }
-
-    return this.hydrate(parsed, this.toResolved(best, best.score));
+    return null;
   }
 
   // -------------------------------------------------------------------------
@@ -131,15 +134,26 @@ export class LocationResolver {
     const parsed = this.normalizeInput(input);
     if (!parsed) return [];
 
-    const candidates = await findLocationCandidates(parsed.text, {
+    const limit = parsed.limit ?? 5;
+    const scopes = this.scopesOf(parsed);
+    const cache = new Map<string, Set<string>>();
+
+    // Fetch more than needed, because scope filtering happens in-process.
+    const rows = await findLocationCandidates(parsed.text, {
       type: parsed.type,
-      parentId: parsed.cityId ?? parsed.districtId ?? undefined,
-      limit: parsed.limit ?? 5,
+      limit: scopes.length ? 100 : limit,
     });
 
-    return candidates
-      .filter((c) => this.accepts(c, parsed))
-      .map((c) => this.toResolved(c, c.score));
+    let ids: Set<string> | null = null;
+    if (scopes.length) {
+      ids = await this.subtreeIds(scopes[0], cache);
+    }
+
+    return rows
+      .filter((r) => this.accepts(r, parsed))
+      .filter((r) => !ids || ids.has(this.idKey(r.id)))
+      .slice(0, limit)
+      .map((r) => this.toResolved(r, r.score));
   }
 
   // -------------------------------------------------------------------------
@@ -151,7 +165,9 @@ export class LocationResolver {
     if (exact) return this.toResolved(exact, 1.0);
 
     const [fuzzy] = await findLocationCandidates(text, { limit: 1 });
-    return fuzzy ? this.toResolved(fuzzy, fuzzy.score) : null;
+    return fuzzy && fuzzy.score >= MIN_SCORE_FULL
+      ? this.toResolved(fuzzy, fuzzy.score)
+      : null;
   }
 
   async resolveExactLocationAlias(
@@ -162,21 +178,17 @@ export class LocationResolver {
   }
 
   async resolveFuzzyLocationAlias(
-    text: string,
+    input: unknown,
   ): Promise<ResolvedLocation | null> {
-    const parsed = this.normalizeInput(text);
+    const parsed = this.normalizeInput(input);
     if (!parsed) return null;
 
     const [best] = await findLocationCandidates(parsed.text, {
       type: parsed.type,
-      parentId: parsed.cityId ?? parsed.districtId,
       limit: 1,
     });
 
-    if (!best || best.score < 0.45) {
-      return null;
-    }
-
+    if (!best || best.score < MIN_SCORE_FULL) return null;
     return this.toResolved(best, best.score);
   }
 
@@ -216,8 +228,7 @@ export class LocationResolver {
 
   /**
    * Re-ranks an already-fetched candidate list against a new query string
-   * without hitting the DB. Useful when the caller has a cached list and
-   * wants to re-order it for a different query.
+   * without hitting the DB.
    */
   rankLocationCandidates(
     candidates: RankedLocationCandidate[],
@@ -226,26 +237,27 @@ export class LocationResolver {
     const q = this.normalize(query);
     if (!q) return candidates;
 
-    const scored = candidates.map((c) => {
-      const name = this.normalize(c.name);
-      const slug = this.normalize(c.slug);
-      let score = c.score;
+    return candidates
+      .map((c) => {
+        const name = this.normalize(c.name);
+        const slug = this.normalize(c.slug);
+        let score = c.score;
 
-      if (name === q) score = Math.max(score, 1.0);
-      else if (slug === q) score = Math.max(score, 0.99);
-      else if (name.startsWith(q)) score = Math.max(score, 0.9);
-      else if (name.includes(q)) score = Math.max(score, 0.8);
+        if (name === q) score = Math.max(score, 1.0);
+        else if (slug === q) score = Math.max(score, 0.99);
+        else if (name.startsWith(q)) score = Math.max(score, 0.9);
+        else if (name.includes(q)) score = Math.max(score, 0.8);
 
-      return { ...c, score };
-    });
-
-    return scored.sort((a, b) => b.score - a.score);
+        return { ...c, score };
+      })
+      .sort((a, b) => b.score - a.score);
   }
 
   // -------------------------------------------------------------------------
   // Hierarchy
   // -------------------------------------------------------------------------
 
+  /** Root-first chain, including the node itself as the last element. */
   async resolveLocationHierarchy(
     locationId: bigint,
   ): Promise<ResolvedLocation[]> {
@@ -270,11 +282,11 @@ export class LocationResolver {
   async resolveParentLocation(
     locationId: bigint,
   ): Promise<ResolvedLocation | null> {
-    const ancestors = await findLocationAncestors(locationId);
-    // findLocationAncestors returns root-first; the immediate parent is last-but-one
-    // because the array's last element is the node itself.
-    const parent =
-      ancestors.length >= 2 ? ancestors[ancestors.length - 2] : null;
+    const node = await findLocationById(locationId);
+    if (!node || node.parentId === null || node.parentId === undefined) {
+      return null;
+    }
+    const parent = await findLocationById(BigInt(node.parentId));
     return parent ? this.toResolved(parent, 1.0) : null;
   }
 
@@ -282,10 +294,8 @@ export class LocationResolver {
     childId: bigint;
     parentId: bigint;
   }): Promise<boolean> {
-    if (input.childId === input.parentId) return false;
-
-    const ancestors = await findLocationAncestors(input.childId);
-    return ancestors.some((a) => a.id === input.parentId);
+    if (this.sameId(input.childId, input.parentId)) return false;
+    return this.isUnder(input.childId, input.parentId);
   }
 
   // -------------------------------------------------------------------------
@@ -320,17 +330,11 @@ export class LocationResolver {
   ): Promise<ResolvedLocation | null> {
     const parsed = this.normalizeInput(input);
     if (!parsed) return null;
-
-    const [best] = await findLocationCandidates(parsed.text, {
-      type,
-      parentId: parsed.cityId ?? parsed.districtId ?? undefined,
-      limit: 1,
-    });
-    return best ? this.toResolved(best, best.score) : null;
+    return this.resolve({ ...parsed, type });
   }
 
   // -------------------------------------------------------------------------
-  // Context-aware resolution
+  // Context-aware convenience wrappers
   // -------------------------------------------------------------------------
 
   async resolveLocationWithCityContext(
@@ -338,7 +342,7 @@ export class LocationResolver {
     cityId: bigint,
     type?: LocationType,
   ): Promise<ResolvedLocation | null> {
-    return this.resolveWithParentContext({ text, cityId, type }, cityId);
+    return this.resolve({ text, cityId, type });
   }
 
   async resolveLocationWithDistrictContext(
@@ -346,109 +350,158 @@ export class LocationResolver {
     districtId: bigint,
     type?: LocationType,
   ): Promise<ResolvedLocation | null> {
-    return this.resolveWithParentContext(
-      { text, districtId, type },
-      districtId,
-    );
-  }
-
-  private async resolveWithParentContext(
-    parsed: LocationResolveInput,
-    parentId: bigint,
-  ): Promise<ResolvedLocation | null> {
-    const [best] = await findLocationCandidates(parsed.text, {
-      type: parsed.type,
-      parentId,
-      limit: 1,
-    });
-    return best ? this.toResolved(best, best.score) : null;
+    return this.resolve({ text, districtId, type });
   }
 
   // -------------------------------------------------------------------------
-  // Helpers
+  // Core matching
   // -------------------------------------------------------------------------
 
-  private async resolveInContext(
-    parsed: LocationResolveInput,
-    parentId: bigint,
-  ): Promise<ResolvedLocation | null> {
-    // Exact alias inside the context subtree
-    const aliasHit = await this.exactInSubtree(parsed.text, parentId);
-    if (aliasHit) return this.toResolved(aliasHit, 0.98);
-
-    // Exact name inside the context subtree
-    const nameHit = await this.exactNameInSubtree(parsed.text, parentId);
-    if (nameHit) return this.toResolved(nameHit, 1.0);
-
-    // Fuzzy inside the context subtree
-    const [fuzzy] = await findLocationCandidates(parsed.text, {
-      parentId,
-      type: parsed.type,
-      limit: 1,
-    });
-    return fuzzy ? this.toResolved(fuzzy, fuzzy.score) : null;
-  }
-
-  /**
-   * Find a location under `parentId` whose exact name or alias matches `text`.
-   * Uses the descendants walk and filters in-process; fine for shallow trees.
-   * If trees get deep, promote this to a dedicated repo query.
-   */
-  private async exactInSubtree(
+  /** Exact alias → exact name → exact slug → fuzzy, across the whole table. */
+  private async resolveGlobal(
     text: string,
-    parentId: bigint,
-  ): Promise<LocationRow | null> {
-    const q = this.normalize(text);
-    if (!q) return null;
-
-    // Try alias first via searchLocationAliases, then filter by ancestor chain
-    const aliases = await searchLocationAliases(q);
-    for (const alias of aliases) {
-      if (this.normalize(alias.text) !== q) continue;
-      const loc = await findLocationById(alias.locationId);
-      if (!loc) continue;
-      if (await this.isUnder(loc.id, parentId)) return loc;
+    parsed: LocationResolveInput,
+    minScore: number,
+  ): Promise<ResolvedLocation | null> {
+    const aliasHit = await findLocationAlias(text);
+    if (aliasHit && this.accepts(aliasHit, parsed)) {
+      return this.toResolved(aliasHit, 1.0);
     }
-    return null;
+
+    const nameHit = await findLocationByName(text);
+    if (nameHit && this.accepts(nameHit, parsed)) {
+      return this.toResolved(nameHit, 1.0);
+    }
+
+    const slugHit = await findLocationBySlug(text);
+    if (slugHit && this.accepts(slugHit, parsed)) {
+      return this.toResolved(slugHit, 0.99);
+    }
+
+    const candidates = await findLocationCandidates(text, {
+      type: parsed.type,
+      limit: 5,
+    });
+    const best = candidates.find((c) => this.accepts(c, parsed));
+
+    if (!best || best.score < minScore) return null;
+    return this.toResolved(best, best.score);
   }
 
-  private async exactNameInSubtree(
+  /** Same as global, but restricted to descendants of `rootId`. */
+  private async resolveInScope(
     text: string,
-    parentId: bigint,
-  ): Promise<LocationRow | null> {
+    parsed: LocationResolveInput,
+    rootId: bigint,
+    minScore: number,
+    cache: Map<string, Set<string>>,
+  ): Promise<ResolvedLocation | null> {
+    const ids = await this.subtreeIds(rootId, cache);
+    if (ids.size === 0) return null;
+
+    // Exact alias inside the subtree.
+    const aliases = await searchLocationAliases(text);
+    for (const alias of aliases) {
+      if (this.normalize(alias.text) !== text) continue;
+      if (!ids.has(this.idKey(alias.locationId))) continue;
+
+      const loc = await findLocationById(BigInt(alias.locationId));
+      if (loc && this.accepts(loc, parsed)) {
+        return this.toResolved(loc, 0.98);
+      }
+    }
+
+    // Name / slug / fuzzy inside the subtree. Candidates are fetched
+    // globally (the repo's parentId filter is direct-children only), then
+    // filtered by the real subtree.
     const candidates = await findLocationCandidates(text, {
-      parentId,
-      limit: 10,
+      type: parsed.type,
+      limit: 50,
     });
-    const q = this.normalize(text);
-    return candidates.find((c) => this.normalize(c.name) === q) ?? null;
+
+    const inScope = candidates.filter(
+      (c) => ids.has(this.idKey(c.id)) && this.accepts(c, parsed),
+    );
+
+    const exact = inScope.find(
+      (c) => this.normalize(c.name) === text || c.slug === text,
+    );
+    if (exact) return this.toResolved(exact, 1.0);
+
+    const best = inScope[0];
+    if (!best || best.score < minScore) return null;
+    return this.toResolved(best, best.score);
+  }
+
+  // -------------------------------------------------------------------------
+  // Hierarchy helpers
+  // -------------------------------------------------------------------------
+
+  /** IDs of every descendant of `rootId` (excluding the root itself). */
+  private async subtreeIds(
+    rootId: bigint,
+    cache: Map<string, Set<string>>,
+  ): Promise<Set<string>> {
+    const key = this.idKey(rootId);
+    const cached = cache.get(key);
+    if (cached) return cached;
+
+    const rows = await findLocationDescendants(rootId);
+    const ids = new Set<string>();
+    for (const r of rows) {
+      const k = this.idKey(r.id);
+      if (k !== key) ids.add(k);
+    }
+
+    cache.set(key, ids);
+    return ids;
   }
 
   private async isUnder(
     locationId: bigint,
     ancestorId: bigint,
   ): Promise<boolean> {
-    if (locationId === ancestorId) return true;
+    if (this.sameId(locationId, ancestorId)) return true;
     const ancestors = await findLocationAncestors(locationId);
-    return ancestors.some((a) => a.id === ancestorId);
+    return ancestors.some((a) => this.sameId(a.id, ancestorId));
   }
+
+  /** Context ids ordered from most to least specific. */
+  private scopesOf(parsed: LocationResolveInput): bigint[] {
+    return [
+      parsed.cityId,
+      parsed.districtId,
+      parsed.stateId,
+      parsed.countryId,
+    ].filter((v): v is bigint => v !== undefined);
+  }
+
+  // -------------------------------------------------------------------------
+  // Small helpers
+  // -------------------------------------------------------------------------
 
   private accepts(row: LocationRow, parsed: LocationResolveInput): boolean {
     if (!parsed.includeInactive && !row.isActive) return false;
-    if (parsed.type && row.type !== parsed.type) return false;
+    if (parsed.type && String(row.type).toUpperCase() !== parsed.type) {
+      return false;
+    }
     return true;
   }
 
+  /** Normalizes DB rows so ids are always bigint and type is always uppercase. */
   private toResolved(
     row: LocationRow | LocationCandidateRow,
     score: number,
   ): ResolvedLocation {
     return {
-      id: row.id,
+      id: BigInt(row.id),
       name: row.name,
       slug: row.slug,
-      type: row.type,
-      parentId: row.parentId,
+      type: String(row.type).toUpperCase() as LocationType,
+      parentId:
+        row.parentId === null || row.parentId === undefined
+          ? null
+          : BigInt(row.parentId),
       isActive: row.isActive,
       score,
     };
@@ -464,8 +517,68 @@ export class LocationResolver {
     return match;
   }
 
+  private idKey(id: bigint | number | string): string {
+    return String(id);
+  }
+
+  private sameId(
+    a: bigint | number | string,
+    b: bigint | number | string,
+  ): boolean {
+    return String(a) === String(b);
+  }
+
   private normalize(text: string): string {
-    return text.trim().toLocaleLowerCase("en-IN");
+    return text
+      .replace(/[,;|]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLocaleLowerCase("en-IN");
+  }
+
+  /**
+   * "hakim para siliguri" → ["hakim para siliguri", "hakim para",
+   * "para siliguri", "hakim", "para", "siliguri"].
+   * Stopwords are dropped first so "near sevoke road" yields "sevoke road".
+   */
+  private textVariants(text: string): string[] {
+    const tokens = text
+      .split(" ")
+      .filter((t) => t && !STOPWORDS.has(t))
+      .slice(0, 6);
+
+    const variants: string[] = [text];
+    const seen = new Set<string>(variants);
+
+    for (let len = tokens.length; len >= 1; len--) {
+      for (let i = 0; i + len <= tokens.length; i++) {
+        const v = tokens.slice(i, i + len).join(" ");
+        // Skip very short single tokens, since they match too loosely.
+        if (len === 1 && v.length < 3) continue;
+        if (!seen.has(v)) {
+          seen.add(v);
+          variants.push(v);
+        }
+      }
+    }
+    return variants;
+  }
+
+  private toBigInt(v: unknown): bigint | undefined {
+    if (typeof v === "bigint") return v;
+    if (typeof v === "number" && Number.isSafeInteger(v) && v >= 0) {
+      return BigInt(v);
+    }
+    if (typeof v === "string" && /^\d+$/.test(v.trim())) {
+      return BigInt(v.trim());
+    }
+    return undefined;
+  }
+
+  private toType(v: unknown): LocationType | undefined {
+    if (typeof v !== "string") return undefined;
+    const t = v.trim().toUpperCase() as LocationType;
+    return LOCATION_TYPES.includes(t) ? t : undefined;
   }
 
   private normalizeInput(input: unknown): LocationResolveInput | null {
@@ -473,23 +586,54 @@ export class LocationResolver {
       const text = this.normalize(input);
       return text ? { text } : null;
     }
-    if (input && typeof input === "object") {
-      const c = input as Partial<LocationResolveInput>;
-      const text = this.normalize(String(c.text ?? ""));
-      if (!text) return null;
-      return {
-        text,
-        cityId: c.cityId,
-        districtId: c.districtId,
-        stateId: c.stateId,
-        countryId: c.countryId,
-        type: c.type,
-        limit: c.limit,
-        withAncestors: c.withAncestors,
-        includeInactive: c.includeInactive,
-      };
-    }
-    return null;
+
+    if (!input || typeof input !== "object") return null;
+
+    const c = input as {
+      text?: unknown;
+      query?: unknown;
+      parsed?: { locations?: unknown };
+      cityId?: unknown;
+      districtId?: unknown;
+      stateId?: unknown;
+      countryId?: unknown;
+      type?: unknown;
+      limit?: unknown;
+      withAncestors?: unknown;
+      includeInactive?: unknown;
+    };
+
+    // Prefer explicit text, then query, then the first parsed location term.
+    const rawText =
+      c.text ??
+      c.query ??
+      (Array.isArray(c.parsed?.locations)
+        ? c.parsed.locations.find(
+            (l): l is string => typeof l === "string" && l.trim().length > 0,
+          )
+        : undefined);
+
+    if (typeof rawText !== "string") return null;
+
+    const text = this.normalize(rawText);
+    if (!text) return null;
+
+    return {
+      text,
+      cityId: this.toBigInt(c.cityId),
+      districtId: this.toBigInt(c.districtId),
+      stateId: this.toBigInt(c.stateId),
+      countryId: this.toBigInt(c.countryId),
+      type: this.toType(c.type),
+      limit:
+        typeof c.limit === "number" && Number.isFinite(c.limit)
+          ? Math.max(1, Math.floor(c.limit))
+          : undefined,
+      withAncestors:
+        typeof c.withAncestors === "boolean" ? c.withAncestors : undefined,
+      includeInactive:
+        typeof c.includeInactive === "boolean" ? c.includeInactive : undefined,
+    };
   }
 }
 

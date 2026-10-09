@@ -44,6 +44,7 @@ export type SearchResult = {
     normalizedQuery: string;
     tokens: string[];
     parsed: SearchContext["parsed"];
+    resolved: any;
   };
 };
 
@@ -112,6 +113,7 @@ export class SearchService {
         normalizedQuery: context.normalizedQuery,
         tokens: context.tokens,
         parsed: context.parsed,
+        resolved: resolved,
       },
     };
   }
@@ -163,11 +165,16 @@ export class SearchService {
       parsed: context.parsed,
     };
 
-    const concepts = await conceptResolver.resolve(resolverInput);
-    const locations = await locationResolver.resolve(resolverInput);
+    // const concepts = await conceptResolver.resolve(resolverInput);
+    // const locations = await locationResolver.resolve(resolverInput);
 
-    console.log("**Resolver Input**", concepts);
-    console.log("**Resolver Location**", locations);
+    const [concepts, locations] = await Promise.all([
+      conceptResolver.resolve(resolverInput),
+      locationResolver.resolve(resolverInput),
+    ]);
+
+    // console.log("**Resolver Input**", resolverInput);
+    // console.log("**Resolver Location**", locations);
 
     // const [concepts, locations, attributes, filters] = await Promise.all([
     //   conceptResolver.resolve(resolverInput),
@@ -178,7 +185,7 @@ export class SearchService {
 
     return {
       concepts,
-      // locations,
+      locations,
       // attributes,
       // filters,
     };
