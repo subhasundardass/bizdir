@@ -44,7 +44,13 @@ export class ConceptResolver {
   private async findConceptMatches(
     input: ConceptResolveInput,
   ): Promise<ConceptSearchMatch[]> {
-    const concepts = input.parsed.concepts;
+    const concepts = [
+      ...new Set(
+        input.parsed.concepts
+          .map((concept) => concept.trim().toLocaleLowerCase("en-IN"))
+          .filter(Boolean),
+      ),
+    ];
 
     if (concepts.length === 0) {
       return [];

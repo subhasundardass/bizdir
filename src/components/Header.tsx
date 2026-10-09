@@ -1,5 +1,3 @@
-import { Link } from "@tanstack/react-router";
-
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 h-16 border-b border-jd-line bg-white/95 shadow-sm backdrop-blur">

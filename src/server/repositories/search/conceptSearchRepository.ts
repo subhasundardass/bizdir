@@ -22,53 +22,79 @@ class ConceptSearchRepository {
    * Search interpretation belongs to ConceptResolver.
    */
   async search(input: ConceptSearchInput): Promise<ConceptSearchMatch[]> {
-    const query = input.query.trim();
+    const query = input.query.trim().toLocaleLowerCase("en-IN");
 
     if (!query) {
       return [];
     }
 
-    const normalizedQuery = query.toLocaleLowerCase("en-IN");
+    const matches = await db.$queryRaw<ConceptSearchMatch[]>`
+    SELECT
+      c.id,
+      c.name,
+      c.slug,
+      c.type,
+      MAX(
+        CASE
+          -- Exact concept name
+          WHEN LOWER(TRIM(c.name)) = ${query} THEN 1.00
 
-    const concepts = await db.concept.findMany({
-      where: {
-        is_active: true,
-      },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        type: true,
-      },
-    });
+          -- Exact slug
+          WHEN c.slug = ${query} THEN 0.99
 
-    const matches: ConceptSearchMatch[] = [];
+          -- Exact alias
+          WHEN a.text = ${query} THEN 0.98
 
-    for (const concept of concepts) {
-      const name = concept.name.toLocaleLowerCase("en-IN").trim();
+          -- Concept name starts with the query
+          WHEN LOWER(TRIM(c.name)) LIKE ${query} || '%' THEN 0.90
 
-      const slug = concept.slug.toLocaleLowerCase("en-IN").trim();
+          -- Alias starts with the query
+          WHEN a.text LIKE ${query} || '%' THEN 0.88
 
-      const score = this.calculateScore({
-        query: normalizedQuery,
-        name,
-        slug,
-      });
+          -- Slug starts with the query
+          WHEN c.slug LIKE ${query} || '%' THEN 0.85
 
-      if (score > 0) {
-        matches.push({
-          id: concept.id,
-          name: concept.name,
-          slug: concept.slug,
-          type: concept.type as "category" | "service",
-          score,
-        });
-      }
-    }
+          -- Query appears inside the concept name
+          WHEN LOWER(TRIM(c.name)) LIKE '%' || ${query} || '%' THEN 0.80
 
-    matches.sort((a, b) => b.score - a.score);
+          -- Fuzzy alias match using PostgreSQL pg_trgm
+          WHEN a.text % ${query}
+            THEN similarity(a.text, ${query}) * 0.85
 
-    return matches.slice(0, 20);
+          -- Fuzzy concept-name match
+          WHEN similarity(LOWER(TRIM(c.name)), ${query}) > 0
+            THEN similarity(LOWER(TRIM(c.name)), ${query}) * 0.70
+
+          ELSE 0
+        END
+      )::float8 AS score
+    FROM concept AS c
+    LEFT JOIN concept_alias AS a
+      ON a.concept_id = c.id
+    WHERE
+      c.is_active = TRUE
+      AND (
+        LOWER(TRIM(c.name)) = ${query}
+        OR c.slug = ${query}
+        OR a.text = ${query}
+        OR a.text LIKE ${query} || '%'
+        OR c.slug LIKE ${query} || '%'
+        OR LOWER(TRIM(c.name)) LIKE ${"%" + query + "%"}
+        OR a.text % ${query}
+        OR similarity(LOWER(TRIM(c.name)), ${query}) > 0
+      )
+    GROUP BY
+      c.id,
+      c.name,
+      c.slug,
+      c.type
+    ORDER BY
+      score DESC,
+      c.name ASC
+    LIMIT 20
+  `;
+
+    return matches;
   }
 
   /**

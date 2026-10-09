@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { searchBusinessesQuery } from "#/client/queries/search/searchBusinesses";
+import { searchBusinessesQuery } from "@/client/queries/search/searchBusinesses";
 import { useQuery } from "@tanstack/react-query";
 
 export type SearchBusinessesParams = {
@@ -9,8 +9,12 @@ export type SearchBusinessesParams = {
 };
 
 export function Header() {
-  const [query, setQuery] = useState("Restaurants");
-  const [searchQuery, setSearchQuery] = useState("Restaurants");
+  const [query, setQuery] = useState(
+    "Best AC Gas Filling in Hakimpara Siliguri",
+  );
+  const [searchQuery, setSearchQuery] = useState(
+    "Best AC Gas Filling in Hakimpara Siliguri",
+  );
 
   const search = useQuery(
     searchBusinessesQuery({
@@ -37,14 +41,13 @@ export function Header() {
   }
 
   useEffect(() => {
-    if (search.isSuccess) {
-      console.log("🔎 Search result:", search.data);
-      console.log("🧠 Parsed search:", search.data.debug?.parsed);
-    }
-
-    if (search.isError) {
-      console.error("❌ Search error:", search.error);
-    }
+    // if (search.isSuccess) {
+    //   console.log("🔎 Search result:", search.data);
+    //   console.log("🧠 Parsed search:", search.data.debug?.parsed);
+    // }
+    // if (search.isError) {
+    //   console.error("❌ Search error:", search.error);
+    // }
   }, [search.data, search.isSuccess, search.isError, search.error]);
 
   return (

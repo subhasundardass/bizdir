@@ -4,6 +4,8 @@ import {
   parseSearchQuery,
   type ParsedSearchQuery,
 } from "./parser/parseSearchQuery";
+import { conceptResolver } from "./resolver/conceptResolver";
+import { locationResolver } from "./resolver/locationResolver";
 
 export type SearchInput = {
   query: string;
@@ -68,37 +70,11 @@ export class SearchService {
    *   ↓
    * Result
    */
+
   async executeSearch(input: unknown): Promise<SearchResult> {
     const context = await this.createSearchContext(input);
 
     return this.searchBusinesses(context);
-  }
-
-  /**
-   * Build the internal search context.
-   */
-  async createSearchContext(input: unknown): Promise<SearchContext> {
-    const data = this.validateSearchInput(input);
-
-    const rawQuery = data.query;
-
-    const normalizedQuery = normalizeSearchQuery(rawQuery);
-
-    const tokens = tokenizeSearchQuery(normalizedQuery);
-
-    const parsed = await parseSearchQuery({
-      query: normalizedQuery,
-      tokens,
-    });
-
-    return {
-      rawQuery,
-      normalizedQuery,
-      tokens,
-      parsed,
-      page: data.page,
-      perPage: data.perPage,
-    };
   }
 
   /**
@@ -141,8 +117,36 @@ export class SearchService {
   }
 
   /**
+   * Build the internal search context.
+   */
+  async createSearchContext(input: unknown): Promise<SearchContext> {
+    const data = this.validateSearchInput(input);
+
+    const rawQuery = data.query;
+
+    const normalizedQuery = normalizeSearchQuery(rawQuery);
+
+    const tokens = tokenizeSearchQuery(normalizedQuery);
+
+    const parsed = await parseSearchQuery({
+      query: normalizedQuery,
+      tokens,
+    });
+
+    return {
+      rawQuery,
+      normalizedQuery,
+      tokens,
+      parsed,
+      page: data.page,
+      perPage: data.perPage,
+    };
+  }
+
+  /**
    * Resolve concepts, locations and filters.
    */
+
   private async resolveSearch(context: SearchContext) {
     /*
      * TODO:
@@ -153,12 +157,38 @@ export class SearchService {
      * filterResolver
      */
 
-    return {
-      concepts: [],
-      locations: [],
-      attributes: [],
-      filters: [],
+    const resolverInput = {
+      query: context.normalizedQuery,
+      tokens: context.tokens,
+      parsed: context.parsed,
     };
+
+    const concepts = await conceptResolver.resolve(resolverInput);
+    const locations = await locationResolver.resolve(resolverInput);
+
+    console.log("**Resolver Input**", concepts);
+    console.log("**Resolver Location**", locations);
+
+    // const [concepts, locations, attributes, filters] = await Promise.all([
+    //   conceptResolver.resolve(resolverInput),
+    //   resolveLocation(resolverInput),
+    //   resolveAttributes(resolverInput),
+    //   resolveSearchFilters(resolverInput),
+    // ]);
+
+    return {
+      concepts,
+      // locations,
+      // attributes,
+      // filters,
+    };
+
+    // return {
+    //   concepts: [],
+    //   locations: [],
+    //   attributes: [],
+    //   filters: [],
+    // };
   }
 
   /**

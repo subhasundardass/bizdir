@@ -64,7 +64,7 @@ export const searchBusinessesFn = createServerFn({
   .validator(validateSearchBusinessesInput)
   .handler(async ({ data }) => {
     const result = await searchService.executeSearch(data);
-    console.log("SERVER searchBusinessesFn RESULT:", result);
+    // console.log("SERVER searchBusinessesFn RESULT:", result);
 
     return result;
   });
