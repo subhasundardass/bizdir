@@ -29,6 +29,19 @@ export interface LocationCandidateRow extends LocationRow {
 }
 
 // ---------------------------------------------------------------------------
+// Shared SQL fragments (DB column is `level`, values are lowercase)
+// ---------------------------------------------------------------------------
+
+const LOCATION_COLUMNS = Prisma.sql`
+  l.id,
+  l.name,
+  l.slug,
+  UPPER(l.level::text) AS type,
+  l.parent_id AS "parentId",
+  l.is_active AS "isActive"
+`;
+
+// ---------------------------------------------------------------------------
 // Core lookups
 // ---------------------------------------------------------------------------
 
@@ -36,10 +49,7 @@ export async function findLocationById(
   id: bigint,
 ): Promise<LocationRow | null> {
   const rows = await db.$queryRaw<LocationRow[]>`
-    SELECT
-      l.id, l.name, l.slug, l.type,
-      l.parent_id AS "parentId",
-      l.is_active AS "isActive"
+    SELECT ${LOCATION_COLUMNS}
     FROM location AS l
     WHERE l.id = ${id}
     LIMIT 1
@@ -54,10 +64,7 @@ export async function findLocationBySlug(
   if (!normalized) return null;
 
   const rows = await db.$queryRaw<LocationRow[]>`
-    SELECT
-      l.id, l.name, l.slug, l.type,
-      l.parent_id AS "parentId",
-      l.is_active AS "isActive"
+    SELECT ${LOCATION_COLUMNS}
     FROM location AS l
     WHERE l.slug = ${normalized}
     LIMIT 1
@@ -72,22 +79,18 @@ export async function findLocationByName(
   if (!normalized) return null;
 
   const rows = await db.$queryRaw<LocationRow[]>`
-    SELECT
-      l.id, l.name, l.slug, l.type,
-      l.parent_id AS "parentId",
-      l.is_active AS "isActive"
+    SELECT ${LOCATION_COLUMNS}
     FROM location AS l
     WHERE LOWER(TRIM(l.name)) = ${normalized}
       AND l.is_active = TRUE
     ORDER BY
-      -- prefer more specific types when names collide
-      CASE l.type
-        WHEN 'CITY' THEN 1
-        WHEN 'LOCALITY' THEN 2
-        WHEN 'LANDMARK' THEN 3
-        WHEN 'DISTRICT' THEN 4
-        WHEN 'STATE' THEN 5
-        WHEN 'COUNTRY' THEN 6
+      CASE l.level::text
+        WHEN 'city' THEN 1
+        WHEN 'locality' THEN 2
+        WHEN 'landmark' THEN 3
+        WHEN 'district' THEN 4
+        WHEN 'state' THEN 5
+        WHEN 'country' THEN 6
         ELSE 7
       END
     LIMIT 1
@@ -106,10 +109,7 @@ export async function findLocationAlias(
   if (!normalized) return null;
 
   const rows = await db.$queryRaw<LocationRow[]>`
-    SELECT
-      l.id, l.name, l.slug, l.type,
-      l.parent_id AS "parentId",
-      l.is_active AS "isActive"
+    SELECT ${LOCATION_COLUMNS}
     FROM location_alias AS a
     JOIN location AS l ON l.id = a.location_id
     WHERE LOWER(TRIM(a.text)) = ${normalized}
@@ -160,7 +160,7 @@ export async function searchLocationAliases(
 }
 
 // ---------------------------------------------------------------------------
-// Candidate discovery (used by the resolver's ambiguous path)
+// Candidate discovery
 // ---------------------------------------------------------------------------
 
 export async function findLocationCandidates(
@@ -174,7 +174,6 @@ export async function findLocationCandidates(
   const normalized = text.trim().toLocaleLowerCase("en-IN");
   if (!normalized) return [];
 
-  // Protect the database from invalid or excessive limits.
   const limit = Math.max(1, Math.min(Math.floor(opts.limit ?? 25), 100));
 
   return db.$queryRaw<LocationCandidateRow[]>`
@@ -182,23 +181,23 @@ export async function findLocationCandidates(
       l.id,
       l.name,
       l.slug,
-      l.type,
+      UPPER(l.level::text) AS type,
       l.parent_id AS "parentId",
       l.is_active AS "isActive",
       MAX(
         CASE
           WHEN LOWER(TRIM(l.name)) = ${normalized} THEN 1.00
           WHEN l.slug = ${normalized} THEN 0.99
-          WHEN a.text = ${normalized} THEN 0.98
+          WHEN LOWER(TRIM(a.text)) = ${normalized} THEN 0.98
 
           WHEN LOWER(TRIM(l.name)) LIKE ${normalized} || '%' THEN 0.90
-          WHEN a.text LIKE ${normalized} || '%' THEN 0.88
+          WHEN LOWER(TRIM(a.text)) LIKE ${normalized} || '%' THEN 0.88
           WHEN l.slug LIKE ${normalized} || '%' THEN 0.85
 
           WHEN LOWER(TRIM(l.name)) LIKE '%' || ${normalized} || '%' THEN 0.80
 
-          WHEN a.text % ${normalized}
-            THEN similarity(a.text, ${normalized}) * 0.85
+          WHEN LOWER(a.text) % ${normalized}
+            THEN similarity(LOWER(a.text), ${normalized}) * 0.85
 
           WHEN similarity(LOWER(TRIM(l.name)), ${normalized}) >= 0.25
             THEN similarity(LOWER(TRIM(l.name)), ${normalized}) * 0.70
@@ -213,7 +212,7 @@ export async function findLocationCandidates(
       l.is_active = TRUE
       ${
         opts.type
-          ? Prisma.sql`AND l.type = ${opts.type}::"LocationType"`
+          ? Prisma.sql`AND l.level::text = ${opts.type.toLowerCase()}`
           : Prisma.empty
       }
       ${
@@ -224,24 +223,19 @@ export async function findLocationCandidates(
       AND (
         LOWER(TRIM(l.name)) = ${normalized}
         OR l.slug = ${normalized}
-        OR a.text = ${normalized}
+        OR LOWER(TRIM(a.text)) = ${normalized}
 
         OR LOWER(TRIM(l.name)) LIKE ${normalized} || '%'
-        OR a.text LIKE ${normalized} || '%'
+        OR LOWER(TRIM(a.text)) LIKE ${normalized} || '%'
         OR l.slug LIKE ${normalized} || '%'
 
         OR LOWER(TRIM(l.name)) LIKE '%' || ${normalized} || '%'
-        OR a.text % ${normalized}
+        OR LOWER(a.text) % ${normalized}
 
         OR similarity(LOWER(TRIM(l.name)), ${normalized}) >= 0.25
       )
     GROUP BY
-      l.id,
-      l.name,
-      l.slug,
-      l.type,
-      l.parent_id,
-      l.is_active
+      l.id, l.name, l.slug, l.level, l.parent_id, l.is_active
     ORDER BY
       score DESC,
       l.name ASC
@@ -257,10 +251,7 @@ export async function findLocationChildren(
   locationId: bigint,
 ): Promise<LocationRow[]> {
   return db.$queryRaw<LocationRow[]>`
-    SELECT
-      l.id, l.name, l.slug, l.type,
-      l.parent_id AS "parentId",
-      l.is_active AS "isActive"
+    SELECT ${LOCATION_COLUMNS}
     FROM location AS l
     WHERE l.parent_id = ${locationId}
       AND l.is_active = TRUE
@@ -274,20 +265,17 @@ export async function findLocationAncestors(
   // Walks UP to the root. Returned root-first.
   return db.$queryRaw<LocationRow[]>`
     WITH RECURSIVE ancestry AS (
-      SELECT
-        id, name, slug, type, parent_id, is_active,
-        0 AS depth
+      SELECT id, name, slug, level, parent_id, is_active, 0 AS depth
       FROM location
       WHERE id = ${locationId}
       UNION ALL
-      SELECT
-        l.id, l.name, l.slug, l.type, l.parent_id, l.is_active,
-        a.depth + 1
+      SELECT l.id, l.name, l.slug, l.level, l.parent_id, l.is_active, a.depth + 1
       FROM location AS l
       JOIN ancestry AS a ON l.id = a.parent_id
     )
     SELECT
-      id, name, slug, type,
+      id, name, slug,
+      UPPER(level::text) AS type,
       parent_id AS "parentId",
       is_active AS "isActive"
     FROM ancestry
@@ -301,20 +289,17 @@ export async function findLocationDescendants(
   // Walks DOWN the tree. Includes the root as depth 0.
   return db.$queryRaw<LocationRow[]>`
     WITH RECURSIVE descendants AS (
-      SELECT
-        id, name, slug, type, parent_id, is_active,
-        0 AS depth
+      SELECT id, name, slug, level, parent_id, is_active, 0 AS depth
       FROM location
       WHERE id = ${locationId}
       UNION ALL
-      SELECT
-        l.id, l.name, l.slug, l.type, l.parent_id, l.is_active,
-        d.depth + 1
+      SELECT l.id, l.name, l.slug, l.level, l.parent_id, l.is_active, d.depth + 1
       FROM location AS l
       JOIN descendants AS d ON d.id = l.parent_id
     )
     SELECT
-      id, name, slug, type,
+      id, name, slug,
+      UPPER(level::text) AS type,
       parent_id AS "parentId",
       is_active AS "isActive"
     FROM descendants
@@ -333,12 +318,9 @@ export async function findCityByName(
   if (!normalized) return null;
 
   const rows = await db.$queryRaw<LocationRow[]>`
-    SELECT
-      l.id, l.name, l.slug, l.type,
-      l.parent_id AS "parentId",
-      l.is_active AS "isActive"
+    SELECT ${LOCATION_COLUMNS}
     FROM location AS l
-    WHERE l.type = 'CITY'::"LocationType"
+    WHERE l.level::text = 'city'
       AND LOWER(TRIM(l.name)) = ${normalized}
       AND l.is_active = TRUE
     LIMIT 1
@@ -354,12 +336,9 @@ export async function findLocalityByName(
   if (!normalized) return null;
 
   const rows = await db.$queryRaw<LocationRow[]>`
-    SELECT
-      l.id, l.name, l.slug, l.type,
-      l.parent_id AS "parentId",
-      l.is_active AS "isActive"
+    SELECT ${LOCATION_COLUMNS}
     FROM location AS l
-    WHERE l.type = 'LOCALITY'::"LocationType"
+    WHERE l.level::text = 'locality'
       AND LOWER(TRIM(l.name)) = ${normalized}
       AND l.is_active = TRUE
       ${cityId ? Prisma.sql`AND l.parent_id = ${cityId}` : Prisma.empty}
