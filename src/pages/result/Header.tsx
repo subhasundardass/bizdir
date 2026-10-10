@@ -1,3 +1,6 @@
+import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { searchBusinessesQuery } from "@/client/queries/search/searchBusinesses";
 import { useQuery } from "@tanstack/react-query";
@@ -9,9 +12,10 @@ export type SearchBusinessesParams = {
 };
 
 export function Header() {
-  const [query, setQuery] = useState(
-    "Best AC Gas Filling in Hakimpara Siliguri",
-  );
+  const { register, handleSubmit, watch } = useForm<{ query: string }>({
+    defaultValues: { query: "Best AC Gas Filling in Hakimpara Siliguri" },
+  });
+  const query = watch("query");
   const [searchQuery, setSearchQuery] = useState(
     "Best AC Gas Filling in Hakimpara Siliguri",
   );
@@ -24,20 +28,14 @@ export function Header() {
     }),
   );
 
-  function handleSearch() {
-    const value = query.trim();
+  function handleSearch(values: { query: string }) {
+    const value = values.query.trim();
 
     if (value.length < 2) {
       return;
     }
 
     setSearchQuery(value);
-  }
-
-  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key === "Enter") {
-      handleSearch();
-    }
   }
 
   useEffect(() => {
@@ -76,9 +74,14 @@ export function Header() {
 
         {/* Search */}
         <div className="flex min-w-0 flex-1 justify-center">
-          <div className="flex h-11 w-full max-w-3xl items-center overflow-hidden rounded-full border border-jd-line bg-white shadow-sm">
+          <form
+            onSubmit={handleSubmit(handleSearch)}
+            className="flex h-11 w-full max-w-3xl items-center overflow-hidden rounded-full border border-jd-line bg-white shadow-sm"
+          >
             {/* Location */}
-            <button
+            <Button
+              variant="unstyled"
+              size="unstyled"
               type="button"
               className="hidden h-full items-center gap-2 border-r border-jd-line px-4 text-left transition-all duration-200 hover:bg-jd-light md:flex md:w-[29%]"
             >
@@ -95,27 +98,28 @@ export function Header() {
               </span>
 
               <i className="fa-solid fa-chevron-down text-[9px] text-gray-500" />
-            </button>
+            </Button>
 
             {/* Search Input */}
             <div className="flex min-w-0 flex-1 items-center gap-3 px-4">
               <i className="fa-solid fa-magnifying-glass text-sm text-gray-500" />
 
-              <input
+              <Input
                 type="text"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                onKeyDown={handleKeyDown}
+                {...register("query", {
+                  validate: (value) => value.trim().length >= 2,
+                })}
                 aria-label="Search businesses"
                 placeholder="Search businesses, services..."
-                className="w-full bg-transparent text-sm font-medium text-ink outline-none"
+                className="h-auto min-w-0 rounded-none border-0 p-0 shadow-none focus-visible:border-transparent focus-visible:ring-0 w-full bg-transparent text-sm font-medium text-ink outline-none"
               />
             </div>
 
             {/* Search Button */}
-            <button
-              type="button"
-              onClick={handleSearch}
+            <Button
+              variant="unstyled"
+              size="unstyled"
+              type="submit"
               disabled={query.trim().length < 2 || search.isFetching}
               aria-label="Search"
               className="mr-1 flex h-9 w-10 shrink-0 items-center justify-center rounded-full bg-jd-orange text-white transition-all duration-200 hover:bg-jd-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:gap-2 sm:px-5"
@@ -125,20 +129,24 @@ export function Header() {
               <span className="hidden text-xs font-bold sm:inline">
                 {search.isFetching ? "Searching..." : "Search"}
               </span>
-            </button>
-          </div>
+            </Button>
+          </form>
         </div>
 
         {/* Header actions */}
         <div className="flex shrink-0 items-center gap-2">
-          <button
+          <Button
+            variant="unstyled"
+            size="unstyled"
             type="button"
             className="hidden rounded-full border border-jd-orange px-4 py-2 text-xs font-semibold text-jd-orange transition-all duration-200 hover:bg-jd-orange hover:text-white lg:inline-flex"
           >
             Login / Sign Up
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="unstyled"
+            size="unstyled"
             type="button"
             aria-label="Shopping bag"
             className="relative flex h-10 w-10 items-center justify-center rounded-full text-jd-orange transition-all duration-200 hover:bg-jd-light"
@@ -148,7 +156,7 @@ export function Header() {
             <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-jd-orange px-1 text-[9px] font-bold text-white ring-2 ring-white">
               3
             </span>
-          </button>
+          </Button>
         </div>
       </div>
 
