@@ -1,8 +1,17 @@
+import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { ChevronDown, MapPin, Search } from "lucide-react";
 
 export function HeroSection() {
+  const { register, handleSubmit } = useForm<{ query: string }>({
+    defaultValues: { query: "" },
+  });
+  function onSearch(_values: { query: string }) {
+    // Search integration is not yet implemented on the homepage.
+  }
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#FFF7F0] to-white">
+    <section className="relative overflow-hidden bg-linear-to-b from-[#FFF7F0] to-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-4xl text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-jd-border bg-white px-3.5 py-1.5 text-xs font-semibold text-jd-orange shadow-sm">
@@ -25,10 +34,15 @@ export function HeroSection() {
 
           {/* Search */}
           <div className="mx-auto mt-8 max-w-4xl">
-            <div className="rounded-[28px] border border-jd-line bg-white p-2 shadow-soft sm:rounded-full">
+            <form
+              onSubmit={handleSubmit(onSearch)}
+              className="rounded-[28px] border border-jd-line bg-white p-2 shadow-soft sm:rounded-full"
+            >
               <div className="flex flex-col sm:flex-row sm:items-center">
                 {/* Location */}
-                <button
+                <Button
+                  variant="unstyled"
+                  size="unstyled"
                   type="button"
                   className="flex min-h-14 w-full items-center gap-3 rounded-full px-4 text-left transition-all duration-200 hover:bg-jd-light sm:w-[34%] sm:rounded-r-none sm:border-r sm:border-jd-line"
                   aria-label="Select location"
@@ -48,30 +62,35 @@ export function HeroSection() {
                   </span>
 
                   <ChevronDown className="h-4 w-4 shrink-0 text-gray-500" />
-                </button>
+                </Button>
 
                 {/* Search Input */}
                 <div className="flex min-h-14 flex-1 items-center gap-3 border-t border-jd-line px-4 sm:border-t-0">
                   <Search className="h-4 w-4 shrink-0 text-gray-500" />
 
-                  <input
+                  <Input
+                    {...register("query", {
+                      validate: (value) => value.trim().length >= 2,
+                    })}
                     type="text"
                     aria-label="Search businesses"
                     placeholder="Search for restaurants, salons, gyms..."
-                    className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-gray-500"
+                    className="h-auto min-w-0 rounded-none border-0 p-0 shadow-none focus-visible:border-transparent focus-visible:ring-0 w-full bg-transparent text-sm text-ink outline-none placeholder:text-gray-500"
                   />
                 </div>
 
                 {/* Search Button */}
-                <button
-                  type="button"
+                <Button
+                  variant="unstyled"
+                  size="unstyled"
+                  type="submit"
                   className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-jd-orange px-7 text-sm font-bold text-white shadow-orange transition-all duration-200 hover:bg-jd-hover active:scale-[0.98]"
                 >
                   <Search className="h-4 w-4" />
                   Search
-                </button>
+                </Button>
               </div>
-            </div>
+            </form>
           </div>
 
           {/* Popular Searches */}
