@@ -6,7 +6,7 @@ export function Categories() {
   const GymsIcon = getCategoryIcon("dumbbell");
   const DentistsIcon = getCategoryIcon("stethoscope");
   const PlumbersIcon = getCategoryIcon("wrench");
-  const ElectriciansIcon = getCategoryIcon("bolt"); // fallback unless added
+  const ElectriciansIcon = getCategoryIcon("bolt");
   const HotelsIcon = getCategoryIcon("hotel");
   const CarRepairIcon = getCategoryIcon("car");
   const PetShopsIcon = getCategoryIcon("shopping-bag");
@@ -101,7 +101,7 @@ function Category({
       href="#"
       className="group rounded-2xl border border-jd-line bg-white p-4 text-center transition-all duration-200 hover:-translate-y-1 hover:border-jd-border hover:shadow-orange"
     >
-      <div className="mx-auto flex h-[68px] w-[68px] items-center justify-center rounded-full bg-jd-light text-jd-orange transition-all duration-200 group-hover:bg-jd-orange group-hover:text-white">
+      <div className="mx-auto flex size-17 items-center justify-center rounded-full bg-jd-light text-jd-orange transition-all duration-200 group-hover:bg-jd-orange group-hover:text-white">
         <Icon className="h-7 w-7" />
       </div>
 
