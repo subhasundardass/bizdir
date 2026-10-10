@@ -1,6 +1,3 @@
-import { useEffect, useState } from "react";
-import { searchBusinessesQuery } from "@/client/queries/search/searchBusinesses";
-import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 
 export type SearchBusinessesParams = {
@@ -9,55 +6,19 @@ export type SearchBusinessesParams = {
   perPage?: number;
 };
 
-export function Header() {
-  const [query, setQuery] = useState(
-    "Best AC Gas Filling in Hakimpara Siliguri",
-  );
-  const [searchQuery, setSearchQuery] = useState(
-    "Best AC Gas Filling in Hakimpara Siliguri",
-  );
+type HeaderProps = {
+  query: string;
+  setQuery: (value: string) => void;
+  onSearch: () => void;
+  isFetching: boolean;
+};
 
-  const search = useQuery(
-    searchBusinessesQuery({
-      query: searchQuery,
-      page: 1,
-      perPage: 20,
-    }),
-  );
-
-  function handleSearch() {
-    const value = query.trim();
-
-    if (value.length < 2) {
-      return;
-    }
-
-    setSearchQuery(value);
-  }
-
+export function Header({ query, setQuery, onSearch, isFetching }: HeaderProps) {
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
-      handleSearch();
+      onSearch();
     }
   }
-
-  useEffect(() => {
-    if (search.isSuccess) {
-      console.log("🔎 Search result:", search.data);
-      // console.log("🧠 Parsed search:", search.data.debug?.parsed);
-    }
-    if (search.isError) {
-      console.error("Search error:", search.error);
-      console.error(
-        "Error details:",
-        JSON.stringify(
-          search.error,
-          Object.getOwnPropertyNames(search.error),
-          2,
-        ),
-      );
-    }
-  }, [search.data, search.isSuccess, search.isError, search.error]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-jd-line bg-white/95 shadow-sm backdrop-blur">
@@ -96,15 +57,15 @@ export function Header() {
             {/* Search Button */}
             <button
               type="button"
-              onClick={handleSearch}
-              disabled={query.trim().length < 2 || search.isFetching}
+              onClick={onSearch}
+              disabled={query.trim().length < 2 || isFetching}
               aria-label="Search"
               className="mr-1 flex h-9 w-10 shrink-0 items-center justify-center rounded-full bg-jd-orange text-white transition-all duration-200 hover:bg-jd-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:gap-2 sm:px-5"
             >
               <i className="fa-solid fa-magnifying-glass text-xs" />
 
               <span className="hidden text-xs font-bold sm:inline">
-                {search.isFetching ? "Searching..." : "Search"}
+                {isFetching ? "Searching..." : "Search"}
               </span>
             </button>
           </div>
