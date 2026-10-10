@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 h-16 border-b border-jd-line bg-white/95 shadow-sm backdrop-blur">
@@ -17,13 +18,17 @@ export default function Header() {
         </a>
         {/* Header Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <button
+          <Button
+            variant="unstyled"
+            size="unstyled"
             type="button"
             className="hidden rounded-full border border-jd-orange px-4 py-2 text-sm font-semibold text-jd-orange transition-all duration-200 hover:bg-jd-orange hover:text-white sm:inline-flex"
           >
             Login / Sign Up
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="unstyled"
+            size="unstyled"
             type="button"
             aria-label="Shopping bag with 3 items"
             className="relative flex h-10 w-10 items-center justify-center rounded-full text-jd-orange transition-all duration-200 hover:bg-jd-light"
@@ -32,14 +37,16 @@ export default function Header() {
             <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-jd-orange px-1 text-[9px] font-bold text-white ring-2 ring-white">
               3
             </span>
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="unstyled"
+            size="unstyled"
             type="button"
             aria-label="Login or sign up"
             className="flex h-10 w-10 items-center justify-center rounded-full border border-jd-border text-jd-orange transition-all duration-200 hover:bg-jd-light sm:hidden"
           >
             <i className="fa-regular fa-user" />
-          </button>
+          </Button>
         </div>
       </div>
     </header>
