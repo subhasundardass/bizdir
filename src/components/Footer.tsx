@@ -1,3 +1,5 @@
+import { CircleCheck } from "lucide-react";
+
 const BRAND = "YourBrand"; // move to a shared constant, imported by lib/seo.ts too
 
 const linkClass =
@@ -61,10 +63,7 @@ export default function Footer() {
             </p>
             <div className="mt-5 flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-50 text-success">
-                <i
-                  className="fa-solid fa-circle-check text-xs"
-                  aria-hidden="true"
-                />
+                <CircleCheck className="h-3 w-3" aria-hidden="true" />
               </span>
               <span className="text-xs font-semibold text-sub">
                 Trusted local discovery

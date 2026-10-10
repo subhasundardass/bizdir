@@ -1,60 +1,19 @@
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { searchBusinessesQuery } from "@/client/queries/search/searchBusinesses";
-import { useQuery } from "@tanstack/react-query";
+import { Search } from "lucide-react";
 
-export type SearchBusinessesParams = {
+type HeaderProps = {
   query: string;
-  page?: number;
-  perPage?: number;
+  setQuery: (query: string) => void;
+  onSearch: () => void;
+  isFetching: boolean;
 };
 
-export function Header() {
-  const { register, handleSubmit, watch } = useForm<{ query: string }>({
-    defaultValues: { query: "Best AC Gas Filling in Hakimpara Siliguri" },
+export function Header({ query, setQuery, onSearch, isFetching }: HeaderProps) {
+  const { register, handleSubmit } = useForm<{ query: string }>({
+    values: { query },
   });
-  const query = watch("query");
-  const [searchQuery, setSearchQuery] = useState(
-    "Best AC Gas Filling in Hakimpara Siliguri",
-  );
-
-  const search = useQuery(
-    searchBusinessesQuery({
-      query: searchQuery,
-      page: 1,
-      perPage: 20,
-    }),
-  );
-
-  function handleSearch(values: { query: string }) {
-    const value = values.query.trim();
-
-    if (value.length < 2) {
-      return;
-    }
-
-    setSearchQuery(value);
-  }
-
-  useEffect(() => {
-    if (search.isSuccess) {
-      console.log("🔎 Search result:", search.data);
-      // console.log("🧠 Parsed search:", search.data.debug?.parsed);
-    }
-    if (search.isError) {
-      console.error("Search error:", search.error);
-      console.error(
-        "Error details:",
-        JSON.stringify(
-          search.error,
-          Object.getOwnPropertyNames(search.error),
-          2,
-        ),
-      );
-    }
-  }, [search.data, search.isSuccess, search.isError, search.error]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-jd-line bg-white/95 shadow-sm backdrop-blur">
@@ -75,7 +34,7 @@ export function Header() {
         {/* Search */}
         <div className="flex min-w-0 flex-1 justify-center">
           <form
-            onSubmit={handleSubmit(handleSearch)}
+            onSubmit={handleSubmit(onSearch)}
             className="flex h-11 w-full max-w-3xl items-center overflow-hidden rounded-full border border-jd-line bg-white shadow-sm"
           >
             {/* Location */}
@@ -102,11 +61,12 @@ export function Header() {
 
             {/* Search Input */}
             <div className="flex min-w-0 flex-1 items-center gap-3 px-4">
-              <i className="fa-solid fa-magnifying-glass text-sm text-gray-500" />
+              <Search className="h-4 w-4 shrink-0 text-jd-orange" />
 
               <Input
                 type="text"
                 {...register("query", {
+                  onChange: (event) => setQuery(event.target.value),
                   validate: (value) => value.trim().length >= 2,
                 })}
                 aria-label="Search businesses"
@@ -120,14 +80,14 @@ export function Header() {
               variant="unstyled"
               size="unstyled"
               type="submit"
-              disabled={query.trim().length < 2 || search.isFetching}
+              disabled={query.trim().length < 2 || isFetching}
               aria-label="Search"
               className="mr-1 flex h-9 w-10 shrink-0 items-center justify-center rounded-full bg-jd-orange text-white transition-all duration-200 hover:bg-jd-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:gap-2 sm:px-5"
             >
               <i className="fa-solid fa-magnifying-glass text-xs" />
 
               <span className="hidden text-xs font-bold sm:inline">
-                {search.isFetching ? "Searching..." : "Search"}
+                {isFetching ? "Searching..." : "Search"}
               </span>
             </Button>
           </form>
@@ -160,34 +120,6 @@ export function Header() {
         </div>
       </div>
 
-      {/* Temporary Search Debug Output */}
-      {/* <div className="border-t border-jd-line bg-gray-50 px-4 py-3">
-        <div className="mx-auto max-w-3xl">
-          <div className="mb-1 text-xs font-semibold text-gray-500">
-            Search Result
-          </div>
-
-          {search.isFetching && (
-            <div className="text-xs text-gray-500">
-              Searching for: <strong>{searchQuery}</strong>
-            </div>
-          )}
-
-          {search.isError && (
-            <pre className="overflow-auto rounded-lg bg-red-50 p-3 text-xs text-red-700">
-              {search.error instanceof Error
-                ? search.error.message
-                : String(search.error)}
-            </pre>
-          )}
-
-          {search.isSuccess && (
-            <pre className="max-h-60 overflow-auto rounded-lg bg-white p-3 text-xs text-gray-700 shadow-sm">
-              {JSON.stringify(search.data, null, 2)}
-            </pre>
-          )}
-        </div>
-      </div> */}
     </header>
   );
 }

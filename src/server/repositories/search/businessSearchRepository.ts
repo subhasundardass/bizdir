@@ -1,99 +1,483 @@
-export async function findBusinessById(id: bigint) {
-  throw new Error("Not implemented");
+import { Prisma } from "@/generated/prisma/client";
+import { db } from "@/lib/db";
+
+export type BusinessSearchRow = {
+  id: number;
+  name: string;
+  slug: string;
+  address: string | null;
+  cityId: number;
+  localityId: number | null;
+  rating: number | null;
+  reviewCount: number;
+};
+
+type RawBusinessRow = {
+  id: bigint | number;
+  name: string;
+  slug: string;
+  address: string | null;
+  cityId: bigint | number | null;
+  localityId: bigint | number | null;
+  rating: number | string | null;
+  reviewCount: number | bigint;
+};
+
+const BUSINESS_SELECT = Prisma.sql`
+  SELECT
+    b.id,
+    b.name,
+    b.slug,
+    b.address,
+    b.city_id AS "cityId",
+    b.locality_id AS "localityId",
+    b.rating,
+    b.review_count AS "reviewCount"
+  FROM business b
+`;
+
+function mapRows(rows: RawBusinessRow[]): BusinessSearchRow[] {
+  return rows.map((row) => ({
+    id: Number(row.id),
+    name: row.name,
+    slug: row.slug,
+    address: row.address,
+    cityId: Number(row.cityId ?? 0),
+    localityId: row.localityId == null ? null : Number(row.localityId),
+    rating: row.rating == null ? null : Number(row.rating),
+    reviewCount: Number(row.reviewCount),
+  }));
 }
 
-export async function findBusinessBySlug(slug: string) {
-  throw new Error("Not implemented");
+async function queryBusinesses(sql: Prisma.Sql): Promise<BusinessSearchRow[]> {
+  const rows = await db.$queryRaw<RawBusinessRow[]>(sql);
+  return mapRows(rows);
 }
 
-export async function findBusinessByPhone(phone: string) {
-  throw new Error("Not implemented");
+function uniqueIds(ids: bigint[]): bigint[] {
+  return [...new Set(ids.map(String))].map((id) => BigInt(id));
+}
+
+// -----------------------------------------------------------------------------
+// Business lookup
+// -----------------------------------------------------------------------------
+
+export async function findBusinessById(
+  id: bigint,
+): Promise<BusinessSearchRow | null> {
+  const rows = await queryBusinesses(
+    Prisma.sql`${BUSINESS_SELECT} WHERE b.id = ${id} AND b.status = 'active' LIMIT 1`,
+  );
+
+  return rows[0] ?? null;
+}
+
+export async function findBusinessBySlug(
+  slug: string,
+): Promise<BusinessSearchRow | null> {
+  const rows = await queryBusinesses(
+    Prisma.sql`${BUSINESS_SELECT} WHERE b.slug = ${slug} AND b.status = 'active' LIMIT 1`,
+  );
+
+  return rows[0] ?? null;
+}
+
+export async function findBusinessByPhone(
+  phone: string,
+): Promise<BusinessSearchRow | null> {
+  const rows = await queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      WHERE regexp_replace(COALESCE(b.phone, ''), '[^0-9]', '', 'g')
+          = regexp_replace(${phone}, '[^0-9]', '', 'g')
+        AND b.status = 'active'
+      LIMIT 1
+    `,
+  );
+
+  return rows[0] ?? null;
 }
 
 export async function findBusinessBySourceRef(
   source: string,
   sourceRef: string,
-) {
-  throw new Error("Not implemented");
+): Promise<BusinessSearchRow | null> {
+  const rows = await queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      WHERE b.source = ${source}
+        AND b.source_ref = ${sourceRef}
+        AND b.status = 'active'
+      LIMIT 1
+    `,
+  );
+
+  return rows[0] ?? null;
 }
 
-export async function searchBusinessesByName(query: string) {
-  throw new Error("Not implemented");
+// -----------------------------------------------------------------------------
+// Name search
+// -----------------------------------------------------------------------------
+
+export async function searchBusinessesByName(
+  query: string,
+): Promise<BusinessSearchRow[]> {
+  const normalized = query.trim();
+
+  if (!normalized) return [];
+
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      WHERE b.status = 'active'
+        AND (
+          b.name ILIKE ${normalized}
+          OR b.name ILIKE ${`%${normalized}%`}
+        )
+      ORDER BY
+        CASE WHEN LOWER(b.name) = LOWER(${normalized}) THEN 0 ELSE 1 END,
+        b.name
+      LIMIT 100
+    `,
+  );
 }
 
-export async function searchBusinessesByNameFuzzy(query: string) {
-  throw new Error("Not implemented");
+export async function searchBusinessesByNameFuzzy(
+  query: string,
+): Promise<BusinessSearchRow[]> {
+  const normalized = query.trim();
+
+  if (!normalized) return [];
+
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      WHERE b.status = 'active'
+        AND similarity(b.name, ${normalized}) >= 0.2
+      ORDER BY similarity(b.name, ${normalized}) DESC, b.name
+      LIMIT 100
+    `,
+  );
 }
 
-export async function findBusinessesByConcept(conceptId: bigint) {
-  throw new Error("Not implemented");
+// -----------------------------------------------------------------------------
+// Concept searches
+// -----------------------------------------------------------------------------
+
+export async function findBusinessesByConcept(
+  conceptId: bigint,
+): Promise<BusinessSearchRow[]> {
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      INNER JOIN business_concept bc ON bc.business_id = b.id
+      WHERE bc.concept_id = ${conceptId}
+        AND b.status = 'active'
+      ORDER BY b.name
+      LIMIT 500
+    `,
+  );
 }
 
 export async function findBusinessesByConceptTree(
   conceptIds: bigint[],
-) {
-  throw new Error("Not implemented");
+): Promise<BusinessSearchRow[]> {
+  const ids = uniqueIds(
+    conceptIds.filter((id) => typeof id === "bigint" && id > 0n),
+  );
+
+  if (ids.length === 0) {
+    return [];
+  }
+
+  return queryBusinesses(
+    Prisma.sql`
+      WITH RECURSIVE concept_tree AS (
+        -- Selected concepts
+        SELECT id, parent_id
+        FROM concept
+        WHERE id IN (${Prisma.join(ids)})
+          AND is_active = true
+
+        UNION
+
+        -- Include ancestors of the selected concepts
+        SELECT parent.id, parent.parent_id
+        FROM concept parent
+        INNER JOIN concept_tree child
+          ON child.parent_id = parent.id
+        WHERE parent.is_active = true
+      ),
+      matched_businesses AS (
+        SELECT DISTINCT bc.business_id
+        FROM business_concept bc
+        INNER JOIN concept_tree ct
+          ON ct.id = bc.concept_id
+      )
+      ${BUSINESS_SELECT}
+      INNER JOIN matched_businesses mb
+        ON mb.business_id = b.id
+      WHERE b.status = 'active'
+      ORDER BY b.name ASC
+      LIMIT 500
+    `,
+  );
+}
+// -----------------------------------------------------------------------------
+// Location searches
+// -----------------------------------------------------------------------------
+
+export async function findBusinessesByLocation(
+  locationId: bigint,
+): Promise<BusinessSearchRow[]> {
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      INNER JOIN business_location bl ON bl.business_id = b.id
+      WHERE bl.location_id = ${locationId}
+        AND b.status = 'active'
+      ORDER BY b.name
+      LIMIT 500
+    `,
+  );
 }
 
-export async function findBusinessesByLocation(locationId: bigint) {
-  throw new Error("Not implemented");
+export async function findBusinessesByLocality(
+  localityId: bigint,
+): Promise<BusinessSearchRow[]> {
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      WHERE b.locality_id = ${localityId}
+        AND b.status = 'active'
+      ORDER BY b.name
+      LIMIT 500
+    `,
+  );
 }
 
-export async function findBusinessesByLocality(localityId: bigint) {
-  throw new Error("Not implemented");
-}
-
-export async function findBusinessesByCity(cityId: bigint) {
-  throw new Error("Not implemented");
+export async function findBusinessesByCity(
+  cityId: bigint,
+): Promise<BusinessSearchRow[]> {
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      WHERE b.city_id = ${cityId}
+        AND b.status = 'active'
+      ORDER BY b.name
+      LIMIT 500
+    `,
+  );
 }
 
 export async function findBusinessesWithinRadius(
   lat: number,
   lng: number,
   radiusMeters: number,
-) {
-  throw new Error("Not implemented");
+): Promise<BusinessSearchRow[]> {
+  if (
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng) ||
+    !Number.isFinite(radiusMeters) ||
+    lat < -90 ||
+    lat > 90 ||
+    lng < -180 ||
+    lng > 180 ||
+    radiusMeters <= 0
+  ) {
+    throw new Error("Invalid coordinates or radius");
+  }
+
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      WHERE b.status = 'active'
+        AND b.geom IS NOT NULL
+        AND ST_DWithin(
+          b.geom::geography,
+          ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326)::geography,
+          ${radiusMeters}
+        )
+      ORDER BY ST_Distance(
+        b.geom::geography,
+        ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326)::geography
+      )
+      LIMIT 500
+    `,
+  );
 }
+
+// -----------------------------------------------------------------------------
+// Attribute searches
+// -----------------------------------------------------------------------------
 
 export async function findBusinessesByAttribute(
   attributeId: bigint,
-) {
-  throw new Error("Not implemented");
+): Promise<BusinessSearchRow[]> {
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      INNER JOIN business_attribute_value bav ON bav.business_id = b.id
+      WHERE bav.attribute_id = ${attributeId}
+        AND b.status = 'active'
+      ORDER BY b.name
+      LIMIT 500
+    `,
+  );
 }
 
 export async function findBusinessesByAttributeOption(
   attributeId: bigint,
   optionId: bigint,
-) {
-  throw new Error("Not implemented");
+): Promise<BusinessSearchRow[]> {
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      INNER JOIN business_attribute_value bav ON bav.business_id = b.id
+      WHERE bav.attribute_id = ${attributeId}
+        AND bav.option_id = ${optionId}
+        AND b.status = 'active'
+      ORDER BY b.name
+      LIMIT 500
+    `,
+  );
 }
 
 export async function findBusinessesByBooleanAttribute(
   attributeId: bigint,
   value: boolean,
-) {
-  throw new Error("Not implemented");
+): Promise<BusinessSearchRow[]> {
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      INNER JOIN business_attribute_value bav ON bav.business_id = b.id
+      WHERE bav.attribute_id = ${attributeId}
+        AND bav.boolean_value = ${value}
+        AND b.status = 'active'
+      ORDER BY b.name
+      LIMIT 500
+    `,
+  );
 }
 
 export async function findBusinessesByNumberAttribute(
   attributeId: bigint,
   min?: number,
   max?: number,
-) {
-  throw new Error("Not implemented");
+): Promise<BusinessSearchRow[]> {
+  if (min !== undefined && !Number.isFinite(min)) {
+    throw new Error("min must be a finite number");
+  }
+
+  if (max !== undefined && !Number.isFinite(max)) {
+    throw new Error("max must be a finite number");
+  }
+
+  if (min !== undefined && max !== undefined && min > max) {
+    throw new Error("min cannot be greater than max");
+  }
+
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      INNER JOIN business_attribute_value bav ON bav.business_id = b.id
+      WHERE bav.attribute_id = ${attributeId}
+        AND bav.number_value IS NOT NULL
+        AND (${min ?? null}::double precision IS NULL OR bav.number_value >= ${min ?? null})
+        AND (${max ?? null}::double precision IS NULL OR bav.number_value <= ${max ?? null})
+        AND b.status = 'active'
+      ORDER BY b.name
+      LIMIT 500
+    `,
+  );
 }
 
 export async function findBusinessesByChoiceAttribute(
   attributeId: bigint,
   optionIds: bigint[],
-) {
-  throw new Error("Not implemented");
+): Promise<BusinessSearchRow[]> {
+  const ids = uniqueIds(optionIds);
+
+  if (ids.length === 0) return [];
+
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      INNER JOIN business_attribute_value bav ON bav.business_id = b.id
+      WHERE bav.attribute_id = ${attributeId}
+        AND bav.option_id IN (${Prisma.join(ids)})
+        AND b.status = 'active'
+      ORDER BY b.name
+      LIMIT 500
+    `,
+  );
 }
 
-export async function findBusinessesOpenNow(cityId?: bigint) {
-  throw new Error("Not implemented");
+// -----------------------------------------------------------------------------
+// Opening hours
+// -----------------------------------------------------------------------------
+
+export async function findBusinessesOpenNow(
+  cityId?: bigint,
+): Promise<BusinessSearchRow[]> {
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      INNER JOIN business_hours bh ON bh.business_id = b.id
+      WHERE b.status = 'active'
+        AND (${cityId ?? null}::bigint IS NULL OR b.city_id = ${cityId ?? null})
+        AND bh.day_of_week = EXTRACT(DOW FROM CURRENT_TIMESTAMP)::integer
+        AND bh.open_time <= LOCALTIME
+        AND bh.close_time > LOCALTIME
+      ORDER BY b.name
+      LIMIT 500
+    `,
+  );
 }
 
-export async function findActiveBusinesses() {
-  throw new Error("Not implemented");
+// -----------------------------------------------------------------------------
+// All active businesses
+// -----------------------------------------------------------------------------
+
+export async function findActiveBusinesses(): Promise<BusinessSearchRow[]> {
+  return queryBusinesses(
+    Prisma.sql`
+      ${BUSINESS_SELECT}
+      WHERE b.status = 'active'
+      ORDER BY b.name
+      LIMIT 500
+    `,
+  );
+}
+
+/**
+ * Location
+ */
+export async function findParentCityIdForLocality(
+  localityId: bigint,
+): Promise<number | null> {
+  if (localityId <= 0n) {
+    return null;
+  }
+
+  const rows = await db.$queryRaw<Array<{ cityId: bigint | number | null }>>(
+    Prisma.sql`
+      SELECT parent_id AS "cityId"
+      FROM location
+      WHERE id = ${localityId}
+        AND level = 'LOCALITY'
+        AND is_active = true
+      LIMIT 1
+    `,
+  );
+
+  const rawCityId = rows[0]?.cityId;
+
+  if (rawCityId == null) {
+    return null;
+  }
+
+  const cityId = Number(rawCityId);
+
+  return Number.isSafeInteger(cityId) && cityId > 0 ? cityId : null;
 }

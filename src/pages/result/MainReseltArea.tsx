@@ -1,3 +1,4 @@
+import { CircleCheck, Clock, Heart, MapPin } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -12,7 +13,38 @@ type Filters = {
   distance: string;
 };
 
-export function MainResultArea() {
+
+type SearchBusinessResult = {
+  id: number;
+  name: string;
+  slug: string;
+  address: string | null;
+  cityId: number | null;
+  localityId: number | null;
+  rating: number | null;
+  reviewCount: number | null;
+};
+
+type SearchResponse = {
+  businesses: SearchBusinessResult[];
+  total: number;
+  page: number;
+  perPage: number;
+};
+
+type MainResultAreaProps = {
+  data: SearchResponse | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  error: Error | null;
+};
+
+export function MainResultArea({
+  data,
+  isLoading,
+  isError,
+  error,
+}: MainResultAreaProps) {
   const { control, reset } = useForm<Filters>({
     defaultValues: {
       restaurants: true,
@@ -23,6 +55,9 @@ export function MainResultArea() {
       distance: "",
     },
   });
+
+  const businesses = data?.businesses ?? [];
+
   return (
     <section className="mx-auto max-w-360 px-4 py-5 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[235px_minmax(0,1fr)_360px]">
@@ -264,335 +299,126 @@ export function MainResultArea() {
               <i className="fa-solid fa-xmark text-[9px]" />
             </Button>
           </div>
-          {/* Result Card 1 */}
-          <article className="group mb-4 overflow-hidden rounded-2xl border border-jd-line bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-jd-border hover:shadow-orange">
-            <div className="flex flex-col sm:flex-row">
-              {/* Image */}
-              <div className="relative h-48 shrink-0 overflow-hidden sm:h-auto sm:w-[350px]">
-                <img
-                  src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop&q=80"
-                  alt="Spice Symphony restaurant"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[9px] font-bold text-jd-orange shadow-sm backdrop-blur">
-                  FEATURED
-                </span>
-                <Button
-                  variant="unstyled"
-                  size="unstyled"
-                  type="button"
-                  aria-label="Save Spice Symphony"
-                  className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm backdrop-blur transition-all duration-200 hover:text-jd-orange"
-                >
-                  <i className="fa-regular fa-heart text-sm" />
-                </Button>
-              </div>
-              {/* Content */}
-              <div className="min-w-0 flex-1 p-4 sm:p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="truncate text-lg font-bold tracking-tight text-ink sm:text-xl">
-                        Spice Symphony
-                      </h2>
-                      <span className="flex items-center gap-1 text-[10px] font-semibold text-trust">
-                        <i className="fa-solid fa-circle-check" />
-                        Verified
-                      </span>
+
+          {/* ===================================================== */}
+
+          {businesses.map((business) => (
+            <article
+              key={business.id}
+              className="group mb-4 overflow-hidden rounded-2xl border border-jd-line bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-jd-border hover:shadow-orange"
+            >
+              <div className="flex flex-col sm:flex-row">
+                {/* Image */}
+                <div className="relative h-48 shrink-0 overflow-hidden sm:h-auto sm:w-[350px]">
+                  <img
+                    src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop&q=80"
+                    alt={business.name}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+
+                  <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[9px] font-bold text-jd-orange shadow-sm backdrop-blur">
+                    FEATURED
+                  </span>
+
+                  <Button variant="unstyled" size="unstyled"
+                    type="button"
+                    aria-label={`Save ${business.name}`}
+                    className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95 shadow-sm backdrop-blur transition-all duration-200 hover:text-jd-orange"
+                  >
+                    <Heart className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+
+                {/* Content */}
+                <div className="min-w-0 flex-1 p-4 sm:p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="flex min-w-0 items-center gap-1.5 text-lg font-bold tracking-tight text-ink sm:text-xl">
+                          <span className="truncate">{business.name}</span>
+
+                          <CircleCheck
+                            className="h-4 w-4 shrink-0 fill-blue-500 text-white sm:h-5 sm:w-5"
+                            aria-label="Verified"
+                          />
+                        </h2>
+                      </div>
+
+                      <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-jd-orange">
+                        North Indian Restaurant
+                      </p>
                     </div>
-                    <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-jd-orange">
-                      North Indian Restaurant
+
+                    {business.rating != null && (
+                      <div className="flex shrink-0 items-center gap-1 rounded-lg bg-green-600 px-2 py-1 text-xs font-bold text-white">
+                        {business.rating.toFixed(1)}
+                        <i className="fa-solid fa-star text-[9px]" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-3 space-y-1">
+                    <p className="flex items-start gap-2 text-xs leading-5">
+                      <MapPin className="mt-0.5 h-3 w-3 shrink-0 text-jd-orange" />
+                      {business.address ?? "Address not available"}
                     </p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-1 rounded-lg bg-green-600 px-2 py-1 text-xs font-bold text-white">
-                    4.7
-                    <i className="fa-solid fa-star text-[9px]" />
-                  </div>
-                </div>
-                <div className="mt-3 space-y-2">
-                  <p className="flex items-start gap-2 text-xs leading-5 ">
-                    <i className="fa-solid fa-location-dot mt-0.5 w-3 shrink-0 text-jd-orange" />
-                    Linking Road, Bandra West, Mumbai
-                  </p>
-                  <p className="flex items-center gap-2 text-xs ">
-                    <i className="fa-regular fa-clock w-3 text-jd-orange" />
-                    Open until 11:30 PM
-                    <span className="font-semibold text-success">Open Now</span>
-                  </p>
-                </div>
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-gray-50 px-3 py-1.5 text-[10px] font-semibold ">
-                    ₹₹
-                  </span>
-                  <span className="rounded-full bg-gray-50 px-3 py-1.5 text-[10px] font-semibold ">
-                    1,842 Reviews
-                  </span>
-                  <span className="rounded-full bg-jd-light px-3 py-1.5 text-[10px] font-semibold text-jd-orange">
-                    1.2 km away
-                  </span>
-                </div>
-                <div className="mt-4 flex items-center justify-between gap-3 border-t border-jd-line pt-4">
-                  <a
-                    href="tel:+912241234567"
-                    className="flex items-center gap-2 text-xs font-bold text-ink transition-colors duration-200 hover:text-jd-orange"
-                  >
-                    <i className="fa-solid fa-phone text-jd-orange" />
-                    +91 22 4123 4567
-                  </a>
-                  <Button
-                    variant="unstyled"
-                    size="unstyled"
-                    type="button"
-                    className="rounded-full bg-jd-orange px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:bg-jd-hover"
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </article>
-          {/* Result Card 2 */}
-          <article className="group mb-4 overflow-hidden rounded-2xl border border-jd-line bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-jd-border hover:shadow-orange">
-            <div className="flex flex-col sm:flex-row">
-              <div className="relative h-48 shrink-0 overflow-hidden sm:h-auto sm:w-[350px]">
-                <img
-                  src="https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&auto=format&fit=crop&q=80"
-                  alt="Urban Tadka restaurant"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[9px] font-bold text-jd-orange shadow-sm">
-                  POPULAR
-                </span>
-                <Button
-                  variant="unstyled"
-                  size="unstyled"
-                  type="button"
-                  aria-label="Save Urban Tadka"
-                  className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm transition-all duration-200 hover:text-jd-orange"
-                >
-                  <i className="fa-regular fa-heart text-sm" />
-                </Button>
-              </div>
-              <div className="min-w-0 flex-1 p-4 sm:p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="truncate text-lg font-bold tracking-tight text-ink sm:text-xl">
-                        Urban Tadka
-                      </h2>
-                      <span className="flex items-center gap-1 text-[10px] font-semibold text-trust">
-                        <i className="fa-solid fa-circle-check" />
-                        Verified
+
+                    <p className="flex items-center gap-2 text-xs">
+                      <Clock className="h-3 w-3 shrink-0 text-jd-orange" />
+                      Open until 11:30 PM
+                      <span className="font-semibold text-success">
+                        Open Now
                       </span>
-                    </div>
-                    <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-jd-orange">
-                      Multi Cuisine Restaurant
                     </p>
                   </div>
-                  <div className="flex shrink-0 items-center gap-1 rounded-lg bg-green-600 px-2 py-1 text-xs font-bold text-white">
-                    4.5
-                    <i className="fa-solid fa-star text-[9px]" />
+
+                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-gray-50 px-3 py-1.5 text-[10px] font-semibold ">
+                      ₹₹
+                    </span>
+                    <span className="rounded-full bg-gray-50 px-3 py-1.5 text-[10px] font-semibold ">
+                      1,842 Reviews
+                    </span>
+                    <span className="rounded-full bg-jd-light px-3 py-1.5 text-[10px] font-semibold text-jd-orange">
+                      1.2 km away
+                    </span>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between gap-3 border-t border-jd-line pt-4">
+                    <span className="flex items-center gap-2 text-xs font-bold text-ink">
+                      <i className="fa-solid fa-location-dot text-jd-orange" />
+                      +91 98989 98989
+                    </span>
+
+                    <a
+                      href={`/business/${business.slug}`}
+                      className="shrink-0 rounded-full bg-jd-orange px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:bg-jd-hover"
+                    >
+                      View Details
+                    </a>
                   </div>
                 </div>
-                <div className="mt-3 space-y-2">
-                  <p className="flex items-start gap-2 text-xs leading-5 ">
-                    <i className="fa-solid fa-location-dot mt-0.5 w-3 shrink-0 text-jd-orange" />
-                    Hill Road, Bandra West, Mumbai
-                  </p>
-                  <p className="flex items-center gap-2 text-xs ">
-                    <i className="fa-regular fa-clock w-3 text-jd-orange" />
-                    Open until 12:00 AM
-                    <span className="font-semibold text-success">Open Now</span>
-                  </p>
-                </div>
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-gray-50 px-3 py-1.5 text-[10px] font-semibold ">
-                    ₹₹
-                  </span>
-                  <span className="rounded-full bg-gray-50 px-3 py-1.5 text-[10px] font-semibold ">
-                    986 Reviews
-                  </span>
-                  <span className="rounded-full bg-jd-light px-3 py-1.5 text-[10px] font-semibold text-jd-orange">
-                    1.8 km away
-                  </span>
-                </div>
-                <div className="mt-4 flex items-center justify-between gap-3 border-t border-jd-line pt-4">
-                  <a
-                    href="tel:+919820112233"
-                    className="flex items-center gap-2 text-xs font-bold text-ink transition-colors duration-200 hover:text-jd-orange"
-                  >
-                    <i className="fa-solid fa-phone text-jd-orange" />
-                    +91 98201 12233
-                  </a>
-                  <Button
-                    variant="unstyled"
-                    size="unstyled"
-                    type="button"
-                    className="rounded-full bg-jd-orange px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:bg-jd-hover"
-                  >
-                    View Details
-                  </Button>
-                </div>
               </div>
-            </div>
-          </article>
-          {/* Result Card 3 */}
-          <article className="group mb-4 overflow-hidden rounded-2xl border border-jd-line bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-jd-border hover:shadow-orange">
-            <div className="flex flex-col sm:flex-row">
-              <div className="relative h-48 shrink-0 overflow-hidden sm:h-auto sm:w-[350px]">
-                <img
-                  src="https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?w=600&auto=format&fit=crop&q=80"
-                  alt="The Bombay Kitchen"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <Button
-                  variant="unstyled"
-                  size="unstyled"
-                  type="button"
-                  aria-label="Save The Bombay Kitchen"
-                  className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm transition-all duration-200 hover:text-jd-orange"
-                >
-                  <i className="fa-regular fa-heart text-sm" />
-                </Button>
-              </div>
-              <div className="min-w-0 flex-1 p-4 sm:p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="truncate text-lg font-bold tracking-tight text-ink sm:text-xl">
-                        The Bombay Kitchen
-                      </h2>
-                      <span className="flex items-center gap-1 text-[10px] font-semibold text-trust">
-                        <i className="fa-solid fa-circle-check" />
-                        Verified
-                      </span>
-                    </div>
-                    <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-jd-orange">
-                      Indian Restaurant
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-1 rounded-lg bg-green-600 px-2 py-1 text-xs font-bold text-white">
-                    4.4
-                    <i className="fa-solid fa-star text-[9px]" />
-                  </div>
-                </div>
-                <div className="mt-3 space-y-2">
-                  <p className="flex items-start gap-2 text-xs leading-5 ">
-                    <i className="fa-solid fa-location-dot mt-0.5 w-3 shrink-0 text-jd-orange" />
-                    Lower Parel, Mumbai
-                  </p>
-                  <p className="flex items-center gap-2 text-xs ">
-                    <i className="fa-regular fa-clock w-3 text-jd-orange" />
-                    Open until 11:00 PM
-                    <span className="font-semibold text-success">Open Now</span>
-                  </p>
-                </div>
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-gray-50 px-3 py-1.5 text-[10px] font-semibold ">
-                    ₹₹₹
-                  </span>
-                  <span className="rounded-full bg-gray-50 px-3 py-1.5 text-[10px] font-semibold ">
-                    731 Reviews
-                  </span>
-                  <span className="rounded-full bg-jd-light px-3 py-1.5 text-[10px] font-semibold text-jd-orange">
-                    3.7 km away
-                  </span>
-                </div>
-                <div className="mt-4 flex items-center justify-between gap-3 border-t border-jd-line pt-4">
-                  <a
-                    href="tel:+912249876543"
-                    className="flex items-center gap-2 text-xs font-bold text-ink transition-colors duration-200 hover:text-jd-orange"
-                  >
-                    <i className="fa-solid fa-phone text-jd-orange" />
-                    +91 22 4987 6543
-                  </a>
-                  <Button
-                    variant="unstyled"
-                    size="unstyled"
-                    type="button"
-                    className="rounded-full bg-jd-orange px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:bg-jd-hover"
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </article>
-          {/* Result Card 4 */}
-          <article className="group mb-4 overflow-hidden rounded-2xl border border-jd-line bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-jd-border hover:shadow-orange">
-            <div className="flex flex-col sm:flex-row">
-              <div className="relative h-48 shrink-0 overflow-hidden sm:h-auto sm:w-[350px]">
-                <img
-                  src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop&q=80"
-                  alt="Coastal Spice restaurant"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <Button
-                  variant="unstyled"
-                  size="unstyled"
-                  type="button"
-                  aria-label="Save Coastal Spice"
-                  className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm transition-all duration-200 hover:text-jd-orange"
-                >
-                  <i className="fa-regular fa-heart text-sm" />
-                </Button>
-              </div>
-              <div className="min-w-0 flex-1 p-4 sm:p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h2 className="truncate text-lg font-bold tracking-tight text-ink sm:text-xl">
-                      Coastal Spice
-                    </h2>
-                    <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-jd-orange">
-                      Seafood Restaurant
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-1 rounded-lg bg-green-600 px-2 py-1 text-xs font-bold text-white">
-                    4.3
-                    <i className="fa-solid fa-star text-[9px]" />
-                  </div>
-                </div>
-                <div className="mt-3 space-y-2">
-                  <p className="flex items-start gap-2 text-xs leading-5 ">
-                    <i className="fa-solid fa-location-dot mt-0.5 w-3 shrink-0 text-jd-orange" />
-                    Andheri West, Mumbai
-                  </p>
-                  <p className="flex items-center gap-2 text-xs ">
-                    <i className="fa-regular fa-clock w-3 text-jd-orange" />
-                    Open until 10:30 PM
-                  </p>
-                </div>
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-gray-50 px-3 py-1.5 text-[10px] font-semibold ">
-                    ₹₹₹
-                  </span>
-                  <span className="rounded-full bg-gray-50 px-3 py-1.5 text-[10px] font-semibold ">
-                    542 Reviews
-                  </span>
-                  <span className="rounded-full bg-jd-light px-3 py-1.5 text-[10px] font-semibold text-jd-orange">
-                    4.6 km away
-                  </span>
-                </div>
-                <div className="mt-4 flex items-center justify-between gap-3 border-t border-jd-line pt-4">
-                  <a
-                    href="tel:+919821334455"
-                    className="flex items-center gap-2 text-xs font-bold text-ink hover:text-jd-orange"
-                  >
-                    <i className="fa-solid fa-phone text-jd-orange" />
-                    +91 98213 34455
-                  </a>
-                  <Button
-                    variant="unstyled"
-                    size="unstyled"
-                    type="button"
-                    className="rounded-full bg-jd-orange px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:bg-jd-hover"
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </article>
+            </article>
+          ))}
+
+          {isLoading && (
+            <p role="status" className="p-6 text-center text-sm text-gray-500">
+              Loading businesses…
+            </p>
+          )}
+          {isError && (
+            <p role="alert" className="p-6 text-center text-sm text-red-600">
+              {error?.message ?? "Unable to load businesses."}
+            </p>
+          )}
+          {/* Empty state */}
+          {!isLoading && !isError && businesses.length === 0 && (
+            <p className="rounded-2xl border border-jd-line bg-white p-6 text-center text-sm text-gray-500">
+              No businesses found.
+            </p>
+          )}
+
           {/* Result Card 5 */}
           <article className="group mb-4 overflow-hidden rounded-2xl border border-jd-line bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-jd-border hover:shadow-orange">
             <div className="flex flex-col sm:flex-row"></div>

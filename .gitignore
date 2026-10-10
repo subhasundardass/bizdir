@@ -15,3 +15,5 @@ node_modules/
 dist/
 
 /src/generated/prisma
+pnpm-lock.yaml
+bun.lock

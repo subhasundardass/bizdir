@@ -68,31 +68,31 @@ class ConceptSearchRepository {
           ELSE 0
         END
       )::float8 AS score
-    FROM concept AS c
-    LEFT JOIN concept_alias AS a
-      ON a.concept_id = c.id
-    WHERE
-      c.is_active = TRUE
-      AND (
-        LOWER(TRIM(c.name)) = ${query}
-        OR c.slug = ${query}
-        OR a.text = ${query}
-        OR a.text LIKE ${query} || '%'
-        OR c.slug LIKE ${query} || '%'
-        OR LOWER(TRIM(c.name)) LIKE ${"%" + query + "%"}
-        OR a.text % ${query}
-        OR similarity(LOWER(TRIM(c.name)), ${query}) > 0
-      )
-    GROUP BY
-      c.id,
-      c.name,
-      c.slug,
-      c.type
-    ORDER BY
-      score DESC,
-      c.name ASC
-    LIMIT 20
-  `;
+      FROM concept AS c
+      LEFT JOIN concept_alias AS a
+        ON a.concept_id = c.id
+      WHERE
+        c.is_active = TRUE
+        AND (
+          LOWER(TRIM(c.name)) = ${query}
+          OR c.slug = ${query}
+          OR a.text = ${query}
+          OR a.text LIKE ${query} || '%'
+          OR c.slug LIKE ${query} || '%'
+          OR LOWER(TRIM(c.name)) LIKE ${"%" + query + "%"}
+          OR a.text % ${query}
+          OR similarity(LOWER(TRIM(c.name)), ${query}) > 0
+        )
+      GROUP BY
+        c.id,
+        c.name,
+        c.slug,
+        c.type
+      ORDER BY
+        score DESC,
+        c.name ASC
+      LIMIT 20
+    `;
 
     return matches;
   }
