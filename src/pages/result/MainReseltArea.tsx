@@ -1,3 +1,5 @@
+import { Heart } from "lucide-react";
+
 export function MainResultArea() {
   return (
     <section className="mx-auto max-w-360 px-4 py-5 sm:px-6 lg:px-8">
@@ -43,7 +45,7 @@ export function MainResultArea() {
             {/* Rating */}
             <div className="border-b border-jd-line px-4 py-4">
               <h3 className="text-xs font-bold text-ink">Rating</h3>
-              <div className="mt-3 space-y-2">
+              <div className="mt-3 space-y-0">
                 <button
                   type="button"
                   className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-all duration-200 hover:bg-jd-light"
@@ -162,7 +164,7 @@ export function MainResultArea() {
                   aria-label="Save Spice Symphony"
                   className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm backdrop-blur transition-all duration-200 hover:text-jd-orange"
                 >
-                  <i className="fa-regular fa-heart text-sm" />
+                  <Heart className="h-3.5 w-3.5" />
                 </button>
               </div>
               {/* Content */}
@@ -244,7 +246,7 @@ export function MainResultArea() {
                   aria-label="Save Urban Tadka"
                   className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm transition-all duration-200 hover:text-jd-orange"
                 >
-                  <i className="fa-regular fa-heart text-sm" />
+                  <Heart className="h-3.5 w-3.5" />
                 </button>
               </div>
               <div className="min-w-0 flex-1 p-4 sm:p-5">
@@ -322,7 +324,7 @@ export function MainResultArea() {
                   aria-label="Save The Bombay Kitchen"
                   className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm transition-all duration-200 hover:text-jd-orange"
                 >
-                  <i className="fa-regular fa-heart text-sm" />
+                  <Heart className="h-3.5 w-3.5" />
                 </button>
               </div>
               <div className="min-w-0 flex-1 p-4 sm:p-5">
@@ -400,7 +402,7 @@ export function MainResultArea() {
                   aria-label="Save Coastal Spice"
                   className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm transition-all duration-200 hover:text-jd-orange"
                 >
-                  <i className="fa-regular fa-heart text-sm" />
+                  <Heart className="h-3.5 w-3.5" />
                 </button>
               </div>
               <div className="min-w-0 flex-1 p-4 sm:p-5">

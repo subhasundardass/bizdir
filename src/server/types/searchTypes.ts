@@ -187,3 +187,34 @@ export type SearchOptions = {
   sessionId?: string;
   userLocation?: SearchUserLocation;
 };
+
+type Candidate = {
+  businessId: bigint;
+  cityId: number;
+  localityId: number | null;
+  sources: Array<"concept" | "name" | "attribute" | "nearby">;
+  concept?: { id: number; matchType: ConceptMatchType; confidence: number };
+  location?: {
+    id: number;
+    level: LocationLevel;
+    match: "locality" | "city" | "radius";
+  };
+  distanceM?: number;
+  signals: {
+    rating: number | null;
+    reviewCount: number;
+    verified: boolean;
+    is24x7: boolean;
+    priceLevel?: number;
+    updatedAt: Date;
+    ownerId?: bigint;
+    plan?: string;
+  };
+};
+
+type ScoredCandidate = Candidate & {
+  scores: { relevance: number; quality: number; distance: number };
+  boost: number; // separate; capped by relevance
+  total: number;
+  layer: SearchResultLayer;
+};

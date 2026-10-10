@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { searchBusinessesQuery } from "@/client/queries/search/searchBusinesses";
 import { useQuery } from "@tanstack/react-query";
+import { Search } from "lucide-react";
 
 export type SearchBusinessesParams = {
   query: string;
@@ -77,29 +78,9 @@ export function Header() {
         {/* Search */}
         <div className="flex min-w-0 flex-1 justify-center">
           <div className="flex h-11 w-full max-w-3xl items-center overflow-hidden rounded-full border border-jd-line bg-white shadow-sm">
-            {/* Location */}
-            <button
-              type="button"
-              className="hidden h-full items-center gap-2 border-r border-jd-line px-4 text-left transition-all duration-200 hover:bg-jd-light md:flex md:w-[29%]"
-            >
-              <i className="fa-solid fa-location-dot text-sm text-jd-orange" />
-
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[11px] font-medium text-gray-500">
-                  Location
-                </span>
-
-                <span className="block truncate text-xs font-semibold text-ink">
-                  Siliguri, West Bengal
-                </span>
-              </span>
-
-              <i className="fa-solid fa-chevron-down text-[9px] text-gray-500" />
-            </button>
-
             {/* Search Input */}
             <div className="flex min-w-0 flex-1 items-center gap-3 px-4">
-              <i className="fa-solid fa-magnifying-glass text-sm text-gray-500" />
+              <Search className="h-4 w-4 shrink-0 text-jd-orange" />
 
               <input
                 type="text"

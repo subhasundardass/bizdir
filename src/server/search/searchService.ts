@@ -6,6 +6,15 @@ import {
 } from "./parser/parseSearchQuery";
 import { conceptResolver } from "./resolver/conceptResolver";
 import { locationResolver } from "./resolver/locationResolver";
+import {
+  findBusinessesByConceptTree,
+  findBusinessesByLocation,
+  findBusinessesByLocality,
+  findBusinessesByCity,
+  searchBusinessesByName,
+  searchBusinessesByNameFuzzy,
+  findParentCityIdForLocality,
+} from "@/server/repositories/search/businessSearchRepository";
 
 export type SearchInput = {
   query: string;
@@ -173,9 +182,6 @@ export class SearchService {
       locationResolver.resolve(resolverInput),
     ]);
 
-    // console.log("**Resolver Input**", resolverInput);
-    // console.log("**Resolver Location**", locations);
-
     // const [concepts, locations, attributes, filters] = await Promise.all([
     //   conceptResolver.resolve(resolverInput),
     //   resolveLocation(resolverInput),
@@ -189,33 +195,166 @@ export class SearchService {
       // attributes,
       // filters,
     };
-
-    // return {
-    //   concepts: [],
-    //   locations: [],
-    //   attributes: [],
-    //   filters: [],
-    // };
   }
 
   /**
-   * Retrieve candidate businesses.
+   * Retrieve candidate businesses using multiple strategies.
+   *
+   * Strategies:
+   * 1. Candidate retrieval — businesses matching resolved concepts.
+   * 2. Business retrieval — businesses matching the resolved location.
+   * 3. Name retrieval — businesses matching the search text.
+   *
+   * Ranking and pagination are handled by later pipeline stages.
    */
   private async retrieveCandidates(input: {
     context: SearchContext;
     resolved: unknown;
   }): Promise<SearchBusinessResult[]> {
-    /*
-     * TODO:
-     *
-     * candidateRetrieval
-     * businessRetrieval
-     * nameRetrieval
-     */
+    const { context, resolved } = input;
 
-    return [];
+    // 1. Validate resolver output
+    if (!resolved || typeof resolved !== "object") {
+      return [];
+    }
+
+    const resolution = resolved as {
+      concepts?: Array<{
+        id: number;
+        score?: number;
+      }>;
+      locations?: {
+        id: bigint | number | string;
+        type?: string;
+      } | null;
+    };
+
+    // 2. Validate and filter concepts
+    const MIN_CONCEPT_SCORE = 0.15;
+
+    const concepts = Array.isArray(resolution.concepts)
+      ? resolution.concepts.filter(
+          (concept) =>
+            concept !== null &&
+            typeof concept === "object" &&
+            Number.isSafeInteger(concept.id) &&
+            concept.id > 0 &&
+            (concept.score === undefined ||
+              (typeof concept.score === "number" &&
+                Number.isFinite(concept.score) &&
+                concept.score >= 0 &&
+                concept.score <= 1)),
+        )
+      : [];
+
+    const matchedConcepts = concepts.filter(
+      (concept) => (concept.score ?? 0) >= MIN_CONCEPT_SCORE,
+    );
+
+    const hasConcept = matchedConcepts.length > 0;
+    const location = resolution.locations;
+
+    // 3. Validate location ID
+    let locationId: bigint | null = null;
+
+    if (location && typeof location === "object") {
+      const rawId = location.id;
+
+      try {
+        if (typeof rawId === "bigint" && rawId > 0n) {
+          locationId = rawId;
+        } else if (
+          typeof rawId === "number" &&
+          Number.isSafeInteger(rawId) &&
+          rawId > 0
+        ) {
+          locationId = BigInt(rawId);
+        } else if (typeof rawId === "string" && /^[1-9]\d*$/.test(rawId)) {
+          locationId = BigInt(rawId);
+        }
+      } catch {
+        locationId = null;
+      }
+    }
+
+    const hasLocation = locationId !== null;
+
+    if (!hasConcept && !hasLocation) {
+      return [];
+    }
+
+    // 4. Deduplicate and validate candidate rows
+    const candidates = new Map<number, SearchBusinessResult>();
+
+    const addCandidates = (rows: SearchBusinessResult[]) => {
+      for (const row of rows) {
+        if (!row || !Number.isSafeInteger(row.id) || row.id <= 0) {
+          continue;
+        }
+
+        candidates.set(row.id, row);
+      }
+    };
+
+    // 5. Retrieve all businesses matching the resolved concepts.
+    // Intentionally do not apply a location filter here.
+    const conceptIds = [
+      ...new Set(matchedConcepts.map((concept) => concept.id)),
+    ];
+
+    if (conceptIds.length > 0) {
+      const conceptRows = (await findBusinessesByConceptTree(
+        conceptIds.map((id) => BigInt(id)),
+      )) as SearchBusinessResult[];
+
+      addCandidates(conceptRows);
+    }
+
+    // 6. Location-only search.
+    // Use location retrieval only when no concept was resolved.
+    if (!hasConcept && hasLocation && locationId !== null && location) {
+      let locationRows: SearchBusinessResult[];
+
+      switch (location.type) {
+        case "LOCALITY":
+          locationRows = (await findBusinessesByLocality(
+            locationId,
+          )) as SearchBusinessResult[];
+          break;
+
+        case "CITY":
+          locationRows = (await findBusinessesByCity(
+            locationId,
+          )) as SearchBusinessResult[];
+          break;
+
+        default:
+          locationRows = (await findBusinessesByLocation(
+            locationId,
+          )) as SearchBusinessResult[];
+          break;
+      }
+
+      addCandidates(locationRows);
+    }
+
+    // 7. Direct name search only when neither concept nor location
+    // was resolved.
+    const nameQuery =
+      typeof context.normalizedQuery === "string"
+        ? context.normalizedQuery.trim()
+        : "";
+
+    if (!hasConcept && !hasLocation && nameQuery.length >= 2) {
+      const nameMatches = (await searchBusinessesByName(
+        nameQuery,
+      )) as SearchBusinessResult[];
+
+      addCandidates(nameMatches);
+    }
+
+    return [...candidates.values()];
   }
-
   /**
    * Rank candidate businesses.
    */
@@ -416,6 +555,8 @@ export class SearchService {
   ): input is SearchContext {
     return "normalizedQuery" in input && "tokens" in input && "parsed" in input;
   }
+
+  //
 }
 
 export const searchService = new SearchService();
