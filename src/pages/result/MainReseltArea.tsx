@@ -1,4 +1,28 @@
+import { Controller, useForm } from "react-hook-form";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
+type Filters = {
+  restaurants: boolean;
+  cafes: boolean;
+  fastFood: boolean;
+  pureVeg: boolean;
+  openNow: boolean;
+  distance: string;
+};
+
 export function MainResultArea() {
+  const { control, reset } = useForm<Filters>({
+    defaultValues: {
+      restaurants: true,
+      cafes: false,
+      fastFood: false,
+      pureVeg: false,
+      openNow: false,
+      distance: "",
+    },
+  });
   return (
     <section className="mx-auto max-w-360 px-4 py-5 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[235px_minmax(0,1fr)_360px]">
@@ -9,42 +33,112 @@ export function MainResultArea() {
           <div className="sticky top-21 overflow-hidden rounded-2xl border border-jd-line bg-white">
             <div className="flex items-center justify-between border-b border-jd-line px-4 py-4">
               <h2 className="text-sm font-bold text-ink">Filters</h2>
-              <button
+              <Button
+                variant="unstyled"
+                size="unstyled"
                 type="button"
+                onClick={() =>
+                  reset({
+                    restaurants: false,
+                    cafes: false,
+                    fastFood: false,
+                    pureVeg: false,
+                    openNow: false,
+                    distance: "",
+                  })
+                }
                 className="text-[11px] font-semibold text-jd-orange hover:text-jd-hover"
               >
                 Clear All
-              </button>
+              </Button>
             </div>
             {/* Category */}
             <div className="border-b border-jd-line px-4 py-4">
               <h3 className="text-xs font-bold text-ink">Category</h3>
-              <label className="mt-3 flex cursor-pointer items-center gap-3">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="h-4 w-4 accent-[#FF6B00]"
+              <Label className="mt-3 flex font-normal cursor-pointer items-center gap-3">
+                <Controller
+                  name="restaurants"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      ref={field.ref}
+                      name={field.name}
+                      checked={field.value}
+                      onCheckedChange={(checked) =>
+                        field.onChange(checked === true)
+                      }
+                      onBlur={field.onBlur}
+                      className="h-4 w-4 rounded-[3px] border-gray-400 shadow-none data-[state=checked]:border-jd-orange data-[state=checked]:bg-jd-orange"
+                    />
+                  )}
                 />
                 <span className="text-xs ">Restaurants</span>
-              </label>
-              <label className="mt-3 flex cursor-pointer items-center gap-3">
-                <input type="checkbox" className="h-4 w-4 accent-[#FF6B00]" />
+              </Label>
+              <Label className="mt-3 flex font-normal cursor-pointer items-center gap-3">
+                <Controller
+                  name="cafes"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      ref={field.ref}
+                      name={field.name}
+                      checked={field.value}
+                      onCheckedChange={(checked) =>
+                        field.onChange(checked === true)
+                      }
+                      onBlur={field.onBlur}
+                      className="h-4 w-4 rounded-[3px] border-gray-400 shadow-none data-[state=checked]:border-jd-orange data-[state=checked]:bg-jd-orange"
+                    />
+                  )}
+                />
                 <span className="text-xs ">Cafes</span>
-              </label>
-              <label className="mt-3 flex cursor-pointer items-center gap-3">
-                <input type="checkbox" className="h-4 w-4 accent-[#FF6B00]" />
+              </Label>
+              <Label className="mt-3 flex font-normal cursor-pointer items-center gap-3">
+                <Controller
+                  name="fastFood"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      ref={field.ref}
+                      name={field.name}
+                      checked={field.value}
+                      onCheckedChange={(checked) =>
+                        field.onChange(checked === true)
+                      }
+                      onBlur={field.onBlur}
+                      className="h-4 w-4 rounded-[3px] border-gray-400 shadow-none data-[state=checked]:border-jd-orange data-[state=checked]:bg-jd-orange"
+                    />
+                  )}
+                />
                 <span className="text-xs ">Fast Food</span>
-              </label>
-              <label className="mt-3 flex cursor-pointer items-center gap-3">
-                <input type="checkbox" className="h-4 w-4 accent-[#FF6B00]" />
+              </Label>
+              <Label className="mt-3 flex font-normal cursor-pointer items-center gap-3">
+                <Controller
+                  name="pureVeg"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      ref={field.ref}
+                      name={field.name}
+                      checked={field.value}
+                      onCheckedChange={(checked) =>
+                        field.onChange(checked === true)
+                      }
+                      onBlur={field.onBlur}
+                      className="h-4 w-4 rounded-[3px] border-gray-400 shadow-none data-[state=checked]:border-jd-orange data-[state=checked]:bg-jd-orange"
+                    />
+                  )}
+                />
                 <span className="text-xs ">Pure Veg</span>
-              </label>
+              </Label>
             </div>
             {/* Rating */}
             <div className="border-b border-jd-line px-4 py-4">
               <h3 className="text-xs font-bold text-ink">Rating</h3>
               <div className="mt-3 space-y-2">
-                <button
+                <Button
+                  variant="unstyled"
+                  size="unstyled"
                   type="button"
                   className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-all duration-200 hover:bg-jd-light"
                 >
@@ -53,8 +147,10 @@ export function MainResultArea() {
                     4.5+
                   </span>
                   <span className="text-[11px] text-gray-500">(1200)</span>
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="unstyled"
+                  size="unstyled"
                   type="button"
                   className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-all duration-200 hover:bg-jd-light"
                 >
@@ -63,8 +159,10 @@ export function MainResultArea() {
                     4.0+
                   </span>
                   <span className="text-[11px] text-gray-500">(2400)</span>
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="unstyled"
+                  size="unstyled"
                   type="button"
                   className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-all duration-200 hover:bg-jd-light"
                 >
@@ -73,46 +171,62 @@ export function MainResultArea() {
                     3.5+
                   </span>
                   <span className="text-[11px] text-gray-500">(3700)</span>
-                </button>
+                </Button>
               </div>
             </div>
             {/* Open Now */}
             <div className="border-b border-jd-line px-4 py-4">
               <h3 className="text-xs font-bold text-ink">Availability</h3>
-              <label className="mt-3 flex cursor-pointer items-center justify-between">
+              <Label className="mt-3 flex font-normal cursor-pointer items-center justify-between">
                 <span className="text-xs ">Open Now</span>
-                <input type="checkbox" className="h-4 w-4 accent-[#FF6B00]" />
-              </label>
+                <Controller
+                  name="openNow"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      ref={field.ref}
+                      name={field.name}
+                      checked={field.value}
+                      onCheckedChange={(checked) =>
+                        field.onChange(checked === true)
+                      }
+                      onBlur={field.onBlur}
+                      className="h-4 w-4 rounded-[3px] border-gray-400 shadow-none data-[state=checked]:border-jd-orange data-[state=checked]:bg-jd-orange"
+                    />
+                  )}
+                />
+              </Label>
             </div>
             {/* Distance */}
             <div className="px-4 py-4">
               <h3 className="text-xs font-bold text-ink">Distance</h3>
-              <div className="mt-3 space-y-2">
-                <label className="flex cursor-pointer items-center gap-3">
-                  <input
-                    type="radio"
-                    name="distance"
-                    className="h-4 w-4 accent-[#FF6B00]"
-                  />
-                  <span className="text-xs ">Within 1 km</span>
-                </label>
-                <label className="flex cursor-pointer items-center gap-3">
-                  <input
-                    type="radio"
-                    name="distance"
-                    className="h-4 w-4 accent-[#FF6B00]"
-                  />
-                  <span className="text-xs ">Within 3 km</span>
-                </label>
-                <label className="flex cursor-pointer items-center gap-3">
-                  <input
-                    type="radio"
-                    name="distance"
-                    className="h-4 w-4 accent-[#FF6B00]"
-                  />
-                  <span className="text-xs ">Within 5 km</span>
-                </label>
-              </div>
+              <Controller
+                name="distance"
+                control={control}
+                render={({ field }) => (
+                  <RadioGroup
+                    name={field.name}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    onBlur={field.onBlur}
+                    className="mt-3 gap-2"
+                  >
+                    {["1", "3", "5"].map((distance) => (
+                      <Label
+                        key={distance}
+                        className="flex cursor-pointer items-center gap-3 font-normal"
+                      >
+                        <RadioGroupItem
+                          ref={distance === "1" ? field.ref : undefined}
+                          value={distance}
+                          className="h-4 w-4 border-gray-400 text-jd-orange shadow-none data-[state=checked]:border-jd-orange"
+                        />
+                        <span className="text-xs">Within {distance} km</span>
+                      </Label>
+                    ))}
+                  </RadioGroup>
+                )}
+              />
             </div>
           </div>
         </aside>
@@ -122,27 +236,33 @@ export function MainResultArea() {
         <div className="min-w-0">
           {/* Active filters */}
           <div className="mb-4 flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <button
+            <Button
+              variant="unstyled"
+              size="unstyled"
               type="button"
               className="flex shrink-0 items-center gap-2 rounded-full border border-jd-border bg-jd-light px-3 py-1.5 text-[11px] font-semibold text-jd-orange"
             >
               Restaurants
               <i className="fa-solid fa-xmark text-[9px]" />
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="unstyled"
+              size="unstyled"
               type="button"
               className="flex shrink-0 items-center gap-2 rounded-full border border-jd-line bg-white px-3 py-1.5 text-[11px] font-medium  transition-all duration-200 hover:border-jd-border hover:text-jd-orange"
             >
               4.0+ Rating
               <i className="fa-solid fa-xmark text-[9px]" />
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="unstyled"
+              size="unstyled"
               type="button"
               className="flex shrink-0 items-center gap-2 rounded-full border border-jd-line bg-white px-3 py-1.5 text-[11px] font-medium  transition-all duration-200 hover:border-jd-border hover:text-jd-orange"
             >
               Open Now
               <i className="fa-solid fa-xmark text-[9px]" />
-            </button>
+            </Button>
           </div>
           {/* Result Card 1 */}
           <article className="group mb-4 overflow-hidden rounded-2xl border border-jd-line bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-jd-border hover:shadow-orange">
@@ -157,13 +277,15 @@ export function MainResultArea() {
                 <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[9px] font-bold text-jd-orange shadow-sm backdrop-blur">
                   FEATURED
                 </span>
-                <button
+                <Button
+                  variant="unstyled"
+                  size="unstyled"
                   type="button"
                   aria-label="Save Spice Symphony"
                   className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm backdrop-blur transition-all duration-200 hover:text-jd-orange"
                 >
                   <i className="fa-regular fa-heart text-sm" />
-                </button>
+                </Button>
               </div>
               {/* Content */}
               <div className="min-w-0 flex-1 p-4 sm:p-5">
@@ -217,12 +339,14 @@ export function MainResultArea() {
                     <i className="fa-solid fa-phone text-jd-orange" />
                     +91 22 4123 4567
                   </a>
-                  <button
+                  <Button
+                    variant="unstyled"
+                    size="unstyled"
                     type="button"
                     className="rounded-full bg-jd-orange px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:bg-jd-hover"
                   >
                     View Details
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -239,13 +363,15 @@ export function MainResultArea() {
                 <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[9px] font-bold text-jd-orange shadow-sm">
                   POPULAR
                 </span>
-                <button
+                <Button
+                  variant="unstyled"
+                  size="unstyled"
                   type="button"
                   aria-label="Save Urban Tadka"
                   className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm transition-all duration-200 hover:text-jd-orange"
                 >
                   <i className="fa-regular fa-heart text-sm" />
-                </button>
+                </Button>
               </div>
               <div className="min-w-0 flex-1 p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
@@ -298,12 +424,14 @@ export function MainResultArea() {
                     <i className="fa-solid fa-phone text-jd-orange" />
                     +91 98201 12233
                   </a>
-                  <button
+                  <Button
+                    variant="unstyled"
+                    size="unstyled"
                     type="button"
                     className="rounded-full bg-jd-orange px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:bg-jd-hover"
                   >
                     View Details
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -317,13 +445,15 @@ export function MainResultArea() {
                   alt="The Bombay Kitchen"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <button
+                <Button
+                  variant="unstyled"
+                  size="unstyled"
                   type="button"
                   aria-label="Save The Bombay Kitchen"
                   className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm transition-all duration-200 hover:text-jd-orange"
                 >
                   <i className="fa-regular fa-heart text-sm" />
-                </button>
+                </Button>
               </div>
               <div className="min-w-0 flex-1 p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
@@ -376,12 +506,14 @@ export function MainResultArea() {
                     <i className="fa-solid fa-phone text-jd-orange" />
                     +91 22 4987 6543
                   </a>
-                  <button
+                  <Button
+                    variant="unstyled"
+                    size="unstyled"
                     type="button"
                     className="rounded-full bg-jd-orange px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:bg-jd-hover"
                   >
                     View Details
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -395,13 +527,15 @@ export function MainResultArea() {
                   alt="Coastal Spice restaurant"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <button
+                <Button
+                  variant="unstyled"
+                  size="unstyled"
                   type="button"
                   aria-label="Save Coastal Spice"
                   className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95  shadow-sm transition-all duration-200 hover:text-jd-orange"
                 >
                   <i className="fa-regular fa-heart text-sm" />
-                </button>
+                </Button>
               </div>
               <div className="min-w-0 flex-1 p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
@@ -447,12 +581,14 @@ export function MainResultArea() {
                     <i className="fa-solid fa-phone text-jd-orange" />
                     +91 98213 34455
                   </a>
-                  <button
+                  <Button
+                    variant="unstyled"
+                    size="unstyled"
                     type="button"
                     className="rounded-full bg-jd-orange px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:bg-jd-hover"
                   >
                     View Details
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
