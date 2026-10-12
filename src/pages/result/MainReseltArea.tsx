@@ -13,7 +13,6 @@ type Filters = {
   distance: string;
 };
 
-
 type SearchBusinessResult = {
   id: number;
   name: string;
@@ -320,7 +319,9 @@ export function MainResultArea({
                     FEATURED
                   </span>
 
-                  <Button variant="unstyled" size="unstyled"
+                  <Button
+                    variant="unstyled"
+                    size="unstyled"
                     type="button"
                     aria-label={`Save ${business.name}`}
                     className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95 shadow-sm backdrop-blur transition-all duration-200 hover:text-jd-orange"
@@ -377,7 +378,7 @@ export function MainResultArea({
                       ₹₹
                     </span>
                     <span className="rounded-full bg-gray-50 px-3 py-1.5 text-[10px] font-semibold ">
-                      1,842 Reviews
+                      {business.reviewCount ?? 0} Reviews
                     </span>
                     <span className="rounded-full bg-jd-light px-3 py-1.5 text-[10px] font-semibold text-jd-orange">
                       1.2 km away
