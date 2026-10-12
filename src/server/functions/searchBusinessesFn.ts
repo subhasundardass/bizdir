@@ -5,6 +5,7 @@ export type SearchBusinessesInput = {
   query: string;
   location?: string;
   locationId?: number;
+  userLocation?: { lat: number; lng: number };
   page?: number;
   perPage?: number;
 };
