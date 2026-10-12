@@ -15,6 +15,7 @@ export type SearchInput = {
   perPage: number;
   location?: string;
   locationId?: number;
+  userLocation?: { lat: number; lng: number };
 };
 
 export type SearchContext = {
@@ -26,6 +27,7 @@ export type SearchContext = {
   perPage: number;
   location?: string;
   locationId?: number;
+  userLocation?: { lat: number; lng: number };
 };
 
 export type SearchBusinessResult = {
@@ -37,6 +39,7 @@ export type SearchBusinessResult = {
   localityId: number | null;
   rating: number | null;
   reviewCount: number;
+  distanceKm?: number | null;
 };
 
 export type SearchResult = {
@@ -109,6 +112,8 @@ export class SearchService {
       locationUnresolved: resolved.locationUnresolved,
       page: context.page,
       perPage: context.perPage,
+      userLocation: context.userLocation,
+      locationOnly: resolved.locationOnly,
     });
     return {
       ...result,
@@ -147,6 +152,7 @@ export class SearchService {
       perPage: data.perPage,
       location: data.location,
       locationId: data.locationId,
+      userLocation: data.userLocation,
     };
   }
 
@@ -171,10 +177,29 @@ export class SearchService {
     });
     // Strong phrase matches take precedence over loosely related concepts.
     const best = matches[0]?.score ?? 0;
-    const concepts = matches.filter(
+    let concepts = matches.filter(
       (match) => match.score >= Math.max(0.3, best - 0.08),
     );
+    let locationOnly = false;
+    // A bare place name searches all services in that place.
+    if (
+      !locationText &&
+      !context.locationId &&
+      (matches[0]?.score ?? 0) < 0.9
+    ) {
+      const place = await locationResolver.resolve({
+        text: context.normalizedQuery,
+      });
+      if (place && place.score >= 0.98) {
+        locations = place;
+        concepts = [];
+        locationOnly = true;
+      }
+    } else if (locations && context.parsed.concepts.length === 0) {
+      locationOnly = true;
+    }
     return {
+      locationOnly,
       concepts,
       locations,
       locationUnresolved:
@@ -355,7 +380,28 @@ export class SearchService {
       value.locationId === undefined
         ? undefined
         : this.getPositiveInteger(value.locationId, 1, "locationId");
+    let userLocation: { lat: number; lng: number } | undefined;
+    if (value.userLocation !== undefined) {
+      if (!value.userLocation || typeof value.userLocation !== "object")
+        throw new Error("Invalid user location");
+      const coordinates = value.userLocation as Record<string, unknown>;
+      const { lat, lng } = coordinates;
+      if (
+        typeof lat !== "number" ||
+        !Number.isFinite(lat) ||
+        lat < -90 ||
+        lat > 90 ||
+        typeof lng !== "number" ||
+        !Number.isFinite(lng) ||
+        lng < -180 ||
+        lng > 180
+      ) {
+        throw new Error("Invalid user location coordinates");
+      }
+      userLocation = { lat, lng };
+    }
     return {
+      userLocation,
       query,
       page,
       perPage,
