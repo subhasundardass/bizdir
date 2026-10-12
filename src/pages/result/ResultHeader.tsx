@@ -1,15 +1,26 @@
 import { Button } from "@/components/ui/button";
-export function ResultHeader() {
+export function ResultHeader({
+  query,
+  location,
+  total,
+}: {
+  query: string;
+  location: string;
+  total?: number;
+}) {
   return (
     <section className="border-b border-jd-line bg-white">
       <div className="mx-auto max-w-360 px-4 py-5 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-              Restaurants in Mumbai
+              {query || "Search businesses"}
+              {location ? ` in ${location}` : ""}
             </h1>
             <p className="mt-1.5 text-sm ">
-              4,860+ restaurants found near Mumbai
+              {total === undefined
+                ? "Search local businesses and services"
+                : `${total} businesses found${location ? ` near ${location}` : ""}`}
             </p>
           </div>
           {/* Desktop sort */}
