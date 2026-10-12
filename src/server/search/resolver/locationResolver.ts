@@ -95,6 +95,23 @@ export class LocationResolver {
     const parsed = this.normalizeInput(input);
     if (!parsed) return null;
 
+    // A city suffix disambiguates localities with the same name in different cities.
+    if (!parsed.cityId) {
+      const words = parsed.text.split(" ");
+      for (let split = 1; split < words.length; split++) {
+        const city = await findCityByName(words.slice(split).join(" "));
+        if (!city) continue;
+        const scoped = await this.resolveInScope(
+          words.slice(0, split).join(" "),
+          parsed,
+          BigInt(city.id),
+          MIN_SCORE_FULL,
+          new Map(),
+        );
+        if (scoped) return this.hydrate(parsed, scoped);
+      }
+    }
+
     const variants = this.textVariants(parsed.text);
     const scopes = this.scopesOf(parsed);
     const subtreeCache = new Map<string, Set<string>>();
@@ -122,6 +139,11 @@ export class LocationResolver {
     }
 
     return null;
+  }
+
+  async resolveById(id: bigint): Promise<ResolvedLocation | null> {
+    const row = await findLocationById(id);
+    return row?.isActive ? this.toResolved(row, 1) : null;
   }
 
   // -------------------------------------------------------------------------
