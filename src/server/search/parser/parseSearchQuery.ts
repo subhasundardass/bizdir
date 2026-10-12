@@ -141,7 +141,14 @@ export async function parseWithRules(
     filters.openNow = true;
   }
 
-  const concepts = lowerTokens.filter(
+  const locationStart = lowerTokens.findIndex((token) =>
+    ["in", "near", "at", "around"].includes(token),
+  );
+  const locationTokens =
+    locationStart >= 0 ? lowerTokens.slice(locationStart + 1) : [];
+  const conceptTokens =
+    locationStart >= 0 ? lowerTokens.slice(0, locationStart) : lowerTokens;
+  const concepts = conceptTokens.filter(
     (token) =>
       !STOP_WORDS.has(token) &&
       !INTENT_WORDS.has(token) &&
@@ -150,7 +157,7 @@ export async function parseWithRules(
 
   return {
     concepts,
-    locations: [],
+    locations: locationTokens.length ? [locationTokens.join(" ")] : [],
     attributes: [],
     filters,
     confidence: calculateParserConfidence({
