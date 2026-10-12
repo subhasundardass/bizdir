@@ -481,3 +481,55 @@ export async function findParentCityIdForLocality(
 
   return Number.isSafeInteger(cityId) && cityId > 0 ? cityId : null;
 }
+
+/** Match concept descendants and the selected location subtree in the same query. */
+export async function searchMatchingBusinesses(input: {
+  conceptIds: number[];
+  query: string;
+  locationId?: number;
+  locationUnresolved: boolean;
+  page: number;
+  perPage: number;
+}): Promise<{ businesses: BusinessSearchRow[]; total: number }> {
+  if (input.locationUnresolved) return { businesses: [], total: 0 };
+  const conceptFilter = input.conceptIds.length
+    ? Prisma.sql`EXISTS (
+        SELECT 1 FROM business_concept bc
+        JOIN concept_tree ct ON ct.id = bc.concept_id
+        WHERE bc.business_id = b.id
+      )`
+    : Prisma.sql`(b.name_norm LIKE '%' || norm_text(${input.query}) || '%'
+        OR similarity(b.name_norm, norm_text(${input.query})) >= 0.3)`;
+  const locationFilter = input.locationId
+    ? Prisma.sql`(b.city_id IN (SELECT id FROM location_tree)
+        OR b.locality_id IN (SELECT id FROM location_tree))`
+    : Prisma.sql`TRUE`;
+  const cte = Prisma.sql`
+    WITH RECURSIVE concept_tree AS (
+      SELECT id FROM concept
+      WHERE ${input.conceptIds.length ? Prisma.sql`id IN (${Prisma.join(input.conceptIds)})` : Prisma.sql`FALSE`}
+        AND is_active = TRUE
+      UNION
+      SELECT c.id FROM concept c JOIN concept_tree parent ON c.parent_id = parent.id
+      WHERE c.is_active = TRUE
+    ), location_tree AS (
+      SELECT id FROM location WHERE id = ${input.locationId ?? null} AND is_active = TRUE
+      UNION
+      SELECT l.id FROM location l JOIN location_tree parent ON l.parent_id = parent.id
+      WHERE l.is_active = TRUE
+    )`;
+  // A transaction keeps the total and the page consistent under concurrent writes.
+  const [counts, rows] = await db.$transaction(
+    [
+      db.$queryRaw<Array<{ total: bigint }>>(Prisma.sql`${cte}
+      SELECT COUNT(*) AS total FROM business b
+      WHERE b.status = 'active' AND ${conceptFilter} AND ${locationFilter}`),
+      db.$queryRaw<RawBusinessRow[]>(Prisma.sql`${cte} ${BUSINESS_SELECT}
+      WHERE b.status = 'active' AND ${conceptFilter} AND ${locationFilter}
+      ORDER BY b.rating DESC, b.review_count DESC, b.name ASC, b.id ASC
+      LIMIT ${input.perPage} OFFSET ${(input.page - 1) * input.perPage}`),
+    ],
+    { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
+  );
+  return { businesses: mapRows(rows), total: Number(counts[0]?.total ?? 0) };
+}
