@@ -1,3 +1,4 @@
+import { useSearchLocation } from "@/client/hooks/useSearchLocation";
 import { useQuery } from "@tanstack/react-query";
 import { Route } from "@/routes/result";
 import { searchBusinessesQuery } from "@/client/queries/search/searchBusinesses";
@@ -11,7 +12,14 @@ import { MainResultArea } from "./MainReseltArea";
 export function SearchResult() {
   const values = Route.useSearch();
   const navigate = Route.useNavigate();
-  const search = useQuery(searchBusinessesQuery({ ...values, perPage: 20 }));
+  const userLocation = useSearchLocation();
+  const search = useQuery(
+    searchBusinessesQuery({
+      ...values,
+      perPage: 20,
+      userLocation: userLocation.coordinates,
+    }),
+  );
   function handleSearch(next: SearchValues) {
     void navigate({
       search: { ...next, locationId: next.locationId, page: 1 },
@@ -34,8 +42,27 @@ export function SearchResult() {
           query={values.query}
           location={search.data?.location?.name ?? values.location}
           total={search.data?.total}
+          nearest={Boolean(userLocation.coordinates)}
         />
         <MobileFilterBar />
+        <div className="mx-auto flex max-w-360 items-center gap-3 px-6 py-2 text-xs text-gray-500">
+          <span role="status">
+            {userLocation.status === "ready"
+              ? "Nearest places first · distances from your current location"
+              : userLocation.status === "loading"
+                ? "Finding your location…"
+                : "Enable location to show nearest places first"}
+          </span>
+          {userLocation.status === "unavailable" && (
+            <button
+              type="button"
+              onClick={userLocation.requestLocation}
+              className="font-semibold text-jd-orange"
+            >
+              Use my location
+            </button>
+          )}
+        </div>
         {search.data?.locationUnresolved && (
           <p
             role="status"
