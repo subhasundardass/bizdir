@@ -18,7 +18,6 @@ export interface LocationRow {
 }
 
 export interface LocationAliasRow {
-  id: bigint;
   locationId: bigint;
   text: string;
   language: string | null;
@@ -124,10 +123,9 @@ export async function findLocationAliases(
 ): Promise<LocationAliasRow[]> {
   return db.$queryRaw<LocationAliasRow[]>`
     SELECT
-      a.id,
       a.location_id AS "locationId",
       a.text,
-      a.language
+      NULL::text AS language
     FROM location_alias AS a
     WHERE a.location_id = ${locationId}
     ORDER BY a.text ASC
@@ -142,10 +140,9 @@ export async function searchLocationAliases(
 
   return db.$queryRaw<LocationAliasRow[]>`
     SELECT DISTINCT
-      a.id,
       a.location_id AS "locationId",
       a.text,
-      a.language
+      NULL::text AS language
     FROM location_alias AS a
     JOIN location AS l ON l.id = a.location_id
     WHERE l.is_active = TRUE
