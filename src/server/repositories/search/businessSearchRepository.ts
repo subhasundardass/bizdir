@@ -10,6 +10,7 @@ export type BusinessSearchRow = {
   localityId: number | null;
   rating: number | null;
   reviewCount: number;
+  distanceKm?: number | null;
 };
 
 type RawBusinessRow = {
@@ -21,6 +22,7 @@ type RawBusinessRow = {
   localityId: bigint | number | null;
   rating: number | string | null;
   reviewCount: number | bigint;
+  distanceKm?: number | null;
 };
 
 const BUSINESS_SELECT = Prisma.sql`
@@ -46,6 +48,7 @@ function mapRows(rows: RawBusinessRow[]): BusinessSearchRow[] {
     localityId: row.localityId == null ? null : Number(row.localityId),
     rating: row.rating == null ? null : Number(row.rating),
     reviewCount: Number(row.reviewCount),
+    distanceKm: row.distanceKm == null ? null : Number(row.distanceKm),
   }));
 }
 
@@ -480,4 +483,69 @@ export async function findParentCityIdForLocality(
   const cityId = Number(rawCityId);
 
   return Number.isSafeInteger(cityId) && cityId > 0 ? cityId : null;
+}
+
+/** Match concept descendants and the selected location subtree in the same query. */
+export async function searchMatchingBusinesses(input: {
+  conceptIds: number[];
+  query: string;
+  locationId?: number;
+  locationUnresolved: boolean;
+  page: number;
+  perPage: number;
+  userLocation?: { lat: number; lng: number };
+  locationOnly?: boolean;
+}): Promise<{ businesses: BusinessSearchRow[]; total: number }> {
+  if (input.locationUnresolved) return { businesses: [], total: 0 };
+  const conceptFilter = input.locationOnly
+    ? Prisma.sql`TRUE`
+    : input.conceptIds.length
+      ? Prisma.sql`EXISTS (
+        SELECT 1 FROM business_concept bc
+        JOIN concept_tree ct ON ct.id = bc.concept_id
+        WHERE bc.business_id = b.id
+      )`
+      : Prisma.sql`(b.name_norm LIKE '%' || norm_text(${input.query}) || '%'
+        OR similarity(b.name_norm, norm_text(${input.query})) >= 0.3)`;
+  const locationFilter = input.locationId
+    ? Prisma.sql`(b.city_id IN (SELECT id FROM location_tree)
+        OR b.locality_id IN (SELECT id FROM location_tree))`
+    : Prisma.sql`TRUE`;
+  const cte = Prisma.sql`
+    WITH RECURSIVE concept_tree AS (
+      SELECT id FROM concept
+      WHERE ${input.conceptIds.length ? Prisma.sql`id IN (${Prisma.join(input.conceptIds)})` : Prisma.sql`FALSE`}
+        AND is_active = TRUE
+      UNION
+      SELECT c.id FROM concept c JOIN concept_tree parent ON c.parent_id = parent.id
+      WHERE c.is_active = TRUE
+    ), location_tree AS (
+      SELECT id FROM location WHERE id = ${input.locationId ?? null} AND is_active = TRUE
+      UNION
+      SELECT l.id FROM location l JOIN location_tree parent ON l.parent_id = parent.id
+      WHERE l.is_active = TRUE
+    )`;
+  const distance = input.userLocation
+    ? Prisma.sql`ST_Distance(b.geom::geography,
+        ST_SetSRID(ST_MakePoint(${input.userLocation.lng}, ${input.userLocation.lat}), 4326)::geography) / 1000.0`
+    : Prisma.sql`NULL::double precision`;
+  const orderedSelect = Prisma.sql`
+    SELECT b.id, b.name, b.slug, b.address, b.city_id AS "cityId",
+      b.locality_id AS "localityId", b.rating, b.review_count AS "reviewCount",
+      ${distance} AS "distanceKm"
+    FROM business b`;
+  // A transaction keeps the total and the page consistent under concurrent writes.
+  const [counts, rows] = await db.$transaction(
+    [
+      db.$queryRaw<Array<{ total: bigint }>>(Prisma.sql`${cte}
+      SELECT COUNT(*) AS total FROM business b
+      WHERE b.status = 'active' AND ${conceptFilter} AND ${locationFilter}`),
+      db.$queryRaw<RawBusinessRow[]>(Prisma.sql`${cte} ${orderedSelect}
+      WHERE b.status = 'active' AND ${conceptFilter} AND ${locationFilter}
+      ORDER BY "distanceKm" ASC NULLS LAST, b.rating DESC, b.review_count DESC, b.name ASC, b.id ASC
+      LIMIT ${input.perPage} OFFSET ${(input.page - 1) * input.perPage}`),
+    ],
+    { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
+  );
+  return { businesses: mapRows(rows), total: Number(counts[0]?.total ?? 0) };
 }

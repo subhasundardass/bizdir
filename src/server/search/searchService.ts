@@ -6,20 +6,16 @@ import {
 } from "./parser/parseSearchQuery";
 import { conceptResolver } from "./resolver/conceptResolver";
 import { locationResolver } from "./resolver/locationResolver";
-import {
-  findBusinessesByConceptTree,
-  findBusinessesByLocation,
-  findBusinessesByLocality,
-  findBusinessesByCity,
-  searchBusinessesByName,
-  searchBusinessesByNameFuzzy,
-  findParentCityIdForLocality,
-} from "@/server/repositories/search/businessSearchRepository";
+import { searchMatchingBusinesses } from "@/server/repositories/search/businessSearchRepository";
+import type { ResolvedLocation } from "./resolver/locationResolver";
 
 export type SearchInput = {
   query: string;
   page: number;
   perPage: number;
+  location?: string;
+  locationId?: number;
+  userLocation?: { lat: number; lng: number };
 };
 
 export type SearchContext = {
@@ -29,6 +25,9 @@ export type SearchContext = {
   parsed: ParsedSearchQuery;
   page: number;
   perPage: number;
+  location?: string;
+  locationId?: number;
+  userLocation?: { lat: number; lng: number };
 };
 
 export type SearchBusinessResult = {
@@ -40,6 +39,7 @@ export type SearchBusinessResult = {
   localityId: number | null;
   rating: number | null;
   reviewCount: number;
+  distanceKm?: number | null;
 };
 
 export type SearchResult = {
@@ -48,6 +48,8 @@ export type SearchResult = {
   page: number;
   perPage: number;
 
+  location: { id: number; name: string } | null;
+  locationUnresolved: boolean;
   debug?: {
     rawQuery: string;
     normalizedQuery: string;
@@ -58,7 +60,9 @@ export type SearchResult = {
 };
 
 export type SearchSuggestion = {
+  id: number;
   text: string;
+  label: string;
   type: "concept" | "location" | "business";
 };
 
@@ -99,31 +103,26 @@ export class SearchService {
 
     const resolved = await this.resolveSearch(context);
 
-    const candidates = await this.retrieveCandidates({
-      context,
-      resolved,
-    });
-
-    const ranked = await this.rankCandidates({
-      context,
-      candidates,
-    });
-
-    const businesses = this.paginate(ranked, context.page, context.perPage);
-
-    return {
-      businesses,
-      total: ranked.length,
+    const result = await searchMatchingBusinesses({
+      conceptIds: resolved.concepts.map((concept) => concept.id),
+      query: context.parsed.concepts.join(" ") || context.normalizedQuery,
+      locationId: resolved.locations
+        ? Number(resolved.locations.id)
+        : undefined,
+      locationUnresolved: resolved.locationUnresolved,
       page: context.page,
       perPage: context.perPage,
-
-      debug: {
-        rawQuery: context.rawQuery,
-        normalizedQuery: context.normalizedQuery,
-        tokens: context.tokens,
-        parsed: context.parsed,
-        resolved: resolved,
-      },
+      userLocation: context.userLocation,
+      locationOnly: resolved.locationOnly,
+    });
+    return {
+      ...result,
+      page: context.page,
+      perPage: context.perPage,
+      location: resolved.locations
+        ? { id: Number(resolved.locations.id), name: resolved.locations.name }
+        : null,
+      locationUnresolved: resolved.locationUnresolved,
     };
   }
 
@@ -151,6 +150,9 @@ export class SearchService {
       parsed,
       page: data.page,
       perPage: data.perPage,
+      location: data.location,
+      locationId: data.locationId,
+      userLocation: data.userLocation,
     };
   }
 
@@ -159,234 +161,50 @@ export class SearchService {
    */
 
   private async resolveSearch(context: SearchContext) {
-    /*
-     * TODO:
-     *
-     * conceptResolver
-     * locationResolver
-     * attributeResolver
-     * filterResolver
-     */
-
-    const resolverInput = {
+    const locationText = context.location || context.parsed.locations.join(" ");
+    let locations: ResolvedLocation | null = null;
+    if (context.locationId) {
+      locations = await locationResolver.resolveById(
+        BigInt(context.locationId),
+      );
+    } else if (locationText) {
+      locations = await locationResolver.resolve({ text: locationText });
+    }
+    const matches = await conceptResolver.resolve({
       query: context.normalizedQuery,
       tokens: context.tokens,
       parsed: context.parsed,
-    };
-
-    // const concepts = await conceptResolver.resolve(resolverInput);
-    // const locations = await locationResolver.resolve(resolverInput);
-
-    const [concepts, locations] = await Promise.all([
-      conceptResolver.resolve(resolverInput),
-      locationResolver.resolve(resolverInput),
-    ]);
-
-    // const [concepts, locations, attributes, filters] = await Promise.all([
-    //   conceptResolver.resolve(resolverInput),
-    //   resolveLocation(resolverInput),
-    //   resolveAttributes(resolverInput),
-    //   resolveSearchFilters(resolverInput),
-    // ]);
-
+    });
+    // Strong phrase matches take precedence over loosely related concepts.
+    const best = matches[0]?.score ?? 0;
+    let concepts = matches.filter(
+      (match) => match.score >= Math.max(0.3, best - 0.08),
+    );
+    let locationOnly = false;
+    // A bare place name searches all services in that place.
+    if (
+      !locationText &&
+      !context.locationId &&
+      (matches[0]?.score ?? 0) < 0.9
+    ) {
+      const place = await locationResolver.resolve({
+        text: context.normalizedQuery,
+      });
+      if (place && place.score >= 0.98) {
+        locations = place;
+        concepts = [];
+        locationOnly = true;
+      }
+    } else if (locations && context.parsed.concepts.length === 0) {
+      locationOnly = true;
+    }
     return {
+      locationOnly,
       concepts,
       locations,
-      // attributes,
-      // filters,
+      locationUnresolved:
+        Boolean(locationText || context.locationId) && !locations,
     };
-  }
-
-  /**
-   * Retrieve candidate businesses using multiple strategies.
-   *
-   * Strategies:
-   * 1. Candidate retrieval — businesses matching resolved concepts.
-   * 2. Business retrieval — businesses matching the resolved location.
-   * 3. Name retrieval — businesses matching the search text.
-   *
-   * Ranking and pagination are handled by later pipeline stages.
-   */
-  private async retrieveCandidates(input: {
-    context: SearchContext;
-    resolved: unknown;
-  }): Promise<SearchBusinessResult[]> {
-    const { context, resolved } = input;
-
-    // 1. Validate resolver output
-    if (!resolved || typeof resolved !== "object") {
-      return [];
-    }
-
-    const resolution = resolved as {
-      concepts?: Array<{
-        id: number;
-        score?: number;
-      }>;
-      locations?: {
-        id: bigint | number | string;
-        type?: string;
-      } | null;
-    };
-
-    // 2. Validate and filter concepts
-    const MIN_CONCEPT_SCORE = 0.15;
-
-    const concepts = Array.isArray(resolution.concepts)
-      ? resolution.concepts.filter(
-          (concept) =>
-            concept !== null &&
-            typeof concept === "object" &&
-            Number.isSafeInteger(concept.id) &&
-            concept.id > 0 &&
-            (concept.score === undefined ||
-              (typeof concept.score === "number" &&
-                Number.isFinite(concept.score) &&
-                concept.score >= 0 &&
-                concept.score <= 1)),
-        )
-      : [];
-
-    const matchedConcepts = concepts.filter(
-      (concept) => (concept.score ?? 0) >= MIN_CONCEPT_SCORE,
-    );
-
-    const hasConcept = matchedConcepts.length > 0;
-    const location = resolution.locations;
-
-    // 3. Validate location ID
-    let locationId: bigint | null = null;
-
-    if (location && typeof location === "object") {
-      const rawId = location.id;
-
-      try {
-        if (typeof rawId === "bigint" && rawId > 0n) {
-          locationId = rawId;
-        } else if (
-          typeof rawId === "number" &&
-          Number.isSafeInteger(rawId) &&
-          rawId > 0
-        ) {
-          locationId = BigInt(rawId);
-        } else if (typeof rawId === "string" && /^[1-9]\d*$/.test(rawId)) {
-          locationId = BigInt(rawId);
-        }
-      } catch {
-        locationId = null;
-      }
-    }
-
-    const hasLocation = locationId !== null;
-
-    if (!hasConcept && !hasLocation) {
-      return [];
-    }
-
-    // 4. Deduplicate and validate candidate rows
-    const candidates = new Map<number, SearchBusinessResult>();
-
-    const addCandidates = (rows: SearchBusinessResult[]) => {
-      for (const row of rows) {
-        if (!row || !Number.isSafeInteger(row.id) || row.id <= 0) {
-          continue;
-        }
-
-        candidates.set(row.id, row);
-      }
-    };
-
-    // 5. Retrieve all businesses matching the resolved concepts.
-    // Intentionally do not apply a location filter here.
-    const conceptIds = [
-      ...new Set(matchedConcepts.map((concept) => concept.id)),
-    ];
-
-    if (conceptIds.length > 0) {
-      const conceptRows = (await findBusinessesByConceptTree(
-        conceptIds.map((id) => BigInt(id)),
-      )) as SearchBusinessResult[];
-
-      addCandidates(conceptRows);
-    }
-
-    // 6. Location-only search.
-    // Use location retrieval only when no concept was resolved.
-    if (!hasConcept && hasLocation && locationId !== null && location) {
-      let locationRows: SearchBusinessResult[];
-
-      switch (location.type) {
-        case "LOCALITY":
-          locationRows = (await findBusinessesByLocality(
-            locationId,
-          )) as SearchBusinessResult[];
-          break;
-
-        case "CITY":
-          locationRows = (await findBusinessesByCity(
-            locationId,
-          )) as SearchBusinessResult[];
-          break;
-
-        default:
-          locationRows = (await findBusinessesByLocation(
-            locationId,
-          )) as SearchBusinessResult[];
-          break;
-      }
-
-      addCandidates(locationRows);
-    }
-
-    // 7. Direct name search only when neither concept nor location
-    // was resolved.
-    const nameQuery =
-      typeof context.normalizedQuery === "string"
-        ? context.normalizedQuery.trim()
-        : "";
-
-    if (!hasConcept && !hasLocation && nameQuery.length >= 2) {
-      const nameMatches = (await searchBusinessesByName(
-        nameQuery,
-      )) as SearchBusinessResult[];
-
-      addCandidates(nameMatches);
-    }
-
-    return [...candidates.values()];
-  }
-  /**
-   * Rank candidate businesses.
-   */
-  private async rankCandidates(input: {
-    context: SearchContext;
-    candidates: SearchBusinessResult[];
-  }): Promise<SearchBusinessResult[]> {
-    /*
-     * TODO:
-     *
-     * searchRanking
-     * conceptRanking
-     * locationRanking
-     * qualityRanking
-     * subscriptionRanking
-     * diversityRanking
-     */
-
-    return input.candidates;
-  }
-
-  /**
-   * Paginate ranked results.
-   */
-  private paginate(
-    results: SearchBusinessResult[],
-    page: number,
-    perPage: number,
-  ): SearchBusinessResult[] {
-    const start = (page - 1) * perPage;
-
-    return results.slice(start, start + perPage);
   }
 
   /**
@@ -409,16 +227,47 @@ export class SearchService {
       return [];
     }
 
-    /*
-     * TODO:
-     *
-     * Search:
-     * - concept aliases
-     * - location aliases
-     * - business names
-     */
-
-    return [];
+    if (value.type === "location") {
+      const matches = await locationResolver.findLocationCandidates(query, {
+        limit: 8,
+      });
+      return Promise.all(
+        matches.map(async (match) => {
+          const ancestors = await locationResolver.resolveLocationHierarchy(
+            match.id,
+          );
+          const parentNames = ancestors
+            .filter((node) => node.id !== match.id)
+            .reverse()
+            .slice(0, 2)
+            .map((node) => node.name);
+          return {
+            id: Number(match.id),
+            text: match.name,
+            label: [match.name, ...parentNames].join(", "),
+            type: "location" as const,
+          };
+        }),
+      );
+    }
+    const parsed = await parseSearchQuery({
+      query,
+      tokens: tokenizeSearchQuery(query),
+    });
+    const concepts = await conceptResolver.resolve({
+      query,
+      tokens: tokenizeSearchQuery(query),
+      parsed,
+    });
+    return concepts
+      .filter((match) => match.score >= 0.3)
+      .slice(0, 8)
+      .map((match) => ({
+        id: match.id,
+        text: match.name,
+        label: match.name,
+        type: "concept" as const,
+      }));
   }
 
   /**
@@ -521,10 +370,43 @@ export class SearchService {
       throw new Error("perPage must not exceed 100");
     }
 
+    if (
+      value.location !== undefined &&
+      (typeof value.location !== "string" || value.location.length > 200)
+    ) {
+      throw new Error("Location must be a string of at most 200 characters");
+    }
+    const locationId =
+      value.locationId === undefined
+        ? undefined
+        : this.getPositiveInteger(value.locationId, 1, "locationId");
+    let userLocation: { lat: number; lng: number } | undefined;
+    if (value.userLocation !== undefined) {
+      if (!value.userLocation || typeof value.userLocation !== "object")
+        throw new Error("Invalid user location");
+      const coordinates = value.userLocation as Record<string, unknown>;
+      const { lat, lng } = coordinates;
+      if (
+        typeof lat !== "number" ||
+        !Number.isFinite(lat) ||
+        lat < -90 ||
+        lat > 90 ||
+        typeof lng !== "number" ||
+        !Number.isFinite(lng) ||
+        lng < -180 ||
+        lng > 180
+      ) {
+        throw new Error("Invalid user location coordinates");
+      }
+      userLocation = { lat, lng };
+    }
     return {
+      userLocation,
       query,
       page,
       perPage,
+      location: (value.location as string | undefined)?.trim(),
+      locationId,
     };
   }
 
@@ -540,7 +422,11 @@ export class SearchService {
       return defaultValue;
     }
 
-    if (typeof value !== "number" || !Number.isInteger(value) || value < 1) {
+    if (
+      typeof value !== "number" ||
+      !Number.isSafeInteger(value) ||
+      value < 1
+    ) {
       throw new Error(`${fieldName} must be a positive integer`);
     }
 

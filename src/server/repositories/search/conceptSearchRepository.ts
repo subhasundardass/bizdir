@@ -62,7 +62,7 @@ class ConceptSearchRepository {
             THEN similarity(a.text, ${query}) * 0.85
 
           -- Fuzzy concept-name match
-          WHEN similarity(LOWER(TRIM(c.name)), ${query}) > 0
+          WHEN similarity(LOWER(TRIM(c.name)), ${query}) >= 0.3
             THEN similarity(LOWER(TRIM(c.name)), ${query}) * 0.70
 
           ELSE 0
@@ -81,7 +81,7 @@ class ConceptSearchRepository {
           OR c.slug LIKE ${query} || '%'
           OR LOWER(TRIM(c.name)) LIKE ${"%" + query + "%"}
           OR a.text % ${query}
-          OR similarity(LOWER(TRIM(c.name)), ${query}) > 0
+          OR similarity(LOWER(TRIM(c.name)), ${query}) >= 0.3
         )
       GROUP BY
         c.id,
@@ -95,59 +95,6 @@ class ConceptSearchRepository {
     `;
 
     return matches;
-  }
-
-  /**
-   * Calculate a simple concept-name match score.
-   *
-   * This is intentionally basic.
-   *
-   * Later we can replace this with:
-   *
-   * - alias matching
-   * - token matching
-   * - PostgreSQL trigram similarity
-   * - exact phrase matching
-   * - fuzzy matching
-   */
-  private calculateScore(input: {
-    query: string;
-    name: string;
-    slug: string;
-  }): number {
-    const { query, name, slug } = input;
-
-    if (name === query) {
-      return 1;
-    }
-
-    if (slug === query) {
-      return 0.98;
-    }
-
-    if (name.startsWith(query)) {
-      return 0.9;
-    }
-
-    if (name.includes(query)) {
-      return 0.8;
-    }
-
-    if (slug.includes(query)) {
-      return 0.7;
-    }
-
-    const queryTokens = query.split(/\s+/).filter(Boolean);
-
-    const matchedTokens = queryTokens.filter(
-      (token) => name.includes(token) || slug.includes(token),
-    );
-
-    if (matchedTokens.length === 0) {
-      return 0;
-    }
-
-    return 0.4 * (matchedTokens.length / queryTokens.length);
   }
 }
 
