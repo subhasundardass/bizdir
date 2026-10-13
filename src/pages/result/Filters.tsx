@@ -1,4 +1,21 @@
 import { categoryOptions, type SearchFilters } from "@/shared/searchFilters";
+import { useId } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+const checkboxStyle =
+  "rounded-[3px] border-gray-400 shadow-none data-[state=checked]:border-jd-orange data-[state=checked]:bg-jd-orange data-[state=checked]:text-white focus-visible:border-jd-orange focus-visible:ring-jd-orange/30";
+const radioStyle =
+  "border-gray-400 text-jd-orange shadow-none data-[state=checked]:border-jd-orange focus-visible:border-jd-orange focus-visible:ring-jd-orange/30 [&_svg]:fill-jd-orange";
+const labelStyle = "cursor-pointer gap-3 text-xs font-normal leading-5";
 export type FilterProps = {
   filters: SearchFilters;
   onChange: (patch: Partial<SearchFilters>) => void;
@@ -11,12 +28,16 @@ export function Filters({
   hasLocation,
   requestLocation,
 }: FilterProps) {
+  const id = useId();
   return (
     <div className="rounded-2xl border border-jd-line bg-white p-4 text-xs space-y-5">
       <div className="flex justify-between">
         <h2 className="font-bold">Filters</h2>
-        <button
-          className="text-jd-orange"
+        <Button
+          type="button"
+          variant="unstyled"
+          size="unstyled"
+          className="text-jd-orange hover:text-jd-hover focus-visible:ring-jd-orange/30"
           onClick={() =>
             onChange({
               categories: [],
@@ -28,80 +49,120 @@ export function Filters({
           }
         >
           Clear All
-        </button>
+        </Button>
       </div>
       <fieldset className="space-y-3">
         <legend className="mb-3 font-bold">Category</legend>
         {categoryOptions.map((option) => (
-          <label key={option.value} className="flex items-center gap-3">
-            <input
-              type="checkbox"
+          <Label
+            key={option.value}
+            htmlFor={`${id}-${option.value}`}
+            className={labelStyle}
+          >
+            <Checkbox
+              id={`${id}-${option.value}`}
+              className={checkboxStyle}
               checked={filters.categories.includes(option.value)}
-              onChange={(event) =>
+              onCheckedChange={(checked) =>
                 onChange({
-                  categories: event.target.checked
-                    ? [...filters.categories, option.value]
-                    : filters.categories.filter(
-                        (value) => value !== option.value,
-                      ),
+                  categories:
+                    checked === true
+                      ? [...filters.categories, option.value]
+                      : filters.categories.filter(
+                          (value) => value !== option.value,
+                        ),
                 })
               }
             />
             {option.label}
-          </label>
+          </Label>
         ))}
-        <label className="flex items-center gap-3">
-          <input
-            type="checkbox"
+        <Label htmlFor={`${id}-pureVeg`} className={labelStyle}>
+          <Checkbox
+            className={checkboxStyle}
+            id={`${id}-pureVeg`}
             checked={filters.pureVeg}
-            onChange={(event) => onChange({ pureVeg: event.target.checked })}
+            onCheckedChange={(checked) =>
+              onChange({ pureVeg: checked === true })
+            }
           />
           Pure Veg
-        </label>
+        </Label>
       </fieldset>
       <fieldset className="space-y-3">
         <legend className="mb-3 font-bold">Rating</legend>
-        {[undefined, 4.5, 4, 3.5].map((rating) => (
-          <label key={rating ?? "any"} className="flex items-center gap-3">
-            <input
-              type="radio"
-              name="rating"
-              checked={filters.minRating === rating}
-              onChange={() => onChange({ minRating: rating })}
-            />
-            {rating ? `${rating.toFixed(1)}+` : "Any rating"}
-          </label>
-        ))}
+        <RadioGroup
+          aria-label="Minimum rating"
+          value={String(filters.minRating ?? "any")}
+          onValueChange={(value) =>
+            onChange({ minRating: value === "any" ? undefined : Number(value) })
+          }
+        >
+          {[undefined, 4.5, 4, 3.5].map((rating) => (
+            <Label
+              key={rating ?? "any"}
+              htmlFor={`${id}-rating-${rating ?? "any"}`}
+              className={labelStyle}
+            >
+              <RadioGroupItem
+                id={`${id}-rating-${rating ?? "any"}`}
+                value={String(rating ?? "any")}
+                className={radioStyle}
+              />
+              {rating ? `${rating.toFixed(1)}+` : "Any rating"}
+            </Label>
+          ))}
+        </RadioGroup>
       </fieldset>
       <fieldset>
         <legend className="mb-3 font-bold">Availability</legend>
-        <label className="flex items-center gap-3">
-          <input
-            type="checkbox"
+        <Label htmlFor={`${id}-openNow`} className={labelStyle}>
+          <Checkbox
+            className={checkboxStyle}
+            id={`${id}-openNow`}
             checked={filters.openNow}
-            onChange={(event) => onChange({ openNow: event.target.checked })}
+            onCheckedChange={(checked) =>
+              onChange({ openNow: checked === true })
+            }
           />
           Open Now
-        </label>
+        </Label>
       </fieldset>
       <fieldset className="space-y-3">
         <legend className="mb-3 font-bold">Distance</legend>
-        {[undefined, 1, 3, 5].map((distance) => (
-          <label key={distance ?? "any"} className="flex items-center gap-3">
-            <input
-              type="radio"
-              name="distance"
-              disabled={!!distance && !hasLocation}
-              checked={filters.distance === distance}
-              onChange={() => onChange({ distance })}
-            />
-            {distance ? `Within ${distance} km` : "Any distance"}
-          </label>
-        ))}
+        <RadioGroup
+          aria-label="Maximum distance"
+          value={String(filters.distance ?? "any")}
+          onValueChange={(value) =>
+            onChange({ distance: value === "any" ? undefined : Number(value) })
+          }
+        >
+          {[undefined, 1, 3, 5].map((distance) => (
+            <Label
+              key={distance ?? "any"}
+              htmlFor={`${id}-distance-${distance ?? "any"}`}
+              className={`${labelStyle} ${distance && !hasLocation ? "opacity-50" : ""}`}
+            >
+              <RadioGroupItem
+                id={`${id}-distance-${distance ?? "any"}`}
+                disabled={!!distance && !hasLocation}
+                value={String(distance ?? "any")}
+                className={radioStyle}
+              />
+              {distance ? `Within ${distance} km` : "Any distance"}
+            </Label>
+          ))}
+        </RadioGroup>
         {!hasLocation && (
-          <button onClick={requestLocation} className="text-jd-orange">
+          <Button
+            type="button"
+            variant="unstyled"
+            size="unstyled"
+            onClick={requestLocation}
+            className="text-jd-orange hover:text-jd-hover focus-visible:ring-jd-orange/30"
+          >
             Enable location to filter by distance
-          </button>
+          </Button>
         )}
       </fieldset>
     </div>
@@ -113,26 +174,32 @@ export function SortSelect({
   hasLocation,
 }: Omit<FilterProps, "requestLocation">) {
   return (
-    <label className="flex items-center gap-2 text-xs">
-      Sort by
-      <select
-        aria-label="Sort businesses"
+    <div className="flex items-center gap-2 text-xs">
+      <span>Sort by</span>
+      <Select
         value={filters.sort}
-        onChange={(event) =>
-          onChange({ sort: event.target.value as SearchFilters["sort"] })
+        onValueChange={(value) =>
+          onChange({ sort: value as SearchFilters["sort"] })
         }
-        className="rounded-full border border-jd-line bg-white px-3 py-2"
       >
-        <option value="auto">
-          {hasLocation ? "Nearest first (default)" : "Default"}
-        </option>
-        <option value="relevance">Relevance</option>
-        <option value="rating">Highest rated</option>
-        <option value="reviews">Most reviewed</option>
-        <option value="distance" disabled={!hasLocation}>
-          Nearest first
-        </option>
-      </select>
-    </label>
+        <SelectTrigger
+          aria-label="Sort businesses"
+          className="rounded-full border-jd-line bg-white text-xs text-ink hover:border-jd-border focus-visible:border-jd-orange focus-visible:ring-jd-orange/30"
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="auto">
+            {hasLocation ? "Nearest first (default)" : "Default"}
+          </SelectItem>
+          <SelectItem value="relevance">Relevance</SelectItem>
+          <SelectItem value="rating">Highest rated</SelectItem>
+          <SelectItem value="reviews">Most reviewed</SelectItem>
+          <SelectItem value="distance" disabled={!hasLocation}>
+            Nearest first
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
   );
 }
