@@ -1,3 +1,4 @@
+import { parseSearchFilters } from "@/shared/searchFilters";
 import { useNavigate } from "@tanstack/react-router";
 import { BusinessSearchForm } from "@/components/BusinessSearchForm";
 import { MapPin } from "lucide-react";
@@ -32,7 +33,12 @@ export function HeroSection() {
               onSearch={(values) =>
                 navigate({
                   to: "/result",
-                  search: { ...values, locationId: values.locationId, page: 1 },
+                  search: {
+                    ...parseSearchFilters({}),
+                    ...values,
+                    locationId: values.locationId,
+                    page: 1,
+                  },
                 })
               }
             />
