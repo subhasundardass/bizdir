@@ -128,7 +128,7 @@ export function MainResultArea({
             >
               <div className="flex flex-col sm:flex-row">
                 {/* Image */}
-                <div className="relative h-48 shrink-0 overflow-hidden sm:h-auto sm:w-[350px]">
+                <div className="relative h-48 shrink-0 overflow-hidden sm:h-auto sm:w-87.5">
                   <img
                     src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop&q=80"
                     alt={business.name}
