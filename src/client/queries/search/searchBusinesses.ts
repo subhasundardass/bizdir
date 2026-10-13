@@ -1,47 +1,16 @@
 import { queryOptions } from "@tanstack/react-query";
-import { searchBusinessesFn } from "@/server/functions/searchBusinessesFn";
-
-export type SearchBusinessesParams = {
-  query: string;
-  location?: string;
-  locationId?: number;
-  userLocation?: { lat: number; lng: number };
-  page?: number;
-  perPage?: number;
-};
-
-export function searchBusinessesQuery({
-  query,
-  location,
-  locationId,
-  userLocation,
-  page = 1,
-  perPage = 20,
-}: SearchBusinessesParams) {
+import {
+  searchBusinessesFn,
+  type SearchBusinessesInput,
+} from "@/server/functions/searchBusinessesFn";
+export type SearchBusinessesParams = SearchBusinessesInput;
+export function searchBusinessesQuery(params: SearchBusinessesParams) {
   return queryOptions({
-    queryKey: [
-      "search-businesses",
-      query,
-      location,
-      locationId,
-      userLocation?.lat,
-      userLocation?.lng,
-      page,
-      perPage,
-    ],
-
-    queryFn: () =>
-      searchBusinessesFn({
-        data: {
-          query,
-          location,
-          locationId,
-          userLocation,
-          page,
-          perPage,
-        },
-      }),
-
-    enabled: query.trim().length >= 2,
+    queryKey: ["search-businesses", params],
+    queryFn: () => searchBusinessesFn({ data: params }),
+    enabled:
+      params.query.trim().length >= 2 &&
+      (!(params.distance || params.sort === "distance") ||
+        Boolean(params.userLocation)),
   });
 }
