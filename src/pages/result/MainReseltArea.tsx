@@ -1,18 +1,7 @@
 import { CircleCheck, Clock, Heart, MapPin } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
-type Filters = {
-  restaurants: boolean;
-  cafes: boolean;
-  fastFood: boolean;
-  pureVeg: boolean;
-  openNow: boolean;
-  distance: string;
-};
-
+import { Filters, type FilterProps } from "./Filters";
+import { categoryOptions } from "@/shared/searchFilters";
 type SearchBusinessResult = {
   id: number;
   name: string;
@@ -22,6 +11,7 @@ type SearchBusinessResult = {
   localityId: number | null;
   rating: number | null;
   reviewCount: number | null;
+  openNow?: boolean;
   distanceKm?: number | null;
 };
 
@@ -32,7 +22,8 @@ type SearchResponse = {
   perPage: number;
 };
 
-type MainResultAreaProps = {
+type MainResultAreaProps = FilterProps & {
+  mobileFiltersOpen: boolean;
   data: SearchResponse | undefined;
   isLoading: boolean;
   isError: boolean;
@@ -44,264 +35,90 @@ export function MainResultArea({
   isLoading,
   isError,
   error,
+  filters,
+  onChange,
+  hasLocation,
+  requestLocation,
+  mobileFiltersOpen,
 }: MainResultAreaProps) {
-  const { control, reset } = useForm<Filters>({
-    defaultValues: {
-      restaurants: true,
-      cafes: false,
-      fastFood: false,
-      pureVeg: false,
-      openNow: false,
-      distance: "",
-    },
-  });
-
   const businesses = data?.businesses ?? [];
 
   return (
     <section className="mx-auto max-w-360 px-4 py-5 sm:px-6 lg:px-8">
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[235px_minmax(0,1fr)_360px]">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[235px_minmax(0,1fr)]">
         {/* ===================================================== */}
         {/* FILTER SIDEBAR */}
         {/* ===================================================== */}
-        <aside className="hidden lg:block">
-          <div className="sticky top-21 overflow-hidden rounded-2xl border border-jd-line bg-white">
-            <div className="flex items-center justify-between border-b border-jd-line px-4 py-4">
-              <h2 className="text-sm font-bold text-ink">Filters</h2>
-              <Button
-                variant="unstyled"
-                size="unstyled"
-                type="button"
-                onClick={() =>
-                  reset({
-                    restaurants: false,
-                    cafes: false,
-                    fastFood: false,
-                    pureVeg: false,
-                    openNow: false,
-                    distance: "",
-                  })
-                }
-                className="text-[11px] font-semibold text-jd-orange hover:text-jd-hover"
-              >
-                Clear All
-              </Button>
-            </div>
-            {/* Category */}
-            <div className="border-b border-jd-line px-4 py-4">
-              <h3 className="text-xs font-bold text-ink">Category</h3>
-              <Label className="mt-3 flex font-normal cursor-pointer items-center gap-3">
-                <Controller
-                  name="restaurants"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      ref={field.ref}
-                      name={field.name}
-                      checked={field.value}
-                      onCheckedChange={(checked) =>
-                        field.onChange(checked === true)
-                      }
-                      onBlur={field.onBlur}
-                      className="h-4 w-4 rounded-[3px] border-gray-400 shadow-none data-[state=checked]:border-jd-orange data-[state=checked]:bg-jd-orange"
-                    />
-                  )}
-                />
-                <span className="text-xs ">Restaurants</span>
-              </Label>
-              <Label className="mt-3 flex font-normal cursor-pointer items-center gap-3">
-                <Controller
-                  name="cafes"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      ref={field.ref}
-                      name={field.name}
-                      checked={field.value}
-                      onCheckedChange={(checked) =>
-                        field.onChange(checked === true)
-                      }
-                      onBlur={field.onBlur}
-                      className="h-4 w-4 rounded-[3px] border-gray-400 shadow-none data-[state=checked]:border-jd-orange data-[state=checked]:bg-jd-orange"
-                    />
-                  )}
-                />
-                <span className="text-xs ">Cafes</span>
-              </Label>
-              <Label className="mt-3 flex font-normal cursor-pointer items-center gap-3">
-                <Controller
-                  name="fastFood"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      ref={field.ref}
-                      name={field.name}
-                      checked={field.value}
-                      onCheckedChange={(checked) =>
-                        field.onChange(checked === true)
-                      }
-                      onBlur={field.onBlur}
-                      className="h-4 w-4 rounded-[3px] border-gray-400 shadow-none data-[state=checked]:border-jd-orange data-[state=checked]:bg-jd-orange"
-                    />
-                  )}
-                />
-                <span className="text-xs ">Fast Food</span>
-              </Label>
-              <Label className="mt-3 flex font-normal cursor-pointer items-center gap-3">
-                <Controller
-                  name="pureVeg"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      ref={field.ref}
-                      name={field.name}
-                      checked={field.value}
-                      onCheckedChange={(checked) =>
-                        field.onChange(checked === true)
-                      }
-                      onBlur={field.onBlur}
-                      className="h-4 w-4 rounded-[3px] border-gray-400 shadow-none data-[state=checked]:border-jd-orange data-[state=checked]:bg-jd-orange"
-                    />
-                  )}
-                />
-                <span className="text-xs ">Pure Veg</span>
-              </Label>
-            </div>
-            {/* Rating */}
-            <div className="border-b border-jd-line px-4 py-4">
-              <h3 className="text-xs font-bold text-ink">Rating</h3>
-              <div className="mt-3 space-y-2">
-                <Button
-                  variant="unstyled"
-                  size="unstyled"
-                  type="button"
-                  className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-all duration-200 hover:bg-jd-light"
-                >
-                  <span className="flex items-center gap-1 text-xs font-semibold text-ink">
-                    <i className="fa-solid fa-star text-jd-rating" />
-                    4.5+
-                  </span>
-                  <span className="text-[11px] text-gray-500">(1200)</span>
-                </Button>
-                <Button
-                  variant="unstyled"
-                  size="unstyled"
-                  type="button"
-                  className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-all duration-200 hover:bg-jd-light"
-                >
-                  <span className="flex items-center gap-1 text-xs font-semibold text-ink">
-                    <i className="fa-solid fa-star text-jd-rating" />
-                    4.0+
-                  </span>
-                  <span className="text-[11px] text-gray-500">(2400)</span>
-                </Button>
-                <Button
-                  variant="unstyled"
-                  size="unstyled"
-                  type="button"
-                  className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-all duration-200 hover:bg-jd-light"
-                >
-                  <span className="flex items-center gap-1 text-xs font-semibold text-ink">
-                    <i className="fa-solid fa-star text-jd-rating" />
-                    3.5+
-                  </span>
-                  <span className="text-[11px] text-gray-500">(3700)</span>
-                </Button>
-              </div>
-            </div>
-            {/* Open Now */}
-            <div className="border-b border-jd-line px-4 py-4">
-              <h3 className="text-xs font-bold text-ink">Availability</h3>
-              <Label className="mt-3 flex font-normal cursor-pointer items-center justify-between">
-                <span className="text-xs ">Open Now</span>
-                <Controller
-                  name="openNow"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      ref={field.ref}
-                      name={field.name}
-                      checked={field.value}
-                      onCheckedChange={(checked) =>
-                        field.onChange(checked === true)
-                      }
-                      onBlur={field.onBlur}
-                      className="h-4 w-4 rounded-[3px] border-gray-400 shadow-none data-[state=checked]:border-jd-orange data-[state=checked]:bg-jd-orange"
-                    />
-                  )}
-                />
-              </Label>
-            </div>
-            {/* Distance */}
-            <div className="px-4 py-4">
-              <h3 className="text-xs font-bold text-ink">Distance</h3>
-              <Controller
-                name="distance"
-                control={control}
-                render={({ field }) => (
-                  <RadioGroup
-                    name={field.name}
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    onBlur={field.onBlur}
-                    className="mt-3 gap-2"
-                  >
-                    {["1", "3", "5"].map((distance) => (
-                      <Label
-                        key={distance}
-                        className="flex cursor-pointer items-center gap-3 font-normal"
-                      >
-                        <RadioGroupItem
-                          ref={distance === "1" ? field.ref : undefined}
-                          value={distance}
-                          className="h-4 w-4 border-gray-400 text-jd-orange shadow-none data-[state=checked]:border-jd-orange"
-                        />
-                        <span className="text-xs">Within {distance} km</span>
-                      </Label>
-                    ))}
-                  </RadioGroup>
-                )}
-              />
-            </div>
+        <aside className={mobileFiltersOpen ? "block" : "hidden lg:block"}>
+          <div className="sticky top-21">
+            <Filters
+              filters={filters}
+              onChange={onChange}
+              hasLocation={hasLocation}
+              requestLocation={requestLocation}
+            />
           </div>
         </aside>
         {/* ===================================================== */}
         {/* RESULTS */}
         {/* ===================================================== */}
         <div className="min-w-0">
-          {/* Active filters */}
-          <div className="mb-4 flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <Button
-              variant="unstyled"
-              size="unstyled"
-              type="button"
-              className="flex shrink-0 items-center gap-2 rounded-full border border-jd-border bg-jd-light px-3 py-1.5 text-[11px] font-semibold text-jd-orange"
-            >
-              Restaurants
-              <i className="fa-solid fa-xmark text-[9px]" />
-            </Button>
-            <Button
-              variant="unstyled"
-              size="unstyled"
-              type="button"
-              className="flex shrink-0 items-center gap-2 rounded-full border border-jd-line bg-white px-3 py-1.5 text-[11px] font-medium  transition-all duration-200 hover:border-jd-border hover:text-jd-orange"
-            >
-              4.0+ Rating
-              <i className="fa-solid fa-xmark text-[9px]" />
-            </Button>
-            <Button
-              variant="unstyled"
-              size="unstyled"
-              type="button"
-              className="flex shrink-0 items-center gap-2 rounded-full border border-jd-line bg-white px-3 py-1.5 text-[11px] font-medium  transition-all duration-200 hover:border-jd-border hover:text-jd-orange"
-            >
-              Open Now
-              <i className="fa-solid fa-xmark text-[9px]" />
-            </Button>
+          <div className="mb-4 flex flex-wrap gap-2">
+            {[
+              ...categoryOptions
+                .filter((option) => filters.categories.includes(option.value))
+                .map((option) => ({
+                  label: option.label,
+                  remove: () =>
+                    onChange({
+                      categories: filters.categories.filter(
+                        (value) => value !== option.value,
+                      ),
+                    }),
+                })),
+              ...(filters.pureVeg
+                ? [
+                    {
+                      label: "Pure Veg",
+                      remove: () => onChange({ pureVeg: false }),
+                    },
+                  ]
+                : []),
+              ...(filters.openNow
+                ? [
+                    {
+                      label: "Open Now",
+                      remove: () => onChange({ openNow: false }),
+                    },
+                  ]
+                : []),
+              ...(filters.minRating
+                ? [
+                    {
+                      label: `${filters.minRating.toFixed(1)}+ Rating`,
+                      remove: () => onChange({ minRating: undefined }),
+                    },
+                  ]
+                : []),
+              ...(filters.distance
+                ? [
+                    {
+                      label: `Within ${filters.distance} km`,
+                      remove: () => onChange({ distance: undefined }),
+                    },
+                  ]
+                : []),
+            ].map((chip) => (
+              <button
+                key={chip.label}
+                onClick={chip.remove}
+                aria-label={`Remove ${chip.label} filter`}
+                className="rounded-full border border-jd-border bg-jd-light px-3 py-1.5 text-xs text-jd-orange"
+              >
+                {chip.label} ×
+              </button>
+            ))}
           </div>
-
-          {/* ===================================================== */}
-
           {businesses.map((business) => (
             <article
               key={business.id}
@@ -367,9 +184,16 @@ export function MainResultArea({
 
                     <p className="flex items-center gap-2 text-xs">
                       <Clock className="h-3 w-3 shrink-0 text-jd-orange" />
-                      Open until 11:30 PM
-                      <span className="font-semibold text-success">
-                        Open Now
+                      <span
+                        className={
+                          business.openNow
+                            ? "font-semibold text-success"
+                            : "text-gray-500"
+                        }
+                      >
+                        {business.openNow
+                          ? "Open Now"
+                          : "Closed or hours unavailable"}
                       </span>
                     </p>
                   </div>
