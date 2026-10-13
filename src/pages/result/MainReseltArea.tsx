@@ -109,14 +109,16 @@ export function MainResultArea({
                   ]
                 : []),
             ].map((chip) => (
-              <button
+              <Button
+                variant="unstyled"
+                size="unstyled"
                 key={chip.label}
                 onClick={chip.remove}
                 aria-label={`Remove ${chip.label} filter`}
                 className="rounded-full border border-jd-border bg-jd-light px-3 py-1.5 text-xs text-jd-orange"
               >
                 {chip.label} ×
-              </button>
+              </Button>
             ))}
           </div>
           {businesses.map((business) => (
