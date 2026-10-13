@@ -1,7 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { searchService } from "@/server/search/searchService";
 
-export type SearchBusinessesInput = {
+import type { SearchFilters } from "@/shared/searchFilters";
+
+export type SearchBusinessesInput = Partial<SearchFilters> & {
   query: string;
   location?: string;
   locationId?: number;

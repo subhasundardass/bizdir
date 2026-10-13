@@ -1,8 +1,10 @@
+import { parseSearchFilters } from "@/shared/searchFilters";
 import { SearchResult } from "@/pages/result";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/result")({
   validateSearch: (search: Record<string, unknown>) => ({
+    ...parseSearchFilters(search),
     query: typeof search.query === "string" ? search.query.slice(0, 300) : "",
     location:
       typeof search.location === "string" ? search.location.slice(0, 200) : "",

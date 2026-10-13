@@ -1,3 +1,4 @@
+import type { SearchFilters } from "@/shared/searchFilters";
 import { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 
@@ -10,6 +11,7 @@ export type BusinessSearchRow = {
   localityId: number | null;
   rating: number | null;
   reviewCount: number;
+  openNow?: boolean;
   distanceKm?: number | null;
 };
 
@@ -22,6 +24,7 @@ type RawBusinessRow = {
   localityId: bigint | number | null;
   rating: number | string | null;
   reviewCount: number | bigint;
+  openNow?: boolean;
   distanceKm?: number | null;
 };
 
@@ -40,6 +43,7 @@ const BUSINESS_SELECT = Prisma.sql`
 
 function mapRows(rows: RawBusinessRow[]): BusinessSearchRow[] {
   return rows.map((row) => ({
+    openNow: row.openNow,
     id: Number(row.id),
     name: row.name,
     slug: row.slug,
@@ -486,16 +490,18 @@ export async function findParentCityIdForLocality(
 }
 
 /** Match concept descendants and the selected location subtree in the same query. */
-export async function searchMatchingBusinesses(input: {
-  conceptIds: number[];
-  query: string;
-  locationId?: number;
-  locationUnresolved: boolean;
-  page: number;
-  perPage: number;
-  userLocation?: { lat: number; lng: number };
-  locationOnly?: boolean;
-}): Promise<{ businesses: BusinessSearchRow[]; total: number }> {
+export async function searchMatchingBusinesses(
+  input: SearchFilters & {
+    conceptIds: number[];
+    query: string;
+    locationId?: number;
+    locationUnresolved: boolean;
+    page: number;
+    perPage: number;
+    userLocation?: { lat: number; lng: number };
+    locationOnly?: boolean;
+  },
+): Promise<{ businesses: BusinessSearchRow[]; total: number }> {
   if (input.locationUnresolved) return { businesses: [], total: 0 };
   const conceptFilter = input.locationOnly
     ? Prisma.sql`TRUE`
@@ -511,8 +517,67 @@ export async function searchMatchingBusinesses(input: {
     ? Prisma.sql`(b.city_id IN (SELECT id FROM location_tree)
         OR b.locality_id IN (SELECT id FROM location_tree))`
     : Prisma.sql`TRUE`;
+  const categoryNames: Record<string, string[]> = {
+    restaurants: ["restaurant", "restaurants"],
+    cafes: ["cafe", "cafes", "coffee shop", "coffee shops"],
+    fastFood: ["fast food", "fast food restaurant", "fast food restaurants"],
+  };
+  const names = input.categories.flatMap(
+    (category) => categoryNames[category] ?? [],
+  );
+  const categoryFilter = names.length
+    ? Prisma.sql`EXISTS (
+    SELECT 1 FROM business_concept bc JOIN category_tree ct ON ct.id = bc.concept_id
+    WHERE bc.business_id = b.id
+  )`
+    : Prisma.sql`TRUE`;
+  const vegFilter = input.pureVeg
+    ? Prisma.sql`EXISTS (
+    SELECT 1 FROM business_attribute ba JOIN attribute a ON a.id = ba.attribute_id
+    WHERE ba.business_id = b.id AND a.is_active = TRUE
+      AND (a.slug IN ('pure-veg', 'pure-vegetarian', 'vegetarian', 'pure_veg')
+        OR lower(a.name) IN ('pure veg', 'pure vegetarian', 'vegetarian'))
+  )`
+    : Prisma.sql`TRUE`;
+  // Hours use Sunday=0, with overnight intervals belonging to their opening day.
+  const localNow = Prisma.sql`(CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Kolkata')`;
+  const openNow = Prisma.sql`(b.is_24x7 OR EXISTS (
+    SELECT 1 FROM business_hours bh WHERE bh.business_id = b.id AND (
+      (bh.weekday = EXTRACT(DOW FROM ${localNow})::integer
+        AND bh.open_time <= ${localNow}::time
+        AND (bh.close_time > ${localNow}::time OR bh.close_time < bh.open_time))
+      OR (bh.weekday = (EXTRACT(DOW FROM ${localNow})::integer + 6) % 7
+        AND bh.close_time < bh.open_time AND bh.close_time > ${localNow}::time)
+    )
+  ))`;
+  const availabilityFilter = input.openNow ? openNow : Prisma.sql`TRUE`;
+  const ratingFilter = input.minRating
+    ? Prisma.sql`b.rating >= ${input.minRating}`
+    : Prisma.sql`TRUE`;
+  const radiusFilter =
+    input.distance && input.userLocation
+      ? Prisma.sql`ST_DWithin(
+    b.geom::geography,
+    ST_SetSRID(ST_MakePoint(${input.userLocation.lng}, ${input.userLocation.lat}), 4326)::geography,
+    ${input.distance * 1000}
+  )`
+      : Prisma.sql`TRUE`;
+  const filters = Prisma.sql`${categoryFilter} AND ${vegFilter} AND ${availabilityFilter} AND ${ratingFilter} AND ${radiusFilter}`;
+  const order =
+    input.sort === "distance" || (input.sort === "auto" && input.userLocation)
+      ? Prisma.sql`"distanceKm" ASC NULLS LAST, b.rating DESC, b.review_count DESC`
+      : input.sort === "reviews"
+        ? Prisma.sql`b.review_count DESC, b.rating DESC`
+        : input.sort === "rating"
+          ? Prisma.sql`b.rating DESC, b.review_count DESC`
+          : Prisma.sql`similarity(b.name_norm, norm_text(${input.query})) DESC NULLS LAST, b.rating DESC, b.review_count DESC`;
   const cte = Prisma.sql`
-    WITH RECURSIVE concept_tree AS (
+    WITH RECURSIVE category_tree AS (
+      SELECT id FROM concept WHERE is_active = TRUE AND
+        ${names.length ? Prisma.sql`(lower(name) IN (${Prisma.join(names)}) OR replace(slug, '-', ' ') IN (${Prisma.join(names)}))` : Prisma.sql`FALSE`}
+      UNION
+      SELECT c.id FROM concept c JOIN category_tree parent ON c.parent_id = parent.id WHERE c.is_active = TRUE
+    ), concept_tree AS (
       SELECT id FROM concept
       WHERE ${input.conceptIds.length ? Prisma.sql`id IN (${Prisma.join(input.conceptIds)})` : Prisma.sql`FALSE`}
         AND is_active = TRUE
@@ -532,17 +597,17 @@ export async function searchMatchingBusinesses(input: {
   const orderedSelect = Prisma.sql`
     SELECT b.id, b.name, b.slug, b.address, b.city_id AS "cityId",
       b.locality_id AS "localityId", b.rating, b.review_count AS "reviewCount",
-      ${distance} AS "distanceKm"
+      ${distance} AS "distanceKm", ${openNow} AS "openNow"
     FROM business b`;
   // A transaction keeps the total and the page consistent under concurrent writes.
   const [counts, rows] = await db.$transaction(
     [
       db.$queryRaw<Array<{ total: bigint }>>(Prisma.sql`${cte}
       SELECT COUNT(*) AS total FROM business b
-      WHERE b.status = 'active' AND ${conceptFilter} AND ${locationFilter}`),
+      WHERE b.status = 'active' AND ${conceptFilter} AND ${locationFilter} AND ${filters}`),
       db.$queryRaw<RawBusinessRow[]>(Prisma.sql`${cte} ${orderedSelect}
-      WHERE b.status = 'active' AND ${conceptFilter} AND ${locationFilter}
-      ORDER BY "distanceKm" ASC NULLS LAST, b.rating DESC, b.review_count DESC, b.name ASC, b.id ASC
+      WHERE b.status = 'active' AND ${conceptFilter} AND ${locationFilter} AND ${filters}
+      ORDER BY ${order}, b.name ASC, b.id ASC
       LIMIT ${input.perPage} OFFSET ${(input.page - 1) * input.perPage}`),
     ],
     { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },

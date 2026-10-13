@@ -1,3 +1,6 @@
+import { parseSearchFilters } from "@/shared/searchFilters";
+import { useState } from "react";
+import type { SearchFilters } from "@/shared/searchFilters";
 import { useSearchLocation } from "@/client/hooks/useSearchLocation";
 import { useQuery } from "@tanstack/react-query";
 import { Route } from "@/routes/result";
@@ -10,6 +13,7 @@ import { Header } from "./Header";
 import { MainResultArea } from "./MainReseltArea";
 
 export function SearchResult() {
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const values = Route.useSearch();
   const navigate = Route.useNavigate();
   const userLocation = useSearchLocation();
@@ -22,9 +26,25 @@ export function SearchResult() {
   );
   function handleSearch(next: SearchValues) {
     void navigate({
-      search: { ...next, locationId: next.locationId, page: 1 },
+      search: {
+        ...parseSearchFilters({}),
+        ...next,
+        locationId: next.locationId,
+        page: 1,
+      },
     });
   }
+  function handleFilters(patch: Partial<SearchFilters>) {
+    void navigate({
+      search: (previous) => ({ ...previous, ...patch, page: 1 }),
+    });
+  }
+  const filterProps = {
+    filters: values,
+    onChange: handleFilters,
+    hasLocation: Boolean(userLocation.coordinates),
+    requestLocation: userLocation.requestLocation,
+  };
   const total = search.data?.total ?? 0;
   return (
     <>
@@ -42,13 +62,17 @@ export function SearchResult() {
           query={values.query}
           location={search.data?.location?.name ?? values.location}
           total={search.data?.total}
-          nearest={Boolean(userLocation.coordinates)}
+          {...filterProps}
         />
-        <MobileFilterBar />
+        <MobileFilterBar
+          {...filterProps}
+          open={mobileFiltersOpen}
+          onToggle={() => setMobileFiltersOpen((open) => !open)}
+        />
         <div className="mx-auto flex max-w-360 items-center gap-3 px-6 py-2 text-xs text-gray-500">
           <span role="status">
             {userLocation.status === "ready"
-              ? "Nearest places first · distances from your current location"
+              ? `${values.sort === "auto" || values.sort === "distance" ? "Nearest places first · " : ""}Distances from your current location`
               : userLocation.status === "loading"
                 ? "Finding your location…"
                 : "Enable location to show nearest places first"}
@@ -72,7 +96,16 @@ export function SearchResult() {
             suggested location.
           </p>
         )}
+        {(values.distance || values.sort === "distance") &&
+          !userLocation.coordinates && (
+            <p role="status" className="mx-auto max-w-360 px-6 py-3 text-sm">
+              Enable your location to apply the selected distance filter or
+              sort.
+            </p>
+          )}
         <MainResultArea
+          {...filterProps}
+          mobileFiltersOpen={mobileFiltersOpen}
           data={search.data}
           isLoading={search.isLoading && search.fetchStatus !== "idle"}
           isError={search.isError}

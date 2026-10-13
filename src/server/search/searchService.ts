@@ -1,3 +1,4 @@
+import { parseSearchFilters, type SearchFilters } from "@/shared/searchFilters";
 import { normalizeSearchQuery } from "./parser/normalizeSearchQuery";
 import { tokenizeSearchQuery } from "./parser/tokenizeSearchQuery";
 import {
@@ -9,7 +10,7 @@ import { locationResolver } from "./resolver/locationResolver";
 import { searchMatchingBusinesses } from "@/server/repositories/search/businessSearchRepository";
 import type { ResolvedLocation } from "./resolver/locationResolver";
 
-export type SearchInput = {
+export type SearchInput = SearchFilters & {
   query: string;
   page: number;
   perPage: number;
@@ -18,7 +19,7 @@ export type SearchInput = {
   userLocation?: { lat: number; lng: number };
 };
 
-export type SearchContext = {
+export type SearchContext = SearchFilters & {
   rawQuery: string;
   normalizedQuery: string;
   tokens: string[];
@@ -39,6 +40,7 @@ export type SearchBusinessResult = {
   localityId: number | null;
   rating: number | null;
   reviewCount: number;
+  openNow?: boolean;
   distanceKm?: number | null;
 };
 
@@ -104,6 +106,7 @@ export class SearchService {
     const resolved = await this.resolveSearch(context);
 
     const result = await searchMatchingBusinesses({
+      ...parseSearchFilters(context),
       conceptIds: resolved.concepts.map((concept) => concept.id),
       query: context.parsed.concepts.join(" ") || context.normalizedQuery,
       locationId: resolved.locations
@@ -144,6 +147,7 @@ export class SearchService {
     });
 
     return {
+      ...parseSearchFilters(data),
       rawQuery,
       normalizedQuery,
       tokens,
@@ -400,7 +404,12 @@ export class SearchService {
       }
       userLocation = { lat, lng };
     }
+    const filters = parseSearchFilters(value);
+    if ((filters.distance || filters.sort === "distance") && !userLocation) {
+      throw new Error("Enable your location to filter or sort by distance");
+    }
     return {
+      ...filters,
       userLocation,
       query,
       page,

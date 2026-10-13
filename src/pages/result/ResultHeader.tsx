@@ -1,14 +1,15 @@
-import { Button } from "@/components/ui/button";
+import { SortSelect, type FilterProps } from "./Filters";
 export function ResultHeader({
   query,
   location,
   total,
-  nearest = false,
-}: {
+  filters,
+  onChange,
+  hasLocation,
+}: Omit<FilterProps, "requestLocation"> & {
   query: string;
   location: string;
   total?: number;
-  nearest?: boolean;
 }) {
   return (
     <section className="border-b border-jd-line bg-white">
@@ -27,16 +28,11 @@ export function ResultHeader({
           </div>
           {/* Desktop sort */}
           <div className="hidden items-center gap-2 sm:flex">
-            <span className="text-xs font-medium text-gray-500">Sort by</span>
-            <Button
-              variant="unstyled"
-              size="unstyled"
-              type="button"
-              className="flex items-center gap-2 rounded-full border border-jd-line bg-white px-4 py-2.5 text-xs font-semibold text-ink transition-all duration-200 hover:border-jd-border hover:text-jd-orange"
-            >
-              {nearest ? "Nearest first" : "Relevance"}
-              <i className="fa-solid fa-chevron-down text-[9px] text-gray-500" />
-            </Button>
+            <SortSelect
+              filters={filters}
+              onChange={onChange}
+              hasLocation={hasLocation}
+            />
           </div>
         </div>
       </div>
