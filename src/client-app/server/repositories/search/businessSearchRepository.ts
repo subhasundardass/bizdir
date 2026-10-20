@@ -1,6 +1,6 @@
-import type { SearchFilters } from "@/shared/searchFilters";
-import { Prisma } from "@/generated/prisma/client";
-import { db } from "@/lib/db";
+import type { SearchFilters } from '@/client-app/shared/searchFilters';
+import { Prisma } from '@/generated/prisma/client';
+import { db } from '@/client-app/lib/db';
 
 export type BusinessSearchRow = {
   id: number;
@@ -52,7 +52,7 @@ function mapRows(rows: RawBusinessRow[]): BusinessSearchRow[] {
     localityId: row.localityId == null ? null : Number(row.localityId),
     rating: row.rating == null ? null : Number(row.rating),
     reviewCount: Number(row.reviewCount),
-    distanceKm: row.distanceKm == null ? null : Number(row.distanceKm),
+    distanceKm: row.distanceKm == null ? null : Number(row.distanceKm)
   }));
 }
 
@@ -69,29 +69,23 @@ function uniqueIds(ids: bigint[]): bigint[] {
 // Business lookup
 // -----------------------------------------------------------------------------
 
-export async function findBusinessById(
-  id: bigint,
-): Promise<BusinessSearchRow | null> {
+export async function findBusinessById(id: bigint): Promise<BusinessSearchRow | null> {
   const rows = await queryBusinesses(
-    Prisma.sql`${BUSINESS_SELECT} WHERE b.id = ${id} AND b.status = 'active' LIMIT 1`,
+    Prisma.sql`${BUSINESS_SELECT} WHERE b.id = ${id} AND b.status = 'active' LIMIT 1`
   );
 
   return rows[0] ?? null;
 }
 
-export async function findBusinessBySlug(
-  slug: string,
-): Promise<BusinessSearchRow | null> {
+export async function findBusinessBySlug(slug: string): Promise<BusinessSearchRow | null> {
   const rows = await queryBusinesses(
-    Prisma.sql`${BUSINESS_SELECT} WHERE b.slug = ${slug} AND b.status = 'active' LIMIT 1`,
+    Prisma.sql`${BUSINESS_SELECT} WHERE b.slug = ${slug} AND b.status = 'active' LIMIT 1`
   );
 
   return rows[0] ?? null;
 }
 
-export async function findBusinessByPhone(
-  phone: string,
-): Promise<BusinessSearchRow | null> {
+export async function findBusinessByPhone(phone: string): Promise<BusinessSearchRow | null> {
   const rows = await queryBusinesses(
     Prisma.sql`
       ${BUSINESS_SELECT}
@@ -99,7 +93,7 @@ export async function findBusinessByPhone(
           = regexp_replace(${phone}, '[^0-9]', '', 'g')
         AND b.status = 'active'
       LIMIT 1
-    `,
+    `
   );
 
   return rows[0] ?? null;
@@ -107,7 +101,7 @@ export async function findBusinessByPhone(
 
 export async function findBusinessBySourceRef(
   source: string,
-  sourceRef: string,
+  sourceRef: string
 ): Promise<BusinessSearchRow | null> {
   const rows = await queryBusinesses(
     Prisma.sql`
@@ -116,7 +110,7 @@ export async function findBusinessBySourceRef(
         AND b.source_ref = ${sourceRef}
         AND b.status = 'active'
       LIMIT 1
-    `,
+    `
   );
 
   return rows[0] ?? null;
@@ -126,9 +120,7 @@ export async function findBusinessBySourceRef(
 // Name search
 // -----------------------------------------------------------------------------
 
-export async function searchBusinessesByName(
-  query: string,
-): Promise<BusinessSearchRow[]> {
+export async function searchBusinessesByName(query: string): Promise<BusinessSearchRow[]> {
   const normalized = query.trim();
 
   if (!normalized) return [];
@@ -145,13 +137,11 @@ export async function searchBusinessesByName(
         CASE WHEN LOWER(b.name) = LOWER(${normalized}) THEN 0 ELSE 1 END,
         b.name
       LIMIT 100
-    `,
+    `
   );
 }
 
-export async function searchBusinessesByNameFuzzy(
-  query: string,
-): Promise<BusinessSearchRow[]> {
+export async function searchBusinessesByNameFuzzy(query: string): Promise<BusinessSearchRow[]> {
   const normalized = query.trim();
 
   if (!normalized) return [];
@@ -163,7 +153,7 @@ export async function searchBusinessesByNameFuzzy(
         AND similarity(b.name, ${normalized}) >= 0.2
       ORDER BY similarity(b.name, ${normalized}) DESC, b.name
       LIMIT 100
-    `,
+    `
   );
 }
 
@@ -171,9 +161,7 @@ export async function searchBusinessesByNameFuzzy(
 // Concept searches
 // -----------------------------------------------------------------------------
 
-export async function findBusinessesByConcept(
-  conceptId: bigint,
-): Promise<BusinessSearchRow[]> {
+export async function findBusinessesByConcept(conceptId: bigint): Promise<BusinessSearchRow[]> {
   return queryBusinesses(
     Prisma.sql`
       ${BUSINESS_SELECT}
@@ -182,16 +170,14 @@ export async function findBusinessesByConcept(
         AND b.status = 'active'
       ORDER BY b.name
       LIMIT 500
-    `,
+    `
   );
 }
 
 export async function findBusinessesByConceptTree(
-  conceptIds: bigint[],
+  conceptIds: bigint[]
 ): Promise<BusinessSearchRow[]> {
-  const ids = uniqueIds(
-    conceptIds.filter((id) => typeof id === "bigint" && id > 0n),
-  );
+  const ids = uniqueIds(conceptIds.filter((id) => typeof id === 'bigint' && id > 0n));
 
   if (ids.length === 0) {
     return [];
@@ -227,16 +213,14 @@ export async function findBusinessesByConceptTree(
       WHERE b.status = 'active'
       ORDER BY b.name ASC
       LIMIT 500
-    `,
+    `
   );
 }
 // -----------------------------------------------------------------------------
 // Location searches
 // -----------------------------------------------------------------------------
 
-export async function findBusinessesByLocation(
-  locationId: bigint,
-): Promise<BusinessSearchRow[]> {
+export async function findBusinessesByLocation(locationId: bigint): Promise<BusinessSearchRow[]> {
   return queryBusinesses(
     Prisma.sql`
       ${BUSINESS_SELECT}
@@ -245,13 +229,11 @@ export async function findBusinessesByLocation(
         AND b.status = 'active'
       ORDER BY b.name
       LIMIT 500
-    `,
+    `
   );
 }
 
-export async function findBusinessesByLocality(
-  localityId: bigint,
-): Promise<BusinessSearchRow[]> {
+export async function findBusinessesByLocality(localityId: bigint): Promise<BusinessSearchRow[]> {
   return queryBusinesses(
     Prisma.sql`
       ${BUSINESS_SELECT}
@@ -259,13 +241,11 @@ export async function findBusinessesByLocality(
         AND b.status = 'active'
       ORDER BY b.name
       LIMIT 500
-    `,
+    `
   );
 }
 
-export async function findBusinessesByCity(
-  cityId: bigint,
-): Promise<BusinessSearchRow[]> {
+export async function findBusinessesByCity(cityId: bigint): Promise<BusinessSearchRow[]> {
   return queryBusinesses(
     Prisma.sql`
       ${BUSINESS_SELECT}
@@ -273,14 +253,14 @@ export async function findBusinessesByCity(
         AND b.status = 'active'
       ORDER BY b.name
       LIMIT 500
-    `,
+    `
   );
 }
 
 export async function findBusinessesWithinRadius(
   lat: number,
   lng: number,
-  radiusMeters: number,
+  radiusMeters: number
 ): Promise<BusinessSearchRow[]> {
   if (
     !Number.isFinite(lat) ||
@@ -292,7 +272,7 @@ export async function findBusinessesWithinRadius(
     lng > 180 ||
     radiusMeters <= 0
   ) {
-    throw new Error("Invalid coordinates or radius");
+    throw new Error('Invalid coordinates or radius');
   }
 
   return queryBusinesses(
@@ -310,7 +290,7 @@ export async function findBusinessesWithinRadius(
         ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326)::geography
       )
       LIMIT 500
-    `,
+    `
   );
 }
 
@@ -318,9 +298,7 @@ export async function findBusinessesWithinRadius(
 // Attribute searches
 // -----------------------------------------------------------------------------
 
-export async function findBusinessesByAttribute(
-  attributeId: bigint,
-): Promise<BusinessSearchRow[]> {
+export async function findBusinessesByAttribute(attributeId: bigint): Promise<BusinessSearchRow[]> {
   return queryBusinesses(
     Prisma.sql`
       ${BUSINESS_SELECT}
@@ -329,13 +307,13 @@ export async function findBusinessesByAttribute(
         AND b.status = 'active'
       ORDER BY b.name
       LIMIT 500
-    `,
+    `
   );
 }
 
 export async function findBusinessesByAttributeOption(
   attributeId: bigint,
-  optionId: bigint,
+  optionId: bigint
 ): Promise<BusinessSearchRow[]> {
   return queryBusinesses(
     Prisma.sql`
@@ -346,13 +324,13 @@ export async function findBusinessesByAttributeOption(
         AND b.status = 'active'
       ORDER BY b.name
       LIMIT 500
-    `,
+    `
   );
 }
 
 export async function findBusinessesByBooleanAttribute(
   attributeId: bigint,
-  value: boolean,
+  value: boolean
 ): Promise<BusinessSearchRow[]> {
   return queryBusinesses(
     Prisma.sql`
@@ -363,25 +341,25 @@ export async function findBusinessesByBooleanAttribute(
         AND b.status = 'active'
       ORDER BY b.name
       LIMIT 500
-    `,
+    `
   );
 }
 
 export async function findBusinessesByNumberAttribute(
   attributeId: bigint,
   min?: number,
-  max?: number,
+  max?: number
 ): Promise<BusinessSearchRow[]> {
   if (min !== undefined && !Number.isFinite(min)) {
-    throw new Error("min must be a finite number");
+    throw new Error('min must be a finite number');
   }
 
   if (max !== undefined && !Number.isFinite(max)) {
-    throw new Error("max must be a finite number");
+    throw new Error('max must be a finite number');
   }
 
   if (min !== undefined && max !== undefined && min > max) {
-    throw new Error("min cannot be greater than max");
+    throw new Error('min cannot be greater than max');
   }
 
   return queryBusinesses(
@@ -395,13 +373,13 @@ export async function findBusinessesByNumberAttribute(
         AND b.status = 'active'
       ORDER BY b.name
       LIMIT 500
-    `,
+    `
   );
 }
 
 export async function findBusinessesByChoiceAttribute(
   attributeId: bigint,
-  optionIds: bigint[],
+  optionIds: bigint[]
 ): Promise<BusinessSearchRow[]> {
   const ids = uniqueIds(optionIds);
 
@@ -416,7 +394,7 @@ export async function findBusinessesByChoiceAttribute(
         AND b.status = 'active'
       ORDER BY b.name
       LIMIT 500
-    `,
+    `
   );
 }
 
@@ -424,9 +402,7 @@ export async function findBusinessesByChoiceAttribute(
 // Opening hours
 // -----------------------------------------------------------------------------
 
-export async function findBusinessesOpenNow(
-  cityId?: bigint,
-): Promise<BusinessSearchRow[]> {
+export async function findBusinessesOpenNow(cityId?: bigint): Promise<BusinessSearchRow[]> {
   return queryBusinesses(
     Prisma.sql`
       ${BUSINESS_SELECT}
@@ -438,7 +414,7 @@ export async function findBusinessesOpenNow(
         AND bh.close_time > LOCALTIME
       ORDER BY b.name
       LIMIT 500
-    `,
+    `
   );
 }
 
@@ -453,16 +429,14 @@ export async function findActiveBusinesses(): Promise<BusinessSearchRow[]> {
       WHERE b.status = 'active'
       ORDER BY b.name
       LIMIT 500
-    `,
+    `
   );
 }
 
 /**
  * Location
  */
-export async function findParentCityIdForLocality(
-  localityId: bigint,
-): Promise<number | null> {
+export async function findParentCityIdForLocality(localityId: bigint): Promise<number | null> {
   if (localityId <= 0n) {
     return null;
   }
@@ -475,7 +449,7 @@ export async function findParentCityIdForLocality(
         AND level = 'LOCALITY'
         AND is_active = true
       LIMIT 1
-    `,
+    `
   );
 
   const rawCityId = rows[0]?.cityId;
@@ -500,7 +474,7 @@ export async function searchMatchingBusinesses(
     perPage: number;
     userLocation?: { lat: number; lng: number };
     locationOnly?: boolean;
-  },
+  }
 ): Promise<{ businesses: BusinessSearchRow[]; total: number }> {
   if (input.locationUnresolved) return { businesses: [], total: 0 };
   const conceptFilter = input.locationOnly
@@ -518,13 +492,11 @@ export async function searchMatchingBusinesses(
         OR b.locality_id IN (SELECT id FROM location_tree))`
     : Prisma.sql`TRUE`;
   const categoryNames: Record<string, string[]> = {
-    restaurants: ["restaurant", "restaurants"],
-    cafes: ["cafe", "cafes", "coffee shop", "coffee shops"],
-    fastFood: ["fast food", "fast food restaurant", "fast food restaurants"],
+    restaurants: ['restaurant', 'restaurants'],
+    cafes: ['cafe', 'cafes', 'coffee shop', 'coffee shops'],
+    fastFood: ['fast food', 'fast food restaurant', 'fast food restaurants']
   };
-  const names = input.categories.flatMap(
-    (category) => categoryNames[category] ?? [],
-  );
+  const names = input.categories.flatMap((category) => categoryNames[category] ?? []);
   const categoryFilter = names.length
     ? Prisma.sql`EXISTS (
     SELECT 1 FROM business_concept bc JOIN category_tree ct ON ct.id = bc.concept_id
@@ -564,11 +536,11 @@ export async function searchMatchingBusinesses(
       : Prisma.sql`TRUE`;
   const filters = Prisma.sql`${categoryFilter} AND ${vegFilter} AND ${availabilityFilter} AND ${ratingFilter} AND ${radiusFilter}`;
   const order =
-    input.sort === "distance" || (input.sort === "auto" && input.userLocation)
+    input.sort === 'distance' || (input.sort === 'auto' && input.userLocation)
       ? Prisma.sql`"distanceKm" ASC NULLS LAST, b.rating DESC, b.review_count DESC`
-      : input.sort === "reviews"
+      : input.sort === 'reviews'
         ? Prisma.sql`b.review_count DESC, b.rating DESC`
-        : input.sort === "rating"
+        : input.sort === 'rating'
           ? Prisma.sql`b.rating DESC, b.review_count DESC`
           : Prisma.sql`similarity(b.name_norm, norm_text(${input.query})) DESC NULLS LAST, b.rating DESC, b.review_count DESC`;
   const cte = Prisma.sql`
@@ -608,9 +580,9 @@ export async function searchMatchingBusinesses(
       db.$queryRaw<RawBusinessRow[]>(Prisma.sql`${cte} ${orderedSelect}
       WHERE b.status = 'active' AND ${conceptFilter} AND ${locationFilter} AND ${filters}
       ORDER BY ${order}, b.name ASC, b.id ASC
-      LIMIT ${input.perPage} OFFSET ${(input.page - 1) * input.perPage}`),
+      LIMIT ${input.perPage} OFFSET ${(input.page - 1) * input.perPage}`)
     ],
-    { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
+    { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead }
   );
   return { businesses: mapRows(rows), total: Number(counts[0]?.total ?? 0) };
 }
