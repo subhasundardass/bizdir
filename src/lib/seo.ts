@@ -1,137 +1,61 @@
-const BRAND = 'YourBrand'
-const YEAR = new Date().getFullYear()
+import { siteConfig } from '@/config/site';
 
-// ---------- helpers ----------
-export function truncate(text: string, max: number): string {
-  if (text.length <= max) return text
-  const cut = text.slice(0, max - 1)
-  return cut.slice(0, cut.lastIndexOf(' ')).replace(/[,.:;–-]+$/, '') + '…'
+export interface SeoArgs {
+  /** Page title. Falls back to the site name. */
+  title?: string;
+  /** Meta description. Falls back to the site description. */
+  description?: string;
+  /** Comma-separated keywords. Falls back to the site keywords. */
+  keywords?: string;
+  /** Share image — an absolute URL or a path relative to the site root. */
+  image?: string;
+  /** Path of the current page (e.g. `/about`) — used for og:url. */
+  path?: string;
+  /** Emit `noindex, nofollow` for private/app pages (e.g. the dashboard). */
+  noindex?: boolean;
 }
 
-// Brand is dropped automatically if it would push the title over the limit
-function withBrand(title: string, max = 60): string {
-  const full = `${title} | ${BRAND}`
-  return full.length <= max ? full : truncate(title, max)
+/** Resolve a path or URL to an absolute URL against the configured site origin. */
+function absoluteUrl(pathOrUrl: string) {
+  if (!pathOrUrl) return siteConfig.url;
+  if (pathOrUrl.startsWith('http')) return pathOrUrl;
+  return `${siteConfig.url}${pathOrUrl.startsWith('/') ? '' : '/'}${pathOrUrl}`;
 }
 
-// Deterministic pick: same page always gets the same template,
-// but different pages get different ones (avoids near-duplicate metadata)
-function pick<T>(items: T[], seed: string): T {
-  let h = 0
-  for (const c of seed) h = (h * 31 + c.charCodeAt(0)) >>> 0
-  return items[h % items.length]
+/**
+ * Build a meta-tag array for TanStack Router's `head` option, covering the
+ * standard SEO + Open Graph + Twitter Card tags.
+ *
+ * Usage in a route:
+ *   head: () => ({ meta: seo({ title: 'Products', path: '/dashboard/product' }) })
+ */
+export function seo({ title, description, keywords, image, path, noindex }: SeoArgs = {}) {
+  const metaTitle = title ?? siteConfig.name;
+  const metaDescription = description ?? siteConfig.description;
+  const metaKeywords = keywords ?? siteConfig.keywords.join(', ');
+  const metaImage = absoluteUrl(image ?? siteConfig.ogImage);
+  const metaUrl = absoluteUrl(path ?? '/');
+
+  return [
+    { title: metaTitle },
+    { name: 'description', content: metaDescription },
+    { name: 'keywords', content: metaKeywords },
+
+    // Open Graph
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: siteConfig.name },
+    { property: 'og:title', content: metaTitle },
+    { property: 'og:description', content: metaDescription },
+    { property: 'og:image', content: metaImage },
+    { property: 'og:url', content: metaUrl },
+
+    // Twitter
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: metaTitle },
+    { name: 'twitter:description', content: metaDescription },
+    { name: 'twitter:image', content: metaImage },
+
+    // Only emit robots when hiding a page — absence means indexable.
+    ...(noindex ? [{ name: 'robots', content: 'noindex, nofollow' }] : [])
+  ];
 }
-
-const plural = (n: number, one: string, many = one + 's') =>
-  `${n.toLocaleString('en-IN')} ${n === 1 ? one : many}`
-
-// ---------- types ----------
-export type Meta = {
-  title: string
-  description: string
-  robots: 'index,follow' | 'noindex,follow'
-}
-
-const MIN_LISTINGS_TO_INDEX = 5   // thin-page threshold, tune this
-
-// ---------- city page ----------
-export function cityMeta(d: {
-  city: string; totalListings: number; topCategories: string[]
-}): Meta {
-  const cats = d.topCategories.slice(0, 3).join(', ')
-  return {
-    title: withBrand(`Business Directory in ${d.city} – Find Local Services`),
-    description: truncate(
-      `Browse ${plural(d.totalListings, 'business', 'businesses')} in ${d.city}. ` +
-      `Find ${cats} and more, with addresses, phone numbers and reviews.`, 155),
-    robots: d.totalListings >= MIN_LISTINGS_TO_INDEX ? 'index,follow' : 'noindex,follow',
-  }
-}
-
-// ---------- city + category page ----------
-export function categoryMeta(d: {
-  city: string
-  category: string          // display name, plural: "Restaurants"
-  count: number
-  topRated?: string[]       // names of top-rated listings
-  page?: number
-}): Meta {
-  const pageSuffix = d.page && d.page > 1 ? ` – Page ${d.page}` : ''
-  const seed = `${d.city}/${d.category}`
-
-  const title = pick([
-    `Best ${d.category} in ${d.city} (${YEAR})`,
-    `Top ${d.count > 10 ? d.count : 10} ${d.category} in ${d.city}`,
-    `${d.category} in ${d.city} – Reviews & Contacts`,
-  ], seed) + pageSuffix
-
-  const named = d.topRated?.slice(0, 3).join(', ')
-  const description = truncate(
-    named
-      ? `Compare ${plural(d.count, 'listing')} for ${d.category.toLowerCase()} in ${d.city}, ` +
-        `including ${named}. See phone numbers, addresses, hours and ratings.`
-      : `Find ${d.category.toLowerCase()} in ${d.city}. ` +
-        `${plural(d.count, 'listing')} with phone numbers, addresses, hours and ratings.`,
-    155)
-
-  return {
-    title: withBrand(title),
-    description,
-    robots: d.count >= MIN_LISTINGS_TO_INDEX ? 'index,follow' : 'noindex,follow',
-  }
-}
-
-// ---------- city + category + area page ----------
-export function areaMeta(d: {
-  city: string; category: string; area: string; count: number; page?: number
-}): Meta {
-  const pageSuffix = d.page && d.page > 1 ? ` – Page ${d.page}` : ''
-  return {
-    title: withBrand(`${d.category} in ${d.area}, ${d.city}${pageSuffix}`),
-    description: truncate(
-      `${plural(d.count, d.category.replace(/s$/, ''))} in ${d.area}, ${d.city}. ` +
-      `Check ratings, opening hours, contact details and directions.`, 155),
-    robots: d.count >= 3 ? 'index,follow' : 'noindex,follow',
-  }
-}
-
-// ---------- business listing ----------
-export function businessMeta(d: {
-  name: string
-  category: string          // singular: "Chinese Restaurant"
-  area?: string
-  city: string
-  rating?: number
-  reviewCount?: number
-  description?: string      // owner/editor-written, if any
-  hasPhone: boolean
-  hasPhotos: boolean
-}): Meta {
-  const place = d.area ? `${d.area}, ${d.city}` : d.city
-  const title = withBrand(`${d.name} – ${d.category} in ${place}`)
-
-  const ratingText =
-    d.rating && d.reviewCount && d.reviewCount >= 3
-      ? `Rated ${d.rating.toFixed(1)}/5 by ${plural(d.reviewCount, 'reviewer')}. `
-      : ''
-
-  const description = d.description
-    ? truncate(d.description, 155)
-    : truncate(
-        `${d.name} is a ${d.category.toLowerCase()} in ${place}. ${ratingText}` +
-        `See address, phone number, opening hours and directions.`, 155)
-
-  // A listing with almost no content shouldn't be indexed yet
-  const contentScore =
-    Number(!!d.description) + Number(d.hasPhone) + Number(d.hasPhotos) +
-    Number((d.reviewCount ?? 0) > 0)
-
-  return { title, description, robots: contentScore >= 2 ? 'index,follow' : 'noindex,follow' }
-}
-
-// ---------- static pages ----------
-export const homeMeta = (): Meta => ({
-  title: `${BRAND} – Find Local Businesses Across India`,
-  description: 'Discover trusted local businesses, read genuine reviews and get contact details, addresses and directions in your city.',
-  robots: 'index,follow',
-})
