@@ -14,8 +14,8 @@ import {
   type LocationRow,
   type LocationAliasRow,
   type LocationCandidateRow,
-  type LocationType,
-} from "@/server/repositories/search/locationSearchRepository";
+  type LocationType
+} from '@/client-app/server/repositories/search/locationSearchRepository';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -51,12 +51,12 @@ export type RankedLocationCandidate = ResolvedLocation;
 // ---------------------------------------------------------------------------
 
 const LOCATION_TYPES: readonly LocationType[] = [
-  "COUNTRY",
-  "STATE",
-  "DISTRICT",
-  "CITY",
-  "LOCALITY",
-  "LANDMARK",
+  'COUNTRY',
+  'STATE',
+  'DISTRICT',
+  'CITY',
+  'LOCALITY',
+  'LANDMARK'
 ];
 
 /** Minimum fuzzy score when matching the full input text. */
@@ -66,20 +66,20 @@ const MIN_SCORE_FRAGMENT = 0.7;
 
 /** Filler words stripped when building fragments from long inputs. */
 const STOPWORDS = new Set([
-  "in",
-  "near",
-  "at",
-  "around",
-  "nearby",
-  "of",
-  "the",
-  "to",
-  "from",
-  "by",
-  "and",
-  "or",
-  "for",
-  "on",
+  'in',
+  'near',
+  'at',
+  'around',
+  'nearby',
+  'of',
+  'the',
+  'to',
+  'from',
+  'by',
+  'and',
+  'or',
+  'for',
+  'on'
 ]);
 
 // ---------------------------------------------------------------------------
@@ -97,16 +97,16 @@ export class LocationResolver {
 
     // A city suffix disambiguates localities with the same name in different cities.
     if (!parsed.cityId) {
-      const words = parsed.text.split(" ");
+      const words = parsed.text.split(' ');
       for (let split = 1; split < words.length; split++) {
-        const city = await findCityByName(words.slice(split).join(" "));
+        const city = await findCityByName(words.slice(split).join(' '));
         if (!city) continue;
         const scoped = await this.resolveInScope(
-          words.slice(0, split).join(" "),
+          words.slice(0, split).join(' '),
           parsed,
           BigInt(city.id),
           MIN_SCORE_FULL,
-          new Map(),
+          new Map()
         );
         if (scoped) return this.hydrate(parsed, scoped);
       }
@@ -118,18 +118,11 @@ export class LocationResolver {
 
     // Longest variant first (the full text), then smaller fragments.
     for (const variant of variants) {
-      const minScore =
-        variant === parsed.text ? MIN_SCORE_FULL : MIN_SCORE_FRAGMENT;
+      const minScore = variant === parsed.text ? MIN_SCORE_FULL : MIN_SCORE_FRAGMENT;
 
       // 1. Inside the supplied context (city > district > state > country).
       for (const scopeId of scopes) {
-        const hit = await this.resolveInScope(
-          variant,
-          parsed,
-          scopeId,
-          minScore,
-          subtreeCache,
-        );
+        const hit = await this.resolveInScope(variant, parsed, scopeId, minScore, subtreeCache);
         if (hit) return this.hydrate(parsed, hit);
       }
 
@@ -150,9 +143,7 @@ export class LocationResolver {
   // Ambiguous / disambiguation
   // -------------------------------------------------------------------------
 
-  async resolveAmbiguousLocation(
-    input: unknown,
-  ): Promise<RankedLocationCandidate[]> {
+  async resolveAmbiguousLocation(input: unknown): Promise<RankedLocationCandidate[]> {
     const parsed = this.normalizeInput(input);
     if (!parsed) return [];
 
@@ -163,7 +154,7 @@ export class LocationResolver {
     // Fetch more than needed, because scope filtering happens in-process.
     const rows = await findLocationCandidates(parsed.text, {
       type: parsed.type,
-      limit: scopes.length ? 100 : limit,
+      limit: scopes.length ? 100 : limit
     });
 
     let ids: Set<string> | null = null;
@@ -187,27 +178,21 @@ export class LocationResolver {
     if (exact) return this.toResolved(exact, 1.0);
 
     const [fuzzy] = await findLocationCandidates(text, { limit: 1 });
-    return fuzzy && fuzzy.score >= MIN_SCORE_FULL
-      ? this.toResolved(fuzzy, fuzzy.score)
-      : null;
+    return fuzzy && fuzzy.score >= MIN_SCORE_FULL ? this.toResolved(fuzzy, fuzzy.score) : null;
   }
 
-  async resolveExactLocationAlias(
-    text: string,
-  ): Promise<ResolvedLocation | null> {
+  async resolveExactLocationAlias(text: string): Promise<ResolvedLocation | null> {
     const row = await findLocationAlias(text);
     return row ? this.toResolved(row, 1.0) : null;
   }
 
-  async resolveFuzzyLocationAlias(
-    input: unknown,
-  ): Promise<ResolvedLocation | null> {
+  async resolveFuzzyLocationAlias(input: unknown): Promise<ResolvedLocation | null> {
     const parsed = this.normalizeInput(input);
     if (!parsed) return null;
 
     const [best] = await findLocationCandidates(parsed.text, {
       type: parsed.type,
-      limit: 1,
+      limit: 1
     });
 
     if (!best || best.score < MIN_SCORE_FULL) return null;
@@ -242,7 +227,7 @@ export class LocationResolver {
 
   async findLocationCandidates(
     text: string,
-    opts?: { type?: LocationType; parentId?: bigint; limit?: number },
+    opts?: { type?: LocationType; parentId?: bigint; limit?: number }
   ): Promise<RankedLocationCandidate[]> {
     const rows = await findLocationCandidates(text, opts ?? {});
     return rows.map((c) => this.toResolved(c, c.score));
@@ -254,7 +239,7 @@ export class LocationResolver {
    */
   rankLocationCandidates(
     candidates: RankedLocationCandidate[],
-    query: string,
+    query: string
   ): RankedLocationCandidate[] {
     const q = this.normalize(query);
     if (!q) return candidates;
@@ -280,30 +265,22 @@ export class LocationResolver {
   // -------------------------------------------------------------------------
 
   /** Root-first chain, including the node itself as the last element. */
-  async resolveLocationHierarchy(
-    locationId: bigint,
-  ): Promise<ResolvedLocation[]> {
+  async resolveLocationHierarchy(locationId: bigint): Promise<ResolvedLocation[]> {
     const rows = await findLocationAncestors(locationId);
     return rows.map((r) => this.toResolved(r, 1.0));
   }
 
-  async resolveLocationChildren(
-    locationId: bigint,
-  ): Promise<ResolvedLocation[]> {
+  async resolveLocationChildren(locationId: bigint): Promise<ResolvedLocation[]> {
     const rows = await findLocationChildren(locationId);
     return rows.map((r) => this.toResolved(r, 1.0));
   }
 
-  async resolveLocationDescendants(
-    locationId: bigint,
-  ): Promise<ResolvedLocation[]> {
+  async resolveLocationDescendants(locationId: bigint): Promise<ResolvedLocation[]> {
     const rows = await findLocationDescendants(locationId);
     return rows.map((r) => this.toResolved(r, 1.0));
   }
 
-  async resolveParentLocation(
-    locationId: bigint,
-  ): Promise<ResolvedLocation | null> {
+  async resolveParentLocation(locationId: bigint): Promise<ResolvedLocation | null> {
     const node = await findLocationById(locationId);
     if (!node || node.parentId === null || node.parentId === undefined) {
       return null;
@@ -312,10 +289,7 @@ export class LocationResolver {
     return parent ? this.toResolved(parent, 1.0) : null;
   }
 
-  async validateLocationHierarchy(input: {
-    childId: bigint;
-    parentId: bigint;
-  }): Promise<boolean> {
+  async validateLocationHierarchy(input: { childId: bigint; parentId: bigint }): Promise<boolean> {
     if (this.sameId(input.childId, input.parentId)) return false;
     return this.isUnder(input.childId, input.parentId);
   }
@@ -332,7 +306,7 @@ export class LocationResolver {
   }
 
   async resolveDistrict(input: unknown): Promise<ResolvedLocation | null> {
-    return this.resolveByType(input, "DISTRICT");
+    return this.resolveByType(input, 'DISTRICT');
   }
 
   async resolveLocality(input: unknown): Promise<ResolvedLocation | null> {
@@ -343,12 +317,12 @@ export class LocationResolver {
   }
 
   async resolveLandmark(input: unknown): Promise<ResolvedLocation | null> {
-    return this.resolveByType(input, "LANDMARK");
+    return this.resolveByType(input, 'LANDMARK');
   }
 
   private async resolveByType(
     input: unknown,
-    type: LocationType,
+    type: LocationType
   ): Promise<ResolvedLocation | null> {
     const parsed = this.normalizeInput(input);
     if (!parsed) return null;
@@ -362,7 +336,7 @@ export class LocationResolver {
   async resolveLocationWithCityContext(
     text: string,
     cityId: bigint,
-    type?: LocationType,
+    type?: LocationType
   ): Promise<ResolvedLocation | null> {
     return this.resolve({ text, cityId, type });
   }
@@ -370,7 +344,7 @@ export class LocationResolver {
   async resolveLocationWithDistrictContext(
     text: string,
     districtId: bigint,
-    type?: LocationType,
+    type?: LocationType
   ): Promise<ResolvedLocation | null> {
     return this.resolve({ text, districtId, type });
   }
@@ -383,7 +357,7 @@ export class LocationResolver {
   private async resolveGlobal(
     text: string,
     parsed: LocationResolveInput,
-    minScore: number,
+    minScore: number
   ): Promise<ResolvedLocation | null> {
     const aliasHit = await findLocationAlias(text);
     if (aliasHit && this.accepts(aliasHit, parsed)) {
@@ -402,7 +376,7 @@ export class LocationResolver {
 
     const candidates = await findLocationCandidates(text, {
       type: parsed.type,
-      limit: 5,
+      limit: 5
     });
     const best = candidates.find((c) => this.accepts(c, parsed));
 
@@ -416,7 +390,7 @@ export class LocationResolver {
     parsed: LocationResolveInput,
     rootId: bigint,
     minScore: number,
-    cache: Map<string, Set<string>>,
+    cache: Map<string, Set<string>>
   ): Promise<ResolvedLocation | null> {
     const ids = await this.subtreeIds(rootId, cache);
     if (ids.size === 0) return null;
@@ -438,16 +412,12 @@ export class LocationResolver {
     // filtered by the real subtree.
     const candidates = await findLocationCandidates(text, {
       type: parsed.type,
-      limit: 50,
+      limit: 50
     });
 
-    const inScope = candidates.filter(
-      (c) => ids.has(this.idKey(c.id)) && this.accepts(c, parsed),
-    );
+    const inScope = candidates.filter((c) => ids.has(this.idKey(c.id)) && this.accepts(c, parsed));
 
-    const exact = inScope.find(
-      (c) => this.normalize(c.name) === text || c.slug === text,
-    );
+    const exact = inScope.find((c) => this.normalize(c.name) === text || c.slug === text);
     if (exact) return this.toResolved(exact, 1.0);
 
     const best = inScope[0];
@@ -460,10 +430,7 @@ export class LocationResolver {
   // -------------------------------------------------------------------------
 
   /** IDs of every descendant of `rootId` (excluding the root itself). */
-  private async subtreeIds(
-    rootId: bigint,
-    cache: Map<string, Set<string>>,
-  ): Promise<Set<string>> {
+  private async subtreeIds(rootId: bigint, cache: Map<string, Set<string>>): Promise<Set<string>> {
     const key = this.idKey(rootId);
     const cached = cache.get(key);
     if (cached) return cached;
@@ -479,10 +446,7 @@ export class LocationResolver {
     return ids;
   }
 
-  private async isUnder(
-    locationId: bigint,
-    ancestorId: bigint,
-  ): Promise<boolean> {
+  private async isUnder(locationId: bigint, ancestorId: bigint): Promise<boolean> {
     if (this.sameId(locationId, ancestorId)) return true;
     const ancestors = await findLocationAncestors(locationId);
     return ancestors.some((a) => this.sameId(a.id, ancestorId));
@@ -490,12 +454,9 @@ export class LocationResolver {
 
   /** Context ids ordered from most to least specific. */
   private scopesOf(parsed: LocationResolveInput): bigint[] {
-    return [
-      parsed.cityId,
-      parsed.districtId,
-      parsed.stateId,
-      parsed.countryId,
-    ].filter((v): v is bigint => v !== undefined);
+    return [parsed.cityId, parsed.districtId, parsed.stateId, parsed.countryId].filter(
+      (v): v is bigint => v !== undefined
+    );
   }
 
   // -------------------------------------------------------------------------
@@ -511,27 +472,21 @@ export class LocationResolver {
   }
 
   /** Normalizes DB rows so ids are always bigint and type is always uppercase. */
-  private toResolved(
-    row: LocationRow | LocationCandidateRow,
-    score: number,
-  ): ResolvedLocation {
+  private toResolved(row: LocationRow | LocationCandidateRow, score: number): ResolvedLocation {
     return {
       id: BigInt(row.id),
       name: row.name,
       slug: row.slug,
       type: String(row.type).toUpperCase() as LocationType,
-      parentId:
-        row.parentId === null || row.parentId === undefined
-          ? null
-          : BigInt(row.parentId),
+      parentId: row.parentId === null || row.parentId === undefined ? null : BigInt(row.parentId),
       isActive: row.isActive,
-      score,
+      score
     };
   }
 
   private async hydrate(
     parsed: LocationResolveInput,
-    match: ResolvedLocation,
+    match: ResolvedLocation
   ): Promise<ResolvedLocation> {
     if (parsed.withAncestors) {
       match.ancestors = await this.resolveLocationHierarchy(match.id);
@@ -543,19 +498,16 @@ export class LocationResolver {
     return String(id);
   }
 
-  private sameId(
-    a: bigint | number | string,
-    b: bigint | number | string,
-  ): boolean {
+  private sameId(a: bigint | number | string, b: bigint | number | string): boolean {
     return String(a) === String(b);
   }
 
   private normalize(text: string): string {
     return text
-      .replace(/[,;|]+/g, " ")
-      .replace(/\s+/g, " ")
+      .replace(/[,;|]+/g, ' ')
+      .replace(/\s+/g, ' ')
       .trim()
-      .toLocaleLowerCase("en-IN");
+      .toLocaleLowerCase('en-IN');
   }
 
   /**
@@ -565,7 +517,7 @@ export class LocationResolver {
    */
   private textVariants(text: string): string[] {
     const tokens = text
-      .split(" ")
+      .split(' ')
       .filter((t) => t && !STOPWORDS.has(t))
       .slice(0, 6);
 
@@ -574,7 +526,7 @@ export class LocationResolver {
 
     for (let len = tokens.length; len >= 1; len--) {
       for (let i = 0; i + len <= tokens.length; i++) {
-        const v = tokens.slice(i, i + len).join(" ");
+        const v = tokens.slice(i, i + len).join(' ');
         // Skip very short single tokens, since they match too loosely.
         if (len === 1 && v.length < 3) continue;
         if (!seen.has(v)) {
@@ -587,29 +539,29 @@ export class LocationResolver {
   }
 
   private toBigInt(v: unknown): bigint | undefined {
-    if (typeof v === "bigint") return v;
-    if (typeof v === "number" && Number.isSafeInteger(v) && v >= 0) {
+    if (typeof v === 'bigint') return v;
+    if (typeof v === 'number' && Number.isSafeInteger(v) && v >= 0) {
       return BigInt(v);
     }
-    if (typeof v === "string" && /^\d+$/.test(v.trim())) {
+    if (typeof v === 'string' && /^\d+$/.test(v.trim())) {
       return BigInt(v.trim());
     }
     return undefined;
   }
 
   private toType(v: unknown): LocationType | undefined {
-    if (typeof v !== "string") return undefined;
+    if (typeof v !== 'string') return undefined;
     const t = v.trim().toUpperCase() as LocationType;
     return LOCATION_TYPES.includes(t) ? t : undefined;
   }
 
   private normalizeInput(input: unknown): LocationResolveInput | null {
-    if (typeof input === "string") {
+    if (typeof input === 'string') {
       const text = this.normalize(input);
       return text ? { text } : null;
     }
 
-    if (!input || typeof input !== "object") return null;
+    if (!input || typeof input !== 'object') return null;
 
     const c = input as {
       text?: unknown;
@@ -630,12 +582,10 @@ export class LocationResolver {
       c.text ??
       c.query ??
       (Array.isArray(c.parsed?.locations)
-        ? c.parsed.locations.find(
-            (l): l is string => typeof l === "string" && l.trim().length > 0,
-          )
+        ? c.parsed.locations.find((l): l is string => typeof l === 'string' && l.trim().length > 0)
         : undefined);
 
-    if (typeof rawText !== "string") return null;
+    if (typeof rawText !== 'string') return null;
 
     const text = this.normalize(rawText);
     if (!text) return null;
@@ -648,13 +598,11 @@ export class LocationResolver {
       countryId: this.toBigInt(c.countryId),
       type: this.toType(c.type),
       limit:
-        typeof c.limit === "number" && Number.isFinite(c.limit)
+        typeof c.limit === 'number' && Number.isFinite(c.limit)
           ? Math.max(1, Math.floor(c.limit))
           : undefined,
-      withAncestors:
-        typeof c.withAncestors === "boolean" ? c.withAncestors : undefined,
-      includeInactive:
-        typeof c.includeInactive === "boolean" ? c.includeInactive : undefined,
+      withAncestors: typeof c.withAncestors === 'boolean' ? c.withAncestors : undefined,
+      includeInactive: typeof c.includeInactive === 'boolean' ? c.includeInactive : undefined
     };
   }
 }
