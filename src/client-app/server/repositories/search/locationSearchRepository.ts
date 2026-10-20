@@ -1,12 +1,11 @@
-import { Prisma } from "@/generated/prisma/client";
-import { db } from "@/lib/db";
+import { Prisma } from '@/generated/prisma/client';
+import { db } from '@/client-app/lib/db';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-export type LocationType =
-  "COUNTRY" | "STATE" | "DISTRICT" | "CITY" | "LOCALITY" | "LANDMARK";
+export type LocationType = 'COUNTRY' | 'STATE' | 'DISTRICT' | 'CITY' | 'LOCALITY' | 'LANDMARK';
 
 export interface LocationRow {
   id: bigint;
@@ -44,9 +43,7 @@ const LOCATION_COLUMNS = Prisma.sql`
 // Core lookups
 // ---------------------------------------------------------------------------
 
-export async function findLocationById(
-  id: bigint,
-): Promise<LocationRow | null> {
+export async function findLocationById(id: bigint): Promise<LocationRow | null> {
   const rows = await db.$queryRaw<LocationRow[]>`
     SELECT ${LOCATION_COLUMNS}
     FROM location AS l
@@ -56,9 +53,7 @@ export async function findLocationById(
   return rows[0] ?? null;
 }
 
-export async function findLocationBySlug(
-  slug: string,
-): Promise<LocationRow | null> {
+export async function findLocationBySlug(slug: string): Promise<LocationRow | null> {
   const normalized = slug.trim().toLowerCase();
   if (!normalized) return null;
 
@@ -71,9 +66,7 @@ export async function findLocationBySlug(
   return rows[0] ?? null;
 }
 
-export async function findLocationByName(
-  name: string,
-): Promise<LocationRow | null> {
+export async function findLocationByName(name: string): Promise<LocationRow | null> {
   const normalized = name.trim().toLowerCase();
   if (!normalized) return null;
 
@@ -101,9 +94,7 @@ export async function findLocationByName(
 // Aliases
 // ---------------------------------------------------------------------------
 
-export async function findLocationAlias(
-  text: string,
-): Promise<LocationRow | null> {
+export async function findLocationAlias(text: string): Promise<LocationRow | null> {
   const normalized = text.trim().toLowerCase();
   if (!normalized) return null;
 
@@ -118,9 +109,7 @@ export async function findLocationAlias(
   return rows[0] ?? null;
 }
 
-export async function findLocationAliases(
-  locationId: bigint,
-): Promise<LocationAliasRow[]> {
+export async function findLocationAliases(locationId: bigint): Promise<LocationAliasRow[]> {
   return db.$queryRaw<LocationAliasRow[]>`
     SELECT
       a.location_id AS "locationId",
@@ -132,9 +121,7 @@ export async function findLocationAliases(
   `;
 }
 
-export async function searchLocationAliases(
-  text: string,
-): Promise<LocationAliasRow[]> {
+export async function searchLocationAliases(text: string): Promise<LocationAliasRow[]> {
   const normalized = text.trim().toLowerCase();
   if (!normalized) return [];
 
@@ -166,9 +153,9 @@ export async function findLocationCandidates(
     type?: LocationType;
     parentId?: bigint;
     limit?: number;
-  } = {},
+  } = {}
 ): Promise<LocationCandidateRow[]> {
-  const normalized = text.trim().toLocaleLowerCase("en-IN");
+  const normalized = text.trim().toLocaleLowerCase('en-IN');
   if (!normalized) return [];
 
   const limit = Math.max(1, Math.min(Math.floor(opts.limit ?? 25), 100));
@@ -207,16 +194,8 @@ export async function findLocationCandidates(
       ON a.location_id = l.id
     WHERE
       l.is_active = TRUE
-      ${
-        opts.type
-          ? Prisma.sql`AND l.level::text = ${opts.type.toLowerCase()}`
-          : Prisma.empty
-      }
-      ${
-        opts.parentId !== undefined
-          ? Prisma.sql`AND l.parent_id = ${opts.parentId}`
-          : Prisma.empty
-      }
+      ${opts.type ? Prisma.sql`AND l.level::text = ${opts.type.toLowerCase()}` : Prisma.empty}
+      ${opts.parentId !== undefined ? Prisma.sql`AND l.parent_id = ${opts.parentId}` : Prisma.empty}
       AND (
         LOWER(TRIM(l.name)) = ${normalized}
         OR l.slug = ${normalized}
@@ -244,9 +223,7 @@ export async function findLocationCandidates(
 // Hierarchy navigation
 // ---------------------------------------------------------------------------
 
-export async function findLocationChildren(
-  locationId: bigint,
-): Promise<LocationRow[]> {
+export async function findLocationChildren(locationId: bigint): Promise<LocationRow[]> {
   return db.$queryRaw<LocationRow[]>`
     SELECT ${LOCATION_COLUMNS}
     FROM location AS l
@@ -256,9 +233,7 @@ export async function findLocationChildren(
   `;
 }
 
-export async function findLocationAncestors(
-  locationId: bigint,
-): Promise<LocationRow[]> {
+export async function findLocationAncestors(locationId: bigint): Promise<LocationRow[]> {
   // Walks UP to the root. Returned root-first.
   return db.$queryRaw<LocationRow[]>`
     WITH RECURSIVE ancestry AS (
@@ -280,9 +255,7 @@ export async function findLocationAncestors(
   `;
 }
 
-export async function findLocationDescendants(
-  locationId: bigint,
-): Promise<LocationRow[]> {
+export async function findLocationDescendants(locationId: bigint): Promise<LocationRow[]> {
   // Walks DOWN the tree. Includes the root as depth 0.
   return db.$queryRaw<LocationRow[]>`
     WITH RECURSIVE descendants AS (
@@ -308,9 +281,7 @@ export async function findLocationDescendants(
 // Type-specific finders
 // ---------------------------------------------------------------------------
 
-export async function findCityByName(
-  name: string,
-): Promise<LocationRow | null> {
+export async function findCityByName(name: string): Promise<LocationRow | null> {
   const normalized = name.trim().toLowerCase();
   if (!normalized) return null;
 
@@ -327,7 +298,7 @@ export async function findCityByName(
 
 export async function findLocalityByName(
   name: string,
-  cityId?: bigint,
+  cityId?: bigint
 ): Promise<LocationRow | null> {
   const normalized = name.trim().toLowerCase();
   if (!normalized) return null;
