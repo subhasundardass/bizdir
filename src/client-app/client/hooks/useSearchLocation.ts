@@ -1,29 +1,27 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Coordinates = { lat: number; lng: number };
 
 export function useSearchLocation() {
   const [coordinates, setCoordinates] = useState<Coordinates>();
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "ready" | "unavailable"
-  >("idle");
+  const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'unavailable'>('idle');
   const mounted = useRef(false);
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      setStatus("unavailable");
+      setStatus('unavailable');
       return;
     }
-    setStatus("loading");
+    setStatus('loading');
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         if (!mounted.current) return;
         setCoordinates({ lat: coords.latitude, lng: coords.longitude });
-        setStatus("ready");
+        setStatus('ready');
       },
       () => {
-        if (mounted.current) setStatus("unavailable");
+        if (mounted.current) setStatus('unavailable');
       },
-      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 60_000 },
+      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 60_000 }
     );
   }, []);
   useEffect(() => {
