@@ -26,7 +26,7 @@ export function normalizeSearchQuery(query: string): string {
  * → "AC repair in Hakimpara"
  */
 export function normalizeWhitespace(text: string): string {
-  return text.replace(/\s+/g, " ").trim();
+  return text.replace(/\s+/g, ' ').trim();
 }
 
 /**
@@ -37,7 +37,7 @@ export function normalizeWhitespace(text: string): string {
  * → "ac repair siliguri"
  */
 export function normalizeCase(text: string): string {
-  return text.toLocaleLowerCase("en-IN");
+  return text.toLocaleLowerCase('en-IN');
 }
 
 /**
@@ -58,9 +58,9 @@ export function normalizeCase(text: string): string {
  */
 export function normalizePunctuation(text: string): string {
   return text
-    .replace(/[.,!?;:()[\]{}'"`~^*=<>|\\]/g, " ")
-    .replace(/&/g, " and ")
-    .replace(/@/g, " at ");
+    .replace(/[.,!?;:()[\]{}'"`~^*=<>|\\]/g, ' ')
+    .replace(/&/g, ' and ')
+    .replace(/@/g, ' at ');
 }
 
 /**
@@ -74,7 +74,7 @@ export function normalizePunctuation(text: string): string {
  * → "AC Repair"
  */
 export function normalizeUnicode(text: string): string {
-  return text.normalize("NFKC");
+  return text.normalize('NFKC');
 }
 
 /**
@@ -93,7 +93,7 @@ export function normalizeUnicode(text: string): string {
  * The parser may need these later to detect intent/location.
  */
 export function removeSearchNoise(text: string): string {
-  return text.replace(/\s+/g, " ").trim();
+  return text.replace(/\s+/g, ' ').trim();
 }
 
 /**
@@ -120,7 +120,7 @@ export function removeSearchNoise(text: string): string {
  * → "₹ 1500"
  */
 export function normalizeNumbers(text: string): string {
-  return text.replace(/(?<=\d)[,\s](?=\d)/g, "").replace(/₹\s+/g, "₹");
+  return text.replace(/(?<=\d)[,\s](?=\d)/g, '').replace(/₹\s+/g, '₹');
 }
 
 /**
@@ -142,15 +142,15 @@ export function normalizeNumbers(text: string): string {
  * Invalid/unknown formats are returned as digits only.
  */
 export function normalizePhoneNumber(text: string): string {
-  let digits = text.replace(/\D/g, "");
+  let digits = text.replace(/\D/g, '');
 
   // Indian international format: 91XXXXXXXXXX
-  if (digits.startsWith("91") && digits.length === 12) {
+  if (digits.startsWith('91') && digits.length === 12) {
     return digits;
   }
 
   // Indian domestic format with leading zero.
-  if (digits.length === 11 && digits.startsWith("0")) {
+  if (digits.length === 11 && digits.startsWith('0')) {
     return `91${digits.slice(1)}`;
   }
 
