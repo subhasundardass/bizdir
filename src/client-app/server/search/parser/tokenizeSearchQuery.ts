@@ -7,21 +7,21 @@ export function tokenizeSearchQuery(text: string): string[] {
 }
 
 export function tokenizeQuery(text: string) {
-  throw new Error("Not implemented");
+  throw new Error('Not implemented');
 }
 
 export function classifyQueryTokens(tokens: string[]) {
-  throw new Error("Not implemented");
+  throw new Error('Not implemented');
 }
 
 export function removeStopWords(tokens: string[]) {
-  throw new Error("Not implemented");
+  throw new Error('Not implemented');
 }
 
 export function identifySearchPhrases(tokens: string[]) {
-  throw new Error("Not implemented");
+  throw new Error('Not implemented');
 }
 
 export function generateTokenNgrams(tokens: string[], maxN?: number) {
-  throw new Error("Not implemented");
+  throw new Error('Not implemented');
 }
