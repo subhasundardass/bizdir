@@ -1,10 +1,10 @@
-export type ParserTier = "rules" | "fuzzy" | "llm";
+export type ParserTier = 'rules' | 'fuzzy' | 'llm';
 
 export type ParsedSearchQuery = {
   originalQuery: string;
 
   intent: {
-    type: "business_search" | "unknown";
+    type: 'business_search' | 'unknown';
     confidence: number;
   };
 
@@ -21,7 +21,7 @@ export type ParsedSearchQuery = {
 
   remainingTokens: string[];
 
-  parserTier: "rules" | "fuzzy" | "llm";
+  parserTier: 'rules' | 'fuzzy' | 'llm';
 
   confidence: number;
 };
@@ -35,32 +35,25 @@ export type ParserResult = {
   concepts: string[];
   locations: string[];
   attributes: string[];
-  filters: ParsedSearchQuery["filters"];
+  filters: ParsedSearchQuery['filters'];
   confidence: number;
 };
 
-const STOP_WORDS = new Set(["in", "near", "at", "for", "of", "the", "and"]);
+const STOP_WORDS = new Set(['in', 'near', 'at', 'for', 'of', 'the', 'and']);
 
 const INTENT_WORDS = new Set([
-  "best",
-  "top",
-  "nearby",
-  "shop",
-  "shops",
-  "business",
-  "businesses",
-  "service",
-  "services",
+  'best',
+  'top',
+  'nearby',
+  'shop',
+  'shops',
+  'business',
+  'businesses',
+  'service',
+  'services'
 ]);
 
-const ATTRIBUTE_WORDS = new Set([
-  "open",
-  "today",
-  "24x7",
-  "24",
-  "hour",
-  "hours",
-]);
+const ATTRIBUTE_WORDS = new Set(['open', 'today', '24x7', '24', 'hour', 'hours']);
 
 /**
  * Main parser entry point.
@@ -73,23 +66,21 @@ const ATTRIBUTE_WORDS = new Set([
  * - fuzzy matching
  * - LLM fallback
  */
-export async function parseSearchQuery(
-  input: ParseSearchQueryInput,
-): Promise<ParsedSearchQuery> {
+export async function parseSearchQuery(input: ParseSearchQueryInput): Promise<ParsedSearchQuery> {
   const tier = selectParserTier(input);
 
   let result: ParserResult;
 
   switch (tier) {
-    case "rules":
+    case 'rules':
       result = await parseWithRules(input);
       break;
 
-    case "fuzzy":
+    case 'fuzzy':
       result = await parseWithFuzzyMatching(input);
       break;
 
-    case "llm":
+    case 'llm':
       result = await parseWithLlm(input);
       break;
 
@@ -101,8 +92,8 @@ export async function parseSearchQuery(
     originalQuery: input.query,
 
     intent: {
-      type: input.query.trim().length > 0 ? "business_search" : "unknown",
-      confidence: input.query.trim().length > 0 ? 0.8 : 0,
+      type: input.query.trim().length > 0 ? 'business_search' : 'unknown',
+      confidence: input.query.trim().length > 0 ? 0.8 : 0
     },
 
     concepts: result.concepts,
@@ -111,7 +102,7 @@ export async function parseSearchQuery(
     filters: result.filters,
     remainingTokens: getRemainingTokens(input.tokens),
     parserTier: tier,
-    confidence: result.confidence,
+    confidence: result.confidence
   };
 
   validateParsedQuery(parsed);
@@ -124,48 +115,39 @@ export async function parseSearchQuery(
  *
  * This is the V1 parser.
  */
-export async function parseWithRules(
-  input: ParseSearchQueryInput,
-): Promise<ParserResult> {
-  const lowerTokens = input.tokens.map((token) =>
-    token.toLocaleLowerCase("en-IN"),
-  );
+export async function parseWithRules(input: ParseSearchQueryInput): Promise<ParserResult> {
+  const lowerTokens = input.tokens.map((token) => token.toLocaleLowerCase('en-IN'));
 
-  const filters: ParsedSearchQuery["filters"] = {};
+  const filters: ParsedSearchQuery['filters'] = {};
 
-  if (lowerTokens.includes("best") || lowerTokens.includes("top")) {
+  if (lowerTokens.includes('best') || lowerTokens.includes('top')) {
     filters.best = true;
   }
 
-  if (lowerTokens.includes("open") && lowerTokens.includes("today")) {
+  if (lowerTokens.includes('open') && lowerTokens.includes('today')) {
     filters.openNow = true;
   }
 
   const locationStart = lowerTokens.findIndex((token) =>
-    ["in", "near", "at", "around"].includes(token),
+    ['in', 'near', 'at', 'around'].includes(token)
   );
-  const locationTokens =
-    locationStart >= 0 ? lowerTokens.slice(locationStart + 1) : [];
-  const conceptTokens =
-    locationStart >= 0 ? lowerTokens.slice(0, locationStart) : lowerTokens;
+  const locationTokens = locationStart >= 0 ? lowerTokens.slice(locationStart + 1) : [];
+  const conceptTokens = locationStart >= 0 ? lowerTokens.slice(0, locationStart) : lowerTokens;
   const concepts = conceptTokens.filter(
-    (token) =>
-      !STOP_WORDS.has(token) &&
-      !INTENT_WORDS.has(token) &&
-      !ATTRIBUTE_WORDS.has(token),
+    (token) => !STOP_WORDS.has(token) && !INTENT_WORDS.has(token) && !ATTRIBUTE_WORDS.has(token)
   );
 
   return {
     concepts,
-    locations: locationTokens.length ? [locationTokens.join(" ")] : [],
+    locations: locationTokens.length ? [locationTokens.join(' ')] : [],
     attributes: [],
     filters,
     confidence: calculateParserConfidence({
       input,
       concepts,
       locations: [],
-      attributes: [],
-    }),
+      attributes: []
+    })
   };
 }
 
@@ -177,9 +159,7 @@ export async function parseWithRules(
  * For V1 we deliberately fall back to
  * deterministic rule parsing.
  */
-export async function parseWithFuzzyMatching(
-  input: ParseSearchQueryInput,
-): Promise<ParserResult> {
+export async function parseWithFuzzyMatching(input: ParseSearchQueryInput): Promise<ParserResult> {
   return parseWithRules(input);
 }
 
@@ -191,9 +171,7 @@ export async function parseWithFuzzyMatching(
  * For V1 we deliberately fall back to
  * deterministic rule parsing.
  */
-export async function parseWithLlm(
-  input: ParseSearchQueryInput,
-): Promise<ParserResult> {
+export async function parseWithLlm(input: ParseSearchQueryInput): Promise<ParserResult> {
   return parseWithRules(input);
 }
 
@@ -212,10 +190,10 @@ export async function parseWithLlm(
  */
 export function selectParserTier(input: ParseSearchQueryInput): ParserTier {
   if (!input.query.trim()) {
-    return "rules";
+    return 'rules';
   }
 
-  return "rules";
+  return 'rules';
 }
 
 /**
@@ -267,7 +245,7 @@ export function mergeParserResults(results: ParserResult[]): ParserResult {
       locations: [],
       attributes: [],
       filters: {},
-      confidence: 0,
+      confidence: 0
     };
   }
 
@@ -277,7 +255,7 @@ export function mergeParserResults(results: ParserResult[]): ParserResult {
 
   const attributes = unique(results.flatMap((result) => result.attributes));
 
-  const filters: ParsedSearchQuery["filters"] = {};
+  const filters: ParsedSearchQuery['filters'] = {};
 
   for (const result of results) {
     if (result.filters.best) {
@@ -289,16 +267,14 @@ export function mergeParserResults(results: ParserResult[]): ParserResult {
     }
   }
 
-  const confidence =
-    results.reduce((sum, result) => sum + result.confidence, 0) /
-    results.length;
+  const confidence = results.reduce((sum, result) => sum + result.confidence, 0) / results.length;
 
   return {
     concepts,
     locations,
     attributes,
     filters,
-    confidence,
+    confidence
   };
 }
 
@@ -306,36 +282,32 @@ export function mergeParserResults(results: ParserResult[]): ParserResult {
  * Validate parser output.
  */
 export function validateParsedQuery(input: ParsedSearchQuery): void {
-  if (!input || typeof input !== "object") {
-    throw new Error("Invalid parsed search query");
+  if (!input || typeof input !== 'object') {
+    throw new Error('Invalid parsed search query');
   }
 
-  if (typeof input.originalQuery !== "string") {
-    throw new Error("Invalid original query");
+  if (typeof input.originalQuery !== 'string') {
+    throw new Error('Invalid original query');
   }
 
   if (!Array.isArray(input.concepts)) {
-    throw new Error("Invalid concepts");
+    throw new Error('Invalid concepts');
   }
 
   if (!Array.isArray(input.locations)) {
-    throw new Error("Invalid locations");
+    throw new Error('Invalid locations');
   }
 
   if (!Array.isArray(input.attributes)) {
-    throw new Error("Invalid attributes");
+    throw new Error('Invalid attributes');
   }
 
   if (!Array.isArray(input.remainingTokens)) {
-    throw new Error("Invalid remaining tokens");
+    throw new Error('Invalid remaining tokens');
   }
 
-  if (
-    typeof input.confidence !== "number" ||
-    input.confidence < 0 ||
-    input.confidence > 1
-  ) {
-    throw new Error("Invalid parser confidence");
+  if (typeof input.confidence !== 'number' || input.confidence < 0 || input.confidence > 1) {
+    throw new Error('Invalid parser confidence');
   }
 }
 
@@ -344,7 +316,7 @@ export function validateParsedQuery(input: ParsedSearchQuery): void {
  */
 function getRemainingTokens(tokens: string[]): string[] {
   return tokens.filter((token) => {
-    const normalized = token.toLocaleLowerCase("en-IN");
+    const normalized = token.toLocaleLowerCase('en-IN');
 
     return (
       !STOP_WORDS.has(normalized) &&
