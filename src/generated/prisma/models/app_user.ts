@@ -42,6 +42,7 @@ export type App_userMinAggregateOutputType = {
   role: string | null
   is_active: boolean | null
   created_at: Date | null
+  phone_verified_at: Date | null
 }
 
 export type App_userMaxAggregateOutputType = {
@@ -52,6 +53,7 @@ export type App_userMaxAggregateOutputType = {
   role: string | null
   is_active: boolean | null
   created_at: Date | null
+  phone_verified_at: Date | null
 }
 
 export type App_userCountAggregateOutputType = {
@@ -62,6 +64,7 @@ export type App_userCountAggregateOutputType = {
   role: number
   is_active: number
   created_at: number
+  phone_verified_at: number
   _all: number
 }
 
@@ -82,6 +85,7 @@ export type App_userMinAggregateInputType = {
   role?: true
   is_active?: true
   created_at?: true
+  phone_verified_at?: true
 }
 
 export type App_userMaxAggregateInputType = {
@@ -92,6 +96,7 @@ export type App_userMaxAggregateInputType = {
   role?: true
   is_active?: true
   created_at?: true
+  phone_verified_at?: true
 }
 
 export type App_userCountAggregateInputType = {
@@ -102,6 +107,7 @@ export type App_userCountAggregateInputType = {
   role?: true
   is_active?: true
   created_at?: true
+  phone_verified_at?: true
   _all?: true
 }
 
@@ -199,6 +205,7 @@ export type App_userGroupByOutputType = {
   role: string
   is_active: boolean
   created_at: Date
+  phone_verified_at: Date | null
   _count: App_userCountAggregateOutputType | null
   _avg: App_userAvgAggregateOutputType | null
   _sum: App_userSumAggregateOutputType | null
@@ -232,8 +239,12 @@ export type app_userWhereInput = {
   role?: Prisma.StringFilter<"app_user"> | string
   is_active?: Prisma.BoolFilter<"app_user"> | boolean
   created_at?: Prisma.DateTimeFilter<"app_user"> | Date | string
+  phone_verified_at?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
   business?: Prisma.BusinessListRelationFilter
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.Business_claimListRelationFilter
+  business_claim_business_claim_user_idToapp_user?: Prisma.Business_claimListRelationFilter
   creator?: Prisma.XOR<Prisma.CreatorNullableScalarRelationFilter, Prisma.creatorWhereInput> | null
+  lead_status_history?: Prisma.Lead_status_historyListRelationFilter
   review?: Prisma.ReviewListRelationFilter
 }
 
@@ -245,8 +256,12 @@ export type app_userOrderByWithRelationInput = {
   role?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  phone_verified_at?: Prisma.SortOrderInput | Prisma.SortOrder
   business?: Prisma.businessOrderByRelationAggregateInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimOrderByRelationAggregateInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimOrderByRelationAggregateInput
   creator?: Prisma.creatorOrderByWithRelationInput
+  lead_status_history?: Prisma.lead_status_historyOrderByRelationAggregateInput
   review?: Prisma.reviewOrderByRelationAggregateInput
 }
 
@@ -261,8 +276,12 @@ export type app_userWhereUniqueInput = Prisma.AtLeast<{
   role?: Prisma.StringFilter<"app_user"> | string
   is_active?: Prisma.BoolFilter<"app_user"> | boolean
   created_at?: Prisma.DateTimeFilter<"app_user"> | Date | string
+  phone_verified_at?: Prisma.DateTimeNullableFilter<"app_user"> | Date | string | null
   business?: Prisma.BusinessListRelationFilter
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.Business_claimListRelationFilter
+  business_claim_business_claim_user_idToapp_user?: Prisma.Business_claimListRelationFilter
   creator?: Prisma.XOR<Prisma.CreatorNullableScalarRelationFilter, Prisma.creatorWhereInput> | null
+  lead_status_history?: Prisma.Lead_status_historyListRelationFilter
   review?: Prisma.ReviewListRelationFilter
 }, "id" | "phone">
 
@@ -274,6 +293,7 @@ export type app_userOrderByWithAggregationInput = {
   role?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  phone_verified_at?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.app_userCountOrderByAggregateInput
   _avg?: Prisma.app_userAvgOrderByAggregateInput
   _max?: Prisma.app_userMaxOrderByAggregateInput
@@ -292,6 +312,7 @@ export type app_userScalarWhereWithAggregatesInput = {
   role?: Prisma.StringWithAggregatesFilter<"app_user"> | string
   is_active?: Prisma.BoolWithAggregatesFilter<"app_user"> | boolean
   created_at?: Prisma.DateTimeWithAggregatesFilter<"app_user"> | Date | string
+  phone_verified_at?: Prisma.DateTimeNullableWithAggregatesFilter<"app_user"> | Date | string | null
 }
 
 export type app_userCreateInput = {
@@ -302,8 +323,12 @@ export type app_userCreateInput = {
   role?: string
   is_active?: boolean
   created_at?: Date | string
+  phone_verified_at?: Date | string | null
   business?: Prisma.businessCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
   creator?: Prisma.creatorCreateNestedOneWithoutApp_userInput
+  lead_status_history?: Prisma.lead_status_historyCreateNestedManyWithoutApp_userInput
   review?: Prisma.reviewCreateNestedManyWithoutApp_userInput
 }
 
@@ -315,8 +340,12 @@ export type app_userUncheckedCreateInput = {
   role?: string
   is_active?: boolean
   created_at?: Date | string
+  phone_verified_at?: Date | string | null
   business?: Prisma.businessUncheckedCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
   creator?: Prisma.creatorUncheckedCreateNestedOneWithoutApp_userInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedCreateNestedManyWithoutApp_userInput
   review?: Prisma.reviewUncheckedCreateNestedManyWithoutApp_userInput
 }
 
@@ -328,8 +357,12 @@ export type app_userUpdateInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   business?: Prisma.businessUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
   creator?: Prisma.creatorUpdateOneWithoutApp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUpdateManyWithoutApp_userNestedInput
   review?: Prisma.reviewUpdateManyWithoutApp_userNestedInput
 }
 
@@ -341,8 +374,12 @@ export type app_userUncheckedUpdateInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   business?: Prisma.businessUncheckedUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
   creator?: Prisma.creatorUncheckedUpdateOneWithoutApp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedUpdateManyWithoutApp_userNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutApp_userNestedInput
 }
 
@@ -354,6 +391,7 @@ export type app_userCreateManyInput = {
   role?: string
   is_active?: boolean
   created_at?: Date | string
+  phone_verified_at?: Date | string | null
 }
 
 export type app_userUpdateManyMutationInput = {
@@ -364,6 +402,7 @@ export type app_userUpdateManyMutationInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type app_userUncheckedUpdateManyInput = {
@@ -374,6 +413,7 @@ export type app_userUncheckedUpdateManyInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type app_userCountOrderByAggregateInput = {
@@ -384,6 +424,7 @@ export type app_userCountOrderByAggregateInput = {
   role?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  phone_verified_at?: Prisma.SortOrder
 }
 
 export type app_userAvgOrderByAggregateInput = {
@@ -398,6 +439,7 @@ export type app_userMaxOrderByAggregateInput = {
   role?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  phone_verified_at?: Prisma.SortOrder
 }
 
 export type app_userMinOrderByAggregateInput = {
@@ -408,6 +450,7 @@ export type app_userMinOrderByAggregateInput = {
   role?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  phone_verified_at?: Prisma.SortOrder
 }
 
 export type app_userSumOrderByAggregateInput = {
@@ -446,6 +489,10 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type app_userUpdateOneWithoutBusinessNestedInput = {
@@ -488,6 +535,52 @@ export type app_userUpdateOneWithoutReviewNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutReviewInput, Prisma.app_userUpdateWithoutReviewInput>, Prisma.app_userUncheckedUpdateWithoutReviewInput>
 }
 
+export type app_userCreateNestedOneWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput, Prisma.app_userUncheckedCreateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userCreateNestedOneWithoutBusiness_claim_business_claim_user_idToapp_userInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutBusiness_claim_business_claim_user_idToapp_userInput, Prisma.app_userUncheckedCreateWithoutBusiness_claim_business_claim_user_idToapp_userInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutBusiness_claim_business_claim_user_idToapp_userInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userUpdateOneWithoutBusiness_claim_business_claim_reviewed_byToapp_userNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput, Prisma.app_userUncheckedCreateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput
+  upsert?: Prisma.app_userUpsertWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput
+  disconnect?: Prisma.app_userWhereInput | boolean
+  delete?: Prisma.app_userWhereInput | boolean
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput, Prisma.app_userUpdateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput>, Prisma.app_userUncheckedUpdateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput>
+}
+
+export type app_userUpdateOneRequiredWithoutBusiness_claim_business_claim_user_idToapp_userNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutBusiness_claim_business_claim_user_idToapp_userInput, Prisma.app_userUncheckedCreateWithoutBusiness_claim_business_claim_user_idToapp_userInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutBusiness_claim_business_claim_user_idToapp_userInput
+  upsert?: Prisma.app_userUpsertWithoutBusiness_claim_business_claim_user_idToapp_userInput
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutBusiness_claim_business_claim_user_idToapp_userInput, Prisma.app_userUpdateWithoutBusiness_claim_business_claim_user_idToapp_userInput>, Prisma.app_userUncheckedUpdateWithoutBusiness_claim_business_claim_user_idToapp_userInput>
+}
+
+export type app_userCreateNestedOneWithoutLead_status_historyInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutLead_status_historyInput, Prisma.app_userUncheckedCreateWithoutLead_status_historyInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutLead_status_historyInput
+  connect?: Prisma.app_userWhereUniqueInput
+}
+
+export type app_userUpdateOneWithoutLead_status_historyNestedInput = {
+  create?: Prisma.XOR<Prisma.app_userCreateWithoutLead_status_historyInput, Prisma.app_userUncheckedCreateWithoutLead_status_historyInput>
+  connectOrCreate?: Prisma.app_userCreateOrConnectWithoutLead_status_historyInput
+  upsert?: Prisma.app_userUpsertWithoutLead_status_historyInput
+  disconnect?: Prisma.app_userWhereInput | boolean
+  delete?: Prisma.app_userWhereInput | boolean
+  connect?: Prisma.app_userWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.app_userUpdateToOneWithWhereWithoutLead_status_historyInput, Prisma.app_userUpdateWithoutLead_status_historyInput>, Prisma.app_userUncheckedUpdateWithoutLead_status_historyInput>
+}
+
 export type app_userCreateWithoutBusinessInput = {
   id?: bigint | number
   name: string
@@ -496,7 +589,11 @@ export type app_userCreateWithoutBusinessInput = {
   role?: string
   is_active?: boolean
   created_at?: Date | string
+  phone_verified_at?: Date | string | null
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
   creator?: Prisma.creatorCreateNestedOneWithoutApp_userInput
+  lead_status_history?: Prisma.lead_status_historyCreateNestedManyWithoutApp_userInput
   review?: Prisma.reviewCreateNestedManyWithoutApp_userInput
 }
 
@@ -508,7 +605,11 @@ export type app_userUncheckedCreateWithoutBusinessInput = {
   role?: string
   is_active?: boolean
   created_at?: Date | string
+  phone_verified_at?: Date | string | null
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
   creator?: Prisma.creatorUncheckedCreateNestedOneWithoutApp_userInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedCreateNestedManyWithoutApp_userInput
   review?: Prisma.reviewUncheckedCreateNestedManyWithoutApp_userInput
 }
 
@@ -536,7 +637,11 @@ export type app_userUpdateWithoutBusinessInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
   creator?: Prisma.creatorUpdateOneWithoutApp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUpdateManyWithoutApp_userNestedInput
   review?: Prisma.reviewUpdateManyWithoutApp_userNestedInput
 }
 
@@ -548,7 +653,11 @@ export type app_userUncheckedUpdateWithoutBusinessInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
   creator?: Prisma.creatorUncheckedUpdateOneWithoutApp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedUpdateManyWithoutApp_userNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutApp_userNestedInput
 }
 
@@ -560,7 +669,11 @@ export type app_userCreateWithoutCreatorInput = {
   role?: string
   is_active?: boolean
   created_at?: Date | string
+  phone_verified_at?: Date | string | null
   business?: Prisma.businessCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
+  lead_status_history?: Prisma.lead_status_historyCreateNestedManyWithoutApp_userInput
   review?: Prisma.reviewCreateNestedManyWithoutApp_userInput
 }
 
@@ -572,7 +685,11 @@ export type app_userUncheckedCreateWithoutCreatorInput = {
   role?: string
   is_active?: boolean
   created_at?: Date | string
+  phone_verified_at?: Date | string | null
   business?: Prisma.businessUncheckedCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedCreateNestedManyWithoutApp_userInput
   review?: Prisma.reviewUncheckedCreateNestedManyWithoutApp_userInput
 }
 
@@ -600,7 +717,11 @@ export type app_userUpdateWithoutCreatorInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   business?: Prisma.businessUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUpdateManyWithoutApp_userNestedInput
   review?: Prisma.reviewUpdateManyWithoutApp_userNestedInput
 }
 
@@ -612,7 +733,11 @@ export type app_userUncheckedUpdateWithoutCreatorInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   business?: Prisma.businessUncheckedUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedUpdateManyWithoutApp_userNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutApp_userNestedInput
 }
 
@@ -624,8 +749,12 @@ export type app_userCreateWithoutReviewInput = {
   role?: string
   is_active?: boolean
   created_at?: Date | string
+  phone_verified_at?: Date | string | null
   business?: Prisma.businessCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
   creator?: Prisma.creatorCreateNestedOneWithoutApp_userInput
+  lead_status_history?: Prisma.lead_status_historyCreateNestedManyWithoutApp_userInput
 }
 
 export type app_userUncheckedCreateWithoutReviewInput = {
@@ -636,8 +765,12 @@ export type app_userUncheckedCreateWithoutReviewInput = {
   role?: string
   is_active?: boolean
   created_at?: Date | string
+  phone_verified_at?: Date | string | null
   business?: Prisma.businessUncheckedCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
   creator?: Prisma.creatorUncheckedCreateNestedOneWithoutApp_userInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedCreateNestedManyWithoutApp_userInput
 }
 
 export type app_userCreateOrConnectWithoutReviewInput = {
@@ -664,8 +797,12 @@ export type app_userUpdateWithoutReviewInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   business?: Prisma.businessUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
   creator?: Prisma.creatorUpdateOneWithoutApp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUpdateManyWithoutApp_userNestedInput
 }
 
 export type app_userUncheckedUpdateWithoutReviewInput = {
@@ -676,8 +813,252 @@ export type app_userUncheckedUpdateWithoutReviewInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   business?: Prisma.businessUncheckedUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
   creator?: Prisma.creatorUncheckedUpdateOneWithoutApp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedUpdateManyWithoutApp_userNestedInput
+}
+
+export type app_userCreateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput = {
+  id?: bigint | number
+  name: string
+  phone: string
+  email?: string | null
+  role?: string
+  is_active?: boolean
+  created_at?: Date | string
+  phone_verified_at?: Date | string | null
+  business?: Prisma.businessCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
+  creator?: Prisma.creatorCreateNestedOneWithoutApp_userInput
+  lead_status_history?: Prisma.lead_status_historyCreateNestedManyWithoutApp_userInput
+  review?: Prisma.reviewCreateNestedManyWithoutApp_userInput
+}
+
+export type app_userUncheckedCreateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput = {
+  id?: bigint | number
+  name: string
+  phone: string
+  email?: string | null
+  role?: string
+  is_active?: boolean
+  created_at?: Date | string
+  phone_verified_at?: Date | string | null
+  business?: Prisma.businessUncheckedCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
+  creator?: Prisma.creatorUncheckedCreateNestedOneWithoutApp_userInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedCreateNestedManyWithoutApp_userInput
+  review?: Prisma.reviewUncheckedCreateNestedManyWithoutApp_userInput
+}
+
+export type app_userCreateOrConnectWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput, Prisma.app_userUncheckedCreateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput>
+}
+
+export type app_userCreateWithoutBusiness_claim_business_claim_user_idToapp_userInput = {
+  id?: bigint | number
+  name: string
+  phone: string
+  email?: string | null
+  role?: string
+  is_active?: boolean
+  created_at?: Date | string
+  phone_verified_at?: Date | string | null
+  business?: Prisma.businessCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  creator?: Prisma.creatorCreateNestedOneWithoutApp_userInput
+  lead_status_history?: Prisma.lead_status_historyCreateNestedManyWithoutApp_userInput
+  review?: Prisma.reviewCreateNestedManyWithoutApp_userInput
+}
+
+export type app_userUncheckedCreateWithoutBusiness_claim_business_claim_user_idToapp_userInput = {
+  id?: bigint | number
+  name: string
+  phone: string
+  email?: string | null
+  role?: string
+  is_active?: boolean
+  created_at?: Date | string
+  phone_verified_at?: Date | string | null
+  business?: Prisma.businessUncheckedCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  creator?: Prisma.creatorUncheckedCreateNestedOneWithoutApp_userInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedCreateNestedManyWithoutApp_userInput
+  review?: Prisma.reviewUncheckedCreateNestedManyWithoutApp_userInput
+}
+
+export type app_userCreateOrConnectWithoutBusiness_claim_business_claim_user_idToapp_userInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutBusiness_claim_business_claim_user_idToapp_userInput, Prisma.app_userUncheckedCreateWithoutBusiness_claim_business_claim_user_idToapp_userInput>
+}
+
+export type app_userUpsertWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput, Prisma.app_userUncheckedUpdateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput, Prisma.app_userUncheckedCreateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput, Prisma.app_userUncheckedUpdateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput>
+}
+
+export type app_userUpdateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  business?: Prisma.businessUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
+  creator?: Prisma.creatorUpdateOneWithoutApp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUpdateManyWithoutApp_userNestedInput
+  review?: Prisma.reviewUpdateManyWithoutApp_userNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutBusiness_claim_business_claim_reviewed_byToapp_userInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  business?: Prisma.businessUncheckedUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
+  creator?: Prisma.creatorUncheckedUpdateOneWithoutApp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedUpdateManyWithoutApp_userNestedInput
+  review?: Prisma.reviewUncheckedUpdateManyWithoutApp_userNestedInput
+}
+
+export type app_userUpsertWithoutBusiness_claim_business_claim_user_idToapp_userInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutBusiness_claim_business_claim_user_idToapp_userInput, Prisma.app_userUncheckedUpdateWithoutBusiness_claim_business_claim_user_idToapp_userInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutBusiness_claim_business_claim_user_idToapp_userInput, Prisma.app_userUncheckedCreateWithoutBusiness_claim_business_claim_user_idToapp_userInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutBusiness_claim_business_claim_user_idToapp_userInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutBusiness_claim_business_claim_user_idToapp_userInput, Prisma.app_userUncheckedUpdateWithoutBusiness_claim_business_claim_user_idToapp_userInput>
+}
+
+export type app_userUpdateWithoutBusiness_claim_business_claim_user_idToapp_userInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  business?: Prisma.businessUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  creator?: Prisma.creatorUpdateOneWithoutApp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUpdateManyWithoutApp_userNestedInput
+  review?: Prisma.reviewUpdateManyWithoutApp_userNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutBusiness_claim_business_claim_user_idToapp_userInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  business?: Prisma.businessUncheckedUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  creator?: Prisma.creatorUncheckedUpdateOneWithoutApp_userNestedInput
+  lead_status_history?: Prisma.lead_status_historyUncheckedUpdateManyWithoutApp_userNestedInput
+  review?: Prisma.reviewUncheckedUpdateManyWithoutApp_userNestedInput
+}
+
+export type app_userCreateWithoutLead_status_historyInput = {
+  id?: bigint | number
+  name: string
+  phone: string
+  email?: string | null
+  role?: string
+  is_active?: boolean
+  created_at?: Date | string
+  phone_verified_at?: Date | string | null
+  business?: Prisma.businessCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
+  creator?: Prisma.creatorCreateNestedOneWithoutApp_userInput
+  review?: Prisma.reviewCreateNestedManyWithoutApp_userInput
+}
+
+export type app_userUncheckedCreateWithoutLead_status_historyInput = {
+  id?: bigint | number
+  name: string
+  phone: string
+  email?: string | null
+  role?: string
+  is_active?: boolean
+  created_at?: Date | string
+  phone_verified_at?: Date | string | null
+  business?: Prisma.businessUncheckedCreateNestedManyWithoutApp_userInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_reviewed_byToapp_userInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedCreateNestedManyWithoutApp_user_business_claim_user_idToapp_userInput
+  creator?: Prisma.creatorUncheckedCreateNestedOneWithoutApp_userInput
+  review?: Prisma.reviewUncheckedCreateNestedManyWithoutApp_userInput
+}
+
+export type app_userCreateOrConnectWithoutLead_status_historyInput = {
+  where: Prisma.app_userWhereUniqueInput
+  create: Prisma.XOR<Prisma.app_userCreateWithoutLead_status_historyInput, Prisma.app_userUncheckedCreateWithoutLead_status_historyInput>
+}
+
+export type app_userUpsertWithoutLead_status_historyInput = {
+  update: Prisma.XOR<Prisma.app_userUpdateWithoutLead_status_historyInput, Prisma.app_userUncheckedUpdateWithoutLead_status_historyInput>
+  create: Prisma.XOR<Prisma.app_userCreateWithoutLead_status_historyInput, Prisma.app_userUncheckedCreateWithoutLead_status_historyInput>
+  where?: Prisma.app_userWhereInput
+}
+
+export type app_userUpdateToOneWithWhereWithoutLead_status_historyInput = {
+  where?: Prisma.app_userWhereInput
+  data: Prisma.XOR<Prisma.app_userUpdateWithoutLead_status_historyInput, Prisma.app_userUncheckedUpdateWithoutLead_status_historyInput>
+}
+
+export type app_userUpdateWithoutLead_status_historyInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  business?: Prisma.businessUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
+  creator?: Prisma.creatorUpdateOneWithoutApp_userNestedInput
+  review?: Prisma.reviewUpdateManyWithoutApp_userNestedInput
+}
+
+export type app_userUncheckedUpdateWithoutLead_status_historyInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  business?: Prisma.businessUncheckedUpdateManyWithoutApp_userNestedInput
+  business_claim_business_claim_reviewed_byToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_reviewed_byToapp_userNestedInput
+  business_claim_business_claim_user_idToapp_user?: Prisma.business_claimUncheckedUpdateManyWithoutApp_user_business_claim_user_idToapp_userNestedInput
+  creator?: Prisma.creatorUncheckedUpdateOneWithoutApp_userNestedInput
+  review?: Prisma.reviewUncheckedUpdateManyWithoutApp_userNestedInput
 }
 
 
@@ -687,11 +1068,17 @@ export type app_userUncheckedUpdateWithoutReviewInput = {
 
 export type App_userCountOutputType = {
   business: number
+  business_claim_business_claim_reviewed_byToapp_user: number
+  business_claim_business_claim_user_idToapp_user: number
+  lead_status_history: number
   review: number
 }
 
 export type App_userCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business?: boolean | App_userCountOutputTypeCountBusinessArgs
+  business_claim_business_claim_reviewed_byToapp_user?: boolean | App_userCountOutputTypeCountBusiness_claim_business_claim_reviewed_byToapp_userArgs
+  business_claim_business_claim_user_idToapp_user?: boolean | App_userCountOutputTypeCountBusiness_claim_business_claim_user_idToapp_userArgs
+  lead_status_history?: boolean | App_userCountOutputTypeCountLead_status_historyArgs
   review?: boolean | App_userCountOutputTypeCountReviewArgs
 }
 
@@ -715,6 +1102,27 @@ export type App_userCountOutputTypeCountBusinessArgs<ExtArgs extends runtime.Typ
 /**
  * App_userCountOutputType without action
  */
+export type App_userCountOutputTypeCountBusiness_claim_business_claim_reviewed_byToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.business_claimWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountBusiness_claim_business_claim_user_idToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.business_claimWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
+export type App_userCountOutputTypeCountLead_status_historyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.lead_status_historyWhereInput
+}
+
+/**
+ * App_userCountOutputType without action
+ */
 export type App_userCountOutputTypeCountReviewArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.reviewWhereInput
 }
@@ -728,8 +1136,12 @@ export type app_userSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   role?: boolean
   is_active?: boolean
   created_at?: boolean
+  phone_verified_at?: boolean
   business?: boolean | Prisma.app_user$businessArgs<ExtArgs>
+  business_claim_business_claim_reviewed_byToapp_user?: boolean | Prisma.app_user$business_claim_business_claim_reviewed_byToapp_userArgs<ExtArgs>
+  business_claim_business_claim_user_idToapp_user?: boolean | Prisma.app_user$business_claim_business_claim_user_idToapp_userArgs<ExtArgs>
   creator?: boolean | Prisma.app_user$creatorArgs<ExtArgs>
+  lead_status_history?: boolean | Prisma.app_user$lead_status_historyArgs<ExtArgs>
   review?: boolean | Prisma.app_user$reviewArgs<ExtArgs>
   _count?: boolean | Prisma.App_userCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["app_user"]>
@@ -742,6 +1154,7 @@ export type app_userSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   role?: boolean
   is_active?: boolean
   created_at?: boolean
+  phone_verified_at?: boolean
 }, ExtArgs["result"]["app_user"]>
 
 export type app_userSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -752,6 +1165,7 @@ export type app_userSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   role?: boolean
   is_active?: boolean
   created_at?: boolean
+  phone_verified_at?: boolean
 }, ExtArgs["result"]["app_user"]>
 
 export type app_userSelectScalar = {
@@ -762,12 +1176,16 @@ export type app_userSelectScalar = {
   role?: boolean
   is_active?: boolean
   created_at?: boolean
+  phone_verified_at?: boolean
 }
 
-export type app_userOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "email" | "role" | "is_active" | "created_at", ExtArgs["result"]["app_user"]>
+export type app_userOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "email" | "role" | "is_active" | "created_at" | "phone_verified_at", ExtArgs["result"]["app_user"]>
 export type app_userInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business?: boolean | Prisma.app_user$businessArgs<ExtArgs>
+  business_claim_business_claim_reviewed_byToapp_user?: boolean | Prisma.app_user$business_claim_business_claim_reviewed_byToapp_userArgs<ExtArgs>
+  business_claim_business_claim_user_idToapp_user?: boolean | Prisma.app_user$business_claim_business_claim_user_idToapp_userArgs<ExtArgs>
   creator?: boolean | Prisma.app_user$creatorArgs<ExtArgs>
+  lead_status_history?: boolean | Prisma.app_user$lead_status_historyArgs<ExtArgs>
   review?: boolean | Prisma.app_user$reviewArgs<ExtArgs>
   _count?: boolean | Prisma.App_userCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -778,7 +1196,10 @@ export type $app_userPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "app_user"
   objects: {
     business: Prisma.$businessPayload<ExtArgs>[]
+    business_claim_business_claim_reviewed_byToapp_user: Prisma.$business_claimPayload<ExtArgs>[]
+    business_claim_business_claim_user_idToapp_user: Prisma.$business_claimPayload<ExtArgs>[]
     creator: Prisma.$creatorPayload<ExtArgs> | null
+    lead_status_history: Prisma.$lead_status_historyPayload<ExtArgs>[]
     review: Prisma.$reviewPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -789,6 +1210,7 @@ export type $app_userPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     role: string
     is_active: boolean
     created_at: Date
+    phone_verified_at: Date | null
   }, ExtArgs["result"]["app_user"]>
   composites: {}
 }
@@ -1184,7 +1606,10 @@ readonly fields: app_userFieldRefs;
 export interface Prisma__app_userClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   business<T extends Prisma.app_user$businessArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$businessArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$businessPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  business_claim_business_claim_reviewed_byToapp_user<T extends Prisma.app_user$business_claim_business_claim_reviewed_byToapp_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$business_claim_business_claim_reviewed_byToapp_userArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$business_claimPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  business_claim_business_claim_user_idToapp_user<T extends Prisma.app_user$business_claim_business_claim_user_idToapp_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$business_claim_business_claim_user_idToapp_userArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$business_claimPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   creator<T extends Prisma.app_user$creatorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$creatorArgs<ExtArgs>>): Prisma.Prisma__creatorClient<runtime.Types.Result.GetResult<Prisma.$creatorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  lead_status_history<T extends Prisma.app_user$lead_status_historyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$lead_status_historyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$lead_status_historyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   review<T extends Prisma.app_user$reviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.app_user$reviewArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$reviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1222,6 +1647,7 @@ export interface app_userFieldRefs {
   readonly role: Prisma.FieldRef<"app_user", 'String'>
   readonly is_active: Prisma.FieldRef<"app_user", 'Boolean'>
   readonly created_at: Prisma.FieldRef<"app_user", 'DateTime'>
+  readonly phone_verified_at: Prisma.FieldRef<"app_user", 'DateTime'>
 }
     
 
@@ -1639,6 +2065,54 @@ export type app_user$businessArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
+ * app_user.business_claim_business_claim_reviewed_byToapp_user
+ */
+export type app_user$business_claim_business_claim_reviewed_byToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the business_claim
+   */
+  select?: Prisma.business_claimSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the business_claim
+   */
+  omit?: Prisma.business_claimOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.business_claimInclude<ExtArgs> | null
+  where?: Prisma.business_claimWhereInput
+  orderBy?: Prisma.business_claimOrderByWithRelationInput | Prisma.business_claimOrderByWithRelationInput[]
+  cursor?: Prisma.business_claimWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Business_claimScalarFieldEnum | Prisma.Business_claimScalarFieldEnum[]
+}
+
+/**
+ * app_user.business_claim_business_claim_user_idToapp_user
+ */
+export type app_user$business_claim_business_claim_user_idToapp_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the business_claim
+   */
+  select?: Prisma.business_claimSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the business_claim
+   */
+  omit?: Prisma.business_claimOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.business_claimInclude<ExtArgs> | null
+  where?: Prisma.business_claimWhereInput
+  orderBy?: Prisma.business_claimOrderByWithRelationInput | Prisma.business_claimOrderByWithRelationInput[]
+  cursor?: Prisma.business_claimWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Business_claimScalarFieldEnum | Prisma.Business_claimScalarFieldEnum[]
+}
+
+/**
  * app_user.creator
  */
 export type app_user$creatorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1655,6 +2129,30 @@ export type app_user$creatorArgs<ExtArgs extends runtime.Types.Extensions.Intern
    */
   include?: Prisma.creatorInclude<ExtArgs> | null
   where?: Prisma.creatorWhereInput
+}
+
+/**
+ * app_user.lead_status_history
+ */
+export type app_user$lead_status_historyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the lead_status_history
+   */
+  select?: Prisma.lead_status_historySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the lead_status_history
+   */
+  omit?: Prisma.lead_status_historyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.lead_status_historyInclude<ExtArgs> | null
+  where?: Prisma.lead_status_historyWhereInput
+  orderBy?: Prisma.lead_status_historyOrderByWithRelationInput | Prisma.lead_status_historyOrderByWithRelationInput[]
+  cursor?: Prisma.lead_status_historyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Lead_status_historyScalarFieldEnum | Prisma.Lead_status_historyScalarFieldEnum[]
 }
 
 /**

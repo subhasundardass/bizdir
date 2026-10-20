@@ -15,6 +15,7 @@ import type * as Prisma from "../internal/prismaNamespace.ts"
 /**
  * Model lead
  * This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+ * This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
  */
 export type leadModel = runtime.Types.Result.DefaultSelection<Prisma.$leadPayload>
 
@@ -63,6 +64,8 @@ export type LeadMinAggregateOutputType = {
   payout_id: bigint | null
   created_at: Date | null
   updated_at: Date | null
+  contacted_at: Date | null
+  guest_confirmed_at: Date | null
 }
 
 export type LeadMaxAggregateOutputType = {
@@ -82,6 +85,8 @@ export type LeadMaxAggregateOutputType = {
   payout_id: bigint | null
   created_at: Date | null
   updated_at: Date | null
+  contacted_at: Date | null
+  guest_confirmed_at: Date | null
 }
 
 export type LeadCountAggregateOutputType = {
@@ -101,6 +106,8 @@ export type LeadCountAggregateOutputType = {
   payout_id: number
   created_at: number
   updated_at: number
+  contacted_at: number
+  guest_confirmed_at: number
   _all: number
 }
 
@@ -142,6 +149,8 @@ export type LeadMinAggregateInputType = {
   payout_id?: true
   created_at?: true
   updated_at?: true
+  contacted_at?: true
+  guest_confirmed_at?: true
 }
 
 export type LeadMaxAggregateInputType = {
@@ -161,6 +170,8 @@ export type LeadMaxAggregateInputType = {
   payout_id?: true
   created_at?: true
   updated_at?: true
+  contacted_at?: true
+  guest_confirmed_at?: true
 }
 
 export type LeadCountAggregateInputType = {
@@ -180,6 +191,8 @@ export type LeadCountAggregateInputType = {
   payout_id?: true
   created_at?: true
   updated_at?: true
+  contacted_at?: true
+  guest_confirmed_at?: true
   _all?: true
 }
 
@@ -286,6 +299,8 @@ export type LeadGroupByOutputType = {
   payout_id: bigint | null
   created_at: Date
   updated_at: Date
+  contacted_at: Date | null
+  guest_confirmed_at: Date | null
   _count: LeadCountAggregateOutputType | null
   _avg: LeadAvgAggregateOutputType | null
   _sum: LeadSumAggregateOutputType | null
@@ -328,9 +343,12 @@ export type leadWhereInput = {
   payout_id?: Prisma.BigIntNullableFilter<"lead"> | bigint | number | null
   created_at?: Prisma.DateTimeFilter<"lead"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"lead"> | Date | string
+  contacted_at?: Prisma.DateTimeNullableFilter<"lead"> | Date | string | null
+  guest_confirmed_at?: Prisma.DateTimeNullableFilter<"lead"> | Date | string | null
   business?: Prisma.XOR<Prisma.BusinessScalarRelationFilter, Prisma.businessWhereInput>
   creator?: Prisma.XOR<Prisma.CreatorNullableScalarRelationFilter, Prisma.creatorWhereInput> | null
   payout?: Prisma.XOR<Prisma.PayoutNullableScalarRelationFilter, Prisma.payoutWhereInput> | null
+  lead_status_history?: Prisma.Lead_status_historyListRelationFilter
 }
 
 export type leadOrderByWithRelationInput = {
@@ -350,9 +368,12 @@ export type leadOrderByWithRelationInput = {
   payout_id?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  contacted_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  guest_confirmed_at?: Prisma.SortOrderInput | Prisma.SortOrder
   business?: Prisma.businessOrderByWithRelationInput
   creator?: Prisma.creatorOrderByWithRelationInput
   payout?: Prisma.payoutOrderByWithRelationInput
+  lead_status_history?: Prisma.lead_status_historyOrderByRelationAggregateInput
 }
 
 export type leadWhereUniqueInput = Prisma.AtLeast<{
@@ -375,9 +396,12 @@ export type leadWhereUniqueInput = Prisma.AtLeast<{
   payout_id?: Prisma.BigIntNullableFilter<"lead"> | bigint | number | null
   created_at?: Prisma.DateTimeFilter<"lead"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"lead"> | Date | string
+  contacted_at?: Prisma.DateTimeNullableFilter<"lead"> | Date | string | null
+  guest_confirmed_at?: Prisma.DateTimeNullableFilter<"lead"> | Date | string | null
   business?: Prisma.XOR<Prisma.BusinessScalarRelationFilter, Prisma.businessWhereInput>
   creator?: Prisma.XOR<Prisma.CreatorNullableScalarRelationFilter, Prisma.creatorWhereInput> | null
   payout?: Prisma.XOR<Prisma.PayoutNullableScalarRelationFilter, Prisma.payoutWhereInput> | null
+  lead_status_history?: Prisma.Lead_status_historyListRelationFilter
 }, "id">
 
 export type leadOrderByWithAggregationInput = {
@@ -397,6 +421,8 @@ export type leadOrderByWithAggregationInput = {
   payout_id?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  contacted_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  guest_confirmed_at?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.leadCountOrderByAggregateInput
   _avg?: Prisma.leadAvgOrderByAggregateInput
   _max?: Prisma.leadMaxOrderByAggregateInput
@@ -424,6 +450,8 @@ export type leadScalarWhereWithAggregatesInput = {
   payout_id?: Prisma.BigIntNullableWithAggregatesFilter<"lead"> | bigint | number | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"lead"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"lead"> | Date | string
+  contacted_at?: Prisma.DateTimeNullableWithAggregatesFilter<"lead"> | Date | string | null
+  guest_confirmed_at?: Prisma.DateTimeNullableWithAggregatesFilter<"lead"> | Date | string | null
 }
 
 export type leadCreateInput = {
@@ -440,9 +468,12 @@ export type leadCreateInput = {
   commission_amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
   business: Prisma.businessCreateNestedOneWithoutLeadInput
   creator?: Prisma.creatorCreateNestedOneWithoutLeadInput
   payout?: Prisma.payoutCreateNestedOneWithoutLeadInput
+  lead_status_history?: Prisma.lead_status_historyCreateNestedManyWithoutLeadInput
 }
 
 export type leadUncheckedCreateInput = {
@@ -462,6 +493,9 @@ export type leadUncheckedCreateInput = {
   payout_id?: bigint | number | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
+  lead_status_history?: Prisma.lead_status_historyUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type leadUpdateInput = {
@@ -478,9 +512,12 @@ export type leadUpdateInput = {
   commission_amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   business?: Prisma.businessUpdateOneRequiredWithoutLeadNestedInput
   creator?: Prisma.creatorUpdateOneWithoutLeadNestedInput
   payout?: Prisma.payoutUpdateOneWithoutLeadNestedInput
+  lead_status_history?: Prisma.lead_status_historyUpdateManyWithoutLeadNestedInput
 }
 
 export type leadUncheckedUpdateInput = {
@@ -500,6 +537,9 @@ export type leadUncheckedUpdateInput = {
   payout_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lead_status_history?: Prisma.lead_status_historyUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type leadCreateManyInput = {
@@ -519,6 +559,8 @@ export type leadCreateManyInput = {
   payout_id?: bigint | number | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
 }
 
 export type leadUpdateManyMutationInput = {
@@ -535,6 +577,8 @@ export type leadUpdateManyMutationInput = {
   commission_amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type leadUncheckedUpdateManyInput = {
@@ -554,6 +598,8 @@ export type leadUncheckedUpdateManyInput = {
   payout_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type LeadListRelationFilter = {
@@ -583,6 +629,8 @@ export type leadCountOrderByAggregateInput = {
   payout_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  contacted_at?: Prisma.SortOrder
+  guest_confirmed_at?: Prisma.SortOrder
 }
 
 export type leadAvgOrderByAggregateInput = {
@@ -612,6 +660,8 @@ export type leadMaxOrderByAggregateInput = {
   payout_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  contacted_at?: Prisma.SortOrder
+  guest_confirmed_at?: Prisma.SortOrder
 }
 
 export type leadMinOrderByAggregateInput = {
@@ -631,6 +681,8 @@ export type leadMinOrderByAggregateInput = {
   payout_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  contacted_at?: Prisma.SortOrder
+  guest_confirmed_at?: Prisma.SortOrder
 }
 
 export type leadSumOrderByAggregateInput = {
@@ -641,6 +693,11 @@ export type leadSumOrderByAggregateInput = {
   booking_value?: Prisma.SortOrder
   commission_amount?: Prisma.SortOrder
   payout_id?: Prisma.SortOrder
+}
+
+export type LeadScalarRelationFilter = {
+  is?: Prisma.leadWhereInput
+  isNot?: Prisma.leadWhereInput
 }
 
 export type leadUpdateManyWithoutBusinessNestedInput = {
@@ -755,6 +812,20 @@ export type leadUncheckedUpdateManyWithoutPayoutNestedInput = {
   deleteMany?: Prisma.leadScalarWhereInput | Prisma.leadScalarWhereInput[]
 }
 
+export type leadCreateNestedOneWithoutLead_status_historyInput = {
+  create?: Prisma.XOR<Prisma.leadCreateWithoutLead_status_historyInput, Prisma.leadUncheckedCreateWithoutLead_status_historyInput>
+  connectOrCreate?: Prisma.leadCreateOrConnectWithoutLead_status_historyInput
+  connect?: Prisma.leadWhereUniqueInput
+}
+
+export type leadUpdateOneRequiredWithoutLead_status_historyNestedInput = {
+  create?: Prisma.XOR<Prisma.leadCreateWithoutLead_status_historyInput, Prisma.leadUncheckedCreateWithoutLead_status_historyInput>
+  connectOrCreate?: Prisma.leadCreateOrConnectWithoutLead_status_historyInput
+  upsert?: Prisma.leadUpsertWithoutLead_status_historyInput
+  connect?: Prisma.leadWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.leadUpdateToOneWithWhereWithoutLead_status_historyInput, Prisma.leadUpdateWithoutLead_status_historyInput>, Prisma.leadUncheckedUpdateWithoutLead_status_historyInput>
+}
+
 export type leadCreateWithoutBusinessInput = {
   id?: bigint | number
   customer_name?: string | null
@@ -769,8 +840,11 @@ export type leadCreateWithoutBusinessInput = {
   commission_amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
   creator?: Prisma.creatorCreateNestedOneWithoutLeadInput
   payout?: Prisma.payoutCreateNestedOneWithoutLeadInput
+  lead_status_history?: Prisma.lead_status_historyCreateNestedManyWithoutLeadInput
 }
 
 export type leadUncheckedCreateWithoutBusinessInput = {
@@ -789,6 +863,9 @@ export type leadUncheckedCreateWithoutBusinessInput = {
   payout_id?: bigint | number | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
+  lead_status_history?: Prisma.lead_status_historyUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type leadCreateOrConnectWithoutBusinessInput = {
@@ -837,6 +914,8 @@ export type leadScalarWhereInput = {
   payout_id?: Prisma.BigIntNullableFilter<"lead"> | bigint | number | null
   created_at?: Prisma.DateTimeFilter<"lead"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"lead"> | Date | string
+  contacted_at?: Prisma.DateTimeNullableFilter<"lead"> | Date | string | null
+  guest_confirmed_at?: Prisma.DateTimeNullableFilter<"lead"> | Date | string | null
 }
 
 export type leadCreateWithoutCreatorInput = {
@@ -853,8 +932,11 @@ export type leadCreateWithoutCreatorInput = {
   commission_amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
   business: Prisma.businessCreateNestedOneWithoutLeadInput
   payout?: Prisma.payoutCreateNestedOneWithoutLeadInput
+  lead_status_history?: Prisma.lead_status_historyCreateNestedManyWithoutLeadInput
 }
 
 export type leadUncheckedCreateWithoutCreatorInput = {
@@ -873,6 +955,9 @@ export type leadUncheckedCreateWithoutCreatorInput = {
   payout_id?: bigint | number | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
+  lead_status_history?: Prisma.lead_status_historyUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type leadCreateOrConnectWithoutCreatorInput = {
@@ -915,8 +1000,11 @@ export type leadCreateWithoutPayoutInput = {
   commission_amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
   business: Prisma.businessCreateNestedOneWithoutLeadInput
   creator?: Prisma.creatorCreateNestedOneWithoutLeadInput
+  lead_status_history?: Prisma.lead_status_historyCreateNestedManyWithoutLeadInput
 }
 
 export type leadUncheckedCreateWithoutPayoutInput = {
@@ -935,6 +1023,9 @@ export type leadUncheckedCreateWithoutPayoutInput = {
   commission_amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
+  lead_status_history?: Prisma.lead_status_historyUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type leadCreateOrConnectWithoutPayoutInput = {
@@ -963,6 +1054,106 @@ export type leadUpdateManyWithWhereWithoutPayoutInput = {
   data: Prisma.XOR<Prisma.leadUpdateManyMutationInput, Prisma.leadUncheckedUpdateManyWithoutPayoutInput>
 }
 
+export type leadCreateWithoutLead_status_historyInput = {
+  id?: bigint | number
+  customer_name?: string | null
+  customer_phone: string
+  message?: string | null
+  service_date?: Date | string | null
+  guests?: number | null
+  source?: string
+  consent_to_share?: boolean
+  status?: string
+  booking_value?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  commission_amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
+  business: Prisma.businessCreateNestedOneWithoutLeadInput
+  creator?: Prisma.creatorCreateNestedOneWithoutLeadInput
+  payout?: Prisma.payoutCreateNestedOneWithoutLeadInput
+}
+
+export type leadUncheckedCreateWithoutLead_status_historyInput = {
+  id?: bigint | number
+  business_id: bigint | number
+  creator_id?: bigint | number | null
+  customer_name?: string | null
+  customer_phone: string
+  message?: string | null
+  service_date?: Date | string | null
+  guests?: number | null
+  source?: string
+  consent_to_share?: boolean
+  status?: string
+  booking_value?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  commission_amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  payout_id?: bigint | number | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
+}
+
+export type leadCreateOrConnectWithoutLead_status_historyInput = {
+  where: Prisma.leadWhereUniqueInput
+  create: Prisma.XOR<Prisma.leadCreateWithoutLead_status_historyInput, Prisma.leadUncheckedCreateWithoutLead_status_historyInput>
+}
+
+export type leadUpsertWithoutLead_status_historyInput = {
+  update: Prisma.XOR<Prisma.leadUpdateWithoutLead_status_historyInput, Prisma.leadUncheckedUpdateWithoutLead_status_historyInput>
+  create: Prisma.XOR<Prisma.leadCreateWithoutLead_status_historyInput, Prisma.leadUncheckedCreateWithoutLead_status_historyInput>
+  where?: Prisma.leadWhereInput
+}
+
+export type leadUpdateToOneWithWhereWithoutLead_status_historyInput = {
+  where?: Prisma.leadWhereInput
+  data: Prisma.XOR<Prisma.leadUpdateWithoutLead_status_historyInput, Prisma.leadUncheckedUpdateWithoutLead_status_historyInput>
+}
+
+export type leadUpdateWithoutLead_status_historyInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  customer_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_phone?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  service_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  consent_to_share?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  booking_value?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  commission_amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  business?: Prisma.businessUpdateOneRequiredWithoutLeadNestedInput
+  creator?: Prisma.creatorUpdateOneWithoutLeadNestedInput
+  payout?: Prisma.payoutUpdateOneWithoutLeadNestedInput
+}
+
+export type leadUncheckedUpdateWithoutLead_status_historyInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  business_id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  creator_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  customer_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_phone?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  service_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  consent_to_share?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  booking_value?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  commission_amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  payout_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
 export type leadUpdateWithoutBusinessInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   customer_name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -977,8 +1168,11 @@ export type leadUpdateWithoutBusinessInput = {
   commission_amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   creator?: Prisma.creatorUpdateOneWithoutLeadNestedInput
   payout?: Prisma.payoutUpdateOneWithoutLeadNestedInput
+  lead_status_history?: Prisma.lead_status_historyUpdateManyWithoutLeadNestedInput
 }
 
 export type leadUncheckedUpdateWithoutBusinessInput = {
@@ -997,6 +1191,9 @@ export type leadUncheckedUpdateWithoutBusinessInput = {
   payout_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lead_status_history?: Prisma.lead_status_historyUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type leadCreateManyBusinessInput = {
@@ -1015,6 +1212,8 @@ export type leadCreateManyBusinessInput = {
   payout_id?: bigint | number | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
 }
 
 export type leadUncheckedUpdateManyWithoutBusinessInput = {
@@ -1033,6 +1232,8 @@ export type leadUncheckedUpdateManyWithoutBusinessInput = {
   payout_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type leadCreateManyCreatorInput = {
@@ -1051,6 +1252,8 @@ export type leadCreateManyCreatorInput = {
   payout_id?: bigint | number | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
 }
 
 export type leadUpdateWithoutCreatorInput = {
@@ -1067,8 +1270,11 @@ export type leadUpdateWithoutCreatorInput = {
   commission_amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   business?: Prisma.businessUpdateOneRequiredWithoutLeadNestedInput
   payout?: Prisma.payoutUpdateOneWithoutLeadNestedInput
+  lead_status_history?: Prisma.lead_status_historyUpdateManyWithoutLeadNestedInput
 }
 
 export type leadUncheckedUpdateWithoutCreatorInput = {
@@ -1087,6 +1293,9 @@ export type leadUncheckedUpdateWithoutCreatorInput = {
   payout_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lead_status_history?: Prisma.lead_status_historyUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type leadUncheckedUpdateManyWithoutCreatorInput = {
@@ -1105,6 +1314,8 @@ export type leadUncheckedUpdateManyWithoutCreatorInput = {
   payout_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type leadCreateManyPayoutInput = {
@@ -1123,6 +1334,8 @@ export type leadCreateManyPayoutInput = {
   commission_amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  contacted_at?: Date | string | null
+  guest_confirmed_at?: Date | string | null
 }
 
 export type leadUpdateWithoutPayoutInput = {
@@ -1139,8 +1352,11 @@ export type leadUpdateWithoutPayoutInput = {
   commission_amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   business?: Prisma.businessUpdateOneRequiredWithoutLeadNestedInput
   creator?: Prisma.creatorUpdateOneWithoutLeadNestedInput
+  lead_status_history?: Prisma.lead_status_historyUpdateManyWithoutLeadNestedInput
 }
 
 export type leadUncheckedUpdateWithoutPayoutInput = {
@@ -1159,6 +1375,9 @@ export type leadUncheckedUpdateWithoutPayoutInput = {
   commission_amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lead_status_history?: Prisma.lead_status_historyUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type leadUncheckedUpdateManyWithoutPayoutInput = {
@@ -1177,8 +1396,39 @@ export type leadUncheckedUpdateManyWithoutPayoutInput = {
   commission_amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  guest_confirmed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
+
+/**
+ * Count Type LeadCountOutputType
+ */
+
+export type LeadCountOutputType = {
+  lead_status_history: number
+}
+
+export type LeadCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  lead_status_history?: boolean | LeadCountOutputTypeCountLead_status_historyArgs
+}
+
+/**
+ * LeadCountOutputType without action
+ */
+export type LeadCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeadCountOutputType
+   */
+  select?: Prisma.LeadCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * LeadCountOutputType without action
+ */
+export type LeadCountOutputTypeCountLead_status_historyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.lead_status_historyWhereInput
+}
 
 
 export type leadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1198,9 +1448,13 @@ export type leadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   payout_id?: boolean
   created_at?: boolean
   updated_at?: boolean
+  contacted_at?: boolean
+  guest_confirmed_at?: boolean
   business?: boolean | Prisma.businessDefaultArgs<ExtArgs>
   creator?: boolean | Prisma.lead$creatorArgs<ExtArgs>
   payout?: boolean | Prisma.lead$payoutArgs<ExtArgs>
+  lead_status_history?: boolean | Prisma.lead$lead_status_historyArgs<ExtArgs>
+  _count?: boolean | Prisma.LeadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lead"]>
 
 export type leadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1220,6 +1474,8 @@ export type leadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   payout_id?: boolean
   created_at?: boolean
   updated_at?: boolean
+  contacted_at?: boolean
+  guest_confirmed_at?: boolean
   business?: boolean | Prisma.businessDefaultArgs<ExtArgs>
   creator?: boolean | Prisma.lead$creatorArgs<ExtArgs>
   payout?: boolean | Prisma.lead$payoutArgs<ExtArgs>
@@ -1242,6 +1498,8 @@ export type leadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   payout_id?: boolean
   created_at?: boolean
   updated_at?: boolean
+  contacted_at?: boolean
+  guest_confirmed_at?: boolean
   business?: boolean | Prisma.businessDefaultArgs<ExtArgs>
   creator?: boolean | Prisma.lead$creatorArgs<ExtArgs>
   payout?: boolean | Prisma.lead$payoutArgs<ExtArgs>
@@ -1264,13 +1522,17 @@ export type leadSelectScalar = {
   payout_id?: boolean
   created_at?: boolean
   updated_at?: boolean
+  contacted_at?: boolean
+  guest_confirmed_at?: boolean
 }
 
-export type leadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "business_id" | "creator_id" | "customer_name" | "customer_phone" | "message" | "service_date" | "guests" | "source" | "consent_to_share" | "status" | "booking_value" | "commission_amount" | "payout_id" | "created_at" | "updated_at", ExtArgs["result"]["lead"]>
+export type leadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "business_id" | "creator_id" | "customer_name" | "customer_phone" | "message" | "service_date" | "guests" | "source" | "consent_to_share" | "status" | "booking_value" | "commission_amount" | "payout_id" | "created_at" | "updated_at" | "contacted_at" | "guest_confirmed_at", ExtArgs["result"]["lead"]>
 export type leadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business?: boolean | Prisma.businessDefaultArgs<ExtArgs>
   creator?: boolean | Prisma.lead$creatorArgs<ExtArgs>
   payout?: boolean | Prisma.lead$payoutArgs<ExtArgs>
+  lead_status_history?: boolean | Prisma.lead$lead_status_historyArgs<ExtArgs>
+  _count?: boolean | Prisma.LeadCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type leadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business?: boolean | Prisma.businessDefaultArgs<ExtArgs>
@@ -1289,6 +1551,7 @@ export type $leadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     business: Prisma.$businessPayload<ExtArgs>
     creator: Prisma.$creatorPayload<ExtArgs> | null
     payout: Prisma.$payoutPayload<ExtArgs> | null
+    lead_status_history: Prisma.$lead_status_historyPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: bigint
@@ -1307,6 +1570,8 @@ export type $leadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     payout_id: bigint | null
     created_at: Date
     updated_at: Date
+    contacted_at: Date | null
+    guest_confirmed_at: Date | null
   }, ExtArgs["result"]["lead"]>
   composites: {}
 }
@@ -1704,6 +1969,7 @@ export interface Prisma__leadClient<T, Null = never, ExtArgs extends runtime.Typ
   business<T extends Prisma.businessDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.businessDefaultArgs<ExtArgs>>): Prisma.Prisma__businessClient<runtime.Types.Result.GetResult<Prisma.$businessPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   creator<T extends Prisma.lead$creatorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.lead$creatorArgs<ExtArgs>>): Prisma.Prisma__creatorClient<runtime.Types.Result.GetResult<Prisma.$creatorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   payout<T extends Prisma.lead$payoutArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.lead$payoutArgs<ExtArgs>>): Prisma.Prisma__payoutClient<runtime.Types.Result.GetResult<Prisma.$payoutPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  lead_status_history<T extends Prisma.lead$lead_status_historyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.lead$lead_status_historyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$lead_status_historyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1749,6 +2015,8 @@ export interface leadFieldRefs {
   readonly payout_id: Prisma.FieldRef<"lead", 'BigInt'>
   readonly created_at: Prisma.FieldRef<"lead", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"lead", 'DateTime'>
+  readonly contacted_at: Prisma.FieldRef<"lead", 'DateTime'>
+  readonly guest_confirmed_at: Prisma.FieldRef<"lead", 'DateTime'>
 }
     
 
@@ -2185,6 +2453,30 @@ export type lead$payoutArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   include?: Prisma.payoutInclude<ExtArgs> | null
   where?: Prisma.payoutWhereInput
+}
+
+/**
+ * lead.lead_status_history
+ */
+export type lead$lead_status_historyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the lead_status_history
+   */
+  select?: Prisma.lead_status_historySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the lead_status_history
+   */
+  omit?: Prisma.lead_status_historyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.lead_status_historyInclude<ExtArgs> | null
+  where?: Prisma.lead_status_historyWhereInput
+  orderBy?: Prisma.lead_status_historyOrderByWithRelationInput | Prisma.lead_status_historyOrderByWithRelationInput[]
+  cursor?: Prisma.lead_status_historyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Lead_status_historyScalarFieldEnum | Prisma.Lead_status_historyScalarFieldEnum[]
 }
 
 /**

@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client"
-  output = "../../src/generated/prisma"
+  output          = "../../src/generated/prisma"
   previewFeatures = ["partialIndexes"]
 }
 
@@ -10,16 +10,20 @@ datasource db {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model app_user {
-  id         BigInt     @id @default(autoincrement())
-  name       String
-  phone      String     @unique
-  email      String?
-  role       String     @default("owner")
-  is_active  Boolean    @default(true)
-  created_at DateTime   @default(now()) @db.Timestamptz(6)
-  business   business[]
-  creator    creator?
-  review     review[]
+  id                                                  BigInt                @id @default(autoincrement())
+  name                                                String
+  phone                                               String                @unique
+  email                                               String?
+  role                                                String                @default("owner")
+  is_active                                           Boolean               @default(true)
+  created_at                                          DateTime              @default(now()) @db.Timestamptz(6)
+  phone_verified_at                                   DateTime?             @db.Timestamptz(6)
+  business                                            business[]
+  business_claim_business_claim_reviewed_byToapp_user business_claim[]      @relation("business_claim_reviewed_byToapp_user")
+  business_claim_business_claim_user_idToapp_user     business_claim[]      @relation("business_claim_user_idToapp_user")
+  creator                                             creator?
+  lead_status_history                                 lead_status_history[]
+  review                                              review[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -28,7 +32,15 @@ model attribute {
   slug               String               @unique
   name               String
   is_active          Boolean              @default(true)
+  value_type         String               @default("bool")
+  allow_multiple     Boolean              @default(false)
+  unit               String?
+  is_filterable      Boolean              @default(true)
+  sort_order         Int                  @default(0)
+  attribute_alias    attribute_alias[]
+  attribute_option   attribute_option[]
   business_attribute business_attribute[]
+  concept_attribute  concept_attribute[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -58,10 +70,16 @@ model business {
   source                                  String                   @default("owner")
   created_at                              DateTime                 @default(now()) @db.Timestamptz(6)
   updated_at                              DateTime                 @default(now()) @db.Timestamptz(6)
+  source_ref                              String?
+  phone_verified_at                       DateTime?                @db.Timestamptz(6)
+  name_local                              String?
   location_business_city_idTolocation     location                 @relation("business_city_idTolocation", fields: [city_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   location_business_locality_idTolocation location?                @relation("business_locality_idTolocation", fields: [locality_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   app_user                                app_user?                @relation(fields: [owner_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  business_alias                          business_alias[]
   business_attribute                      business_attribute[]
+  business_claim                          business_claim[]
+  business_closure                        business_closure[]
   business_concept                        business_concept?
   business_hours                          business_hours[]
   business_media                          business_media[]
@@ -69,7 +87,9 @@ model business {
   click_log                               click_log[]
   lead                                    lead[]
   review                                  review[]
+  search_impression                       search_impression[]
 
+  @@unique([source, source_ref], map: "business_source_ref_idx", where: raw("(source_ref IS NOT NULL)"))
   @@index([city_id], map: "business_city_active_idx", where: raw("(status = 'active'::text)"))
   @@index([geom], map: "business_geom_active_idx", type: Gist, where: raw("(status = 'active'::text)"))
   @@index([locality_id], map: "business_locality_idx", where: raw("(status = 'active'::text)"))
@@ -78,14 +98,21 @@ model business {
   @@index([phone])
 }
 
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model business_attribute {
-  business_id  BigInt
-  attribute_id Int
-  attribute    attribute @relation(fields: [attribute_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  business     business  @relation(fields: [business_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  business_id                                                                  BigInt
+  attribute_id                                                                 Int
+  id                                                                           BigInt            @id @default(autoincrement())
+  value_number                                                                 Decimal?          @db.Decimal
+  option_id                                                                    Int?
+  attribute                                                                    attribute         @relation(fields: [attribute_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  business                                                                     business          @relation(fields: [business_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option attribute_option? @relation("business_attribute_option_id_attribute_idToattribute_option", fields: [option_id, attribute_id], references: [id, attribute_id], onDelete: NoAction, onUpdate: NoAction, map: "business_attribute_option_fk")
+  attribute_option_business_attribute_option_idToattribute_option              attribute_option? @relation("business_attribute_option_idToattribute_option", fields: [option_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([business_id, attribute_id])
   @@index([attribute_id], map: "business_attribute_attr_idx")
+  @@index([attribute_id, value_number], map: "business_attribute_number_idx", where: raw("(value_number IS NOT NULL)"))
+  @@index([option_id], map: "business_attribute_option_idx", where: raw("(option_id IS NOT NULL)"))
 }
 
 model business_concept {
@@ -156,20 +183,23 @@ model click_log {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model concept {
-  id               Int                @id @default(autoincrement())
-  slug             String             @unique
-  name             String
-  type             String             @default("category")
-  parent_id        Int?
-  sort_order       Int                @default(0)
-  is_active        Boolean            @default(true)
-  created_at       DateTime           @default(now()) @db.Timestamptz(6)
-  business_concept business_concept[]
-  concept          concept?           @relation("conceptToconcept", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  other_concept    concept[]          @relation("conceptToconcept")
-  concept_alias    concept_alias[]
+  id                Int                 @id @default(autoincrement())
+  slug              String              @unique
+  name              String
+  type              String              @default("category")
+  parent_id         Int?
+  sort_order        Int                 @default(0)
+  is_active         Boolean             @default(true)
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  name_local        String?
+  business_concept  business_concept[]
+  concept           concept?            @relation("conceptToconcept", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_concept     concept[]           @relation("conceptToconcept")
+  concept_alias     concept_alias[]
+  concept_attribute concept_attribute[]
 
   @@index([parent_id], map: "concept_parent_idx")
+  @@index([type])
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -183,6 +213,7 @@ model concept_alias {
 
   @@index([concept_id], map: "concept_alias_concept_idx")
   @@index([text(ops: raw("gin_trgm_ops"))], map: "concept_alias_trgm_idx", type: Gin)
+  @@index([text(ops: raw("gin_trgm_ops"))], map: "concept_alias_text_trgm", type: Gin)
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -203,26 +234,30 @@ model creator {
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model lead {
-  id                BigInt    @id @default(autoincrement())
-  business_id       BigInt
-  creator_id        BigInt?
-  customer_name     String?
-  customer_phone    String
-  message           String?
-  service_date      DateTime? @db.Date
-  guests            Int?      @db.SmallInt
-  source            String    @default("web")
-  consent_to_share  Boolean   @default(false)
-  status            String    @default("new")
-  booking_value     Decimal?  @db.Decimal(10, 2)
-  commission_amount Decimal?  @db.Decimal(10, 2)
-  payout_id         BigInt?
-  created_at        DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime  @default(now()) @db.Timestamptz(6)
-  business          business  @relation(fields: [business_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  creator           creator?  @relation(fields: [creator_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  payout            payout?   @relation(fields: [payout_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                  BigInt                @id @default(autoincrement())
+  business_id         BigInt
+  creator_id          BigInt?
+  customer_name       String?
+  customer_phone      String
+  message             String?
+  service_date        DateTime?             @db.Date
+  guests              Int?                  @db.SmallInt
+  source              String                @default("web")
+  consent_to_share    Boolean               @default(false)
+  status              String                @default("new")
+  booking_value       Decimal?              @db.Decimal(10, 2)
+  commission_amount   Decimal?              @db.Decimal(10, 2)
+  payout_id           BigInt?
+  created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime              @default(now()) @db.Timestamptz(6)
+  contacted_at        DateTime?             @db.Timestamptz(6)
+  guest_confirmed_at  DateTime?             @db.Timestamptz(6)
+  business            business              @relation(fields: [business_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator             creator?              @relation(fields: [creator_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payout              payout?               @relation(fields: [payout_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  lead_status_history lead_status_history[]
 
   @@index([business_id, status, created_at(sort: Desc)], map: "lead_business_idx")
   @@index([creator_id, status], map: "lead_creator_idx", where: raw("(creator_id IS NOT NULL)"))
@@ -230,15 +265,19 @@ model lead {
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model location {
   id                                      Int                       @id @default(autoincrement())
   parent_id                               Int?
   level                                   String
   name                                    String
-  slug                                    String                    @unique(map: "location_root_slug_key", where: raw("(parent_id IS NULL)"))
+  slug                                    String
   geom                                    Unsupported("geography")?
   geom_verified                           Boolean                   @default(false)
   is_active                               Boolean                   @default(true)
+  default_radius_m                        Int?
+  boundary                                Unsupported("geography")?
+  name_local                              String?
   business_business_city_idTolocation     business[]                @relation("business_city_idTolocation")
   business_business_locality_idTolocation business[]                @relation("business_locality_idTolocation")
   location                                location?                 @relation("locationTolocation", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -246,12 +285,12 @@ model location {
   location_alias                          location_alias[]
   search_log                              search_log[]
 
-  @@unique([parent_id, slug], map: "location_parent_slug_key", where: raw("(parent_id IS NOT NULL)"))
   @@index([geom], type: Gist)
   @@index([parent_id], map: "location_parent_idx")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model location_alias {
   location_id Int
   text        String
@@ -292,24 +331,27 @@ model review {
   business      business  @relation(fields: [business_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   app_user      app_user? @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@unique([business_id, user_id], map: "review_one_per_user_idx", where: raw("(user_id IS NOT NULL)"))
   @@index([business_id, status, created_at(sort: Desc)], map: "review_business_idx")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model search_log {
-  id               BigInt                    @id @default(autoincrement())
-  session_id       String?
-  raw_query        String
-  normalized_query String?
-  parsed           Json?
-  parser_tier      String?
-  city_id          Int?
-  user_geom        Unsupported("geography")?
-  result_count     Int?
-  took_ms          Int?
-  created_at       DateTime                  @default(now()) @db.Timestamptz(6)
-  click_log        click_log[]
-  location         location?                 @relation(fields: [city_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                BigInt              @id @default(autoincrement())
+  session_id        String?
+  raw_query         String
+  normalized_query  String?
+  parsed            Json?
+  parser_tier       String?
+  city_id           Int?
+  result_count      Int?
+  took_ms           Int?
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  user_lat          Decimal?            @db.Decimal(5, 2)
+  user_lng          Decimal?            @db.Decimal(5, 2)
+  click_log         click_log[]
+  search_impression search_impression[]
+  location          location?           @relation(fields: [city_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([created_at], map: "search_log_created_idx")
   @@index([normalized_query], map: "search_log_query_idx")
@@ -323,4 +365,102 @@ model spatial_ref_sys {
   auth_srid Int?
   srtext    String? @db.VarChar(2048)
   proj4text String? @db.VarChar(2048)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model attribute_alias {
+  attribute_id Int
+  text         String    @unique
+  attribute    attribute @relation(fields: [attribute_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model attribute_option {
+  id                                                                             Int                  @id @default(autoincrement())
+  attribute_id                                                                   Int
+  slug                                                                           String
+  name                                                                           String
+  sort_order                                                                     Int                  @default(0)
+  attribute                                                                      attribute            @relation(fields: [attribute_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  business_attribute_business_attribute_option_id_attribute_idToattribute_option business_attribute[] @relation("business_attribute_option_id_attribute_idToattribute_option")
+  business_attribute_business_attribute_option_idToattribute_option              business_attribute[] @relation("business_attribute_option_idToattribute_option")
+
+  @@unique([attribute_id, slug])
+  @@unique([id, attribute_id], map: "attribute_option_id_attr_uq")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model business_alias {
+  business_id BigInt
+  text        String
+  kind        String   @default("other")
+  business    business @relation(fields: [business_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([business_id, text])
+  @@index([text(ops: raw("gin_trgm_ops"))], map: "business_alias_trgm_idx", type: Gin)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model business_claim {
+  id                                            BigInt    @id @default(autoincrement())
+  business_id                                   BigInt
+  user_id                                       BigInt
+  status                                        String    @default("pending")
+  evidence_note                                 String?
+  reviewed_by                                   BigInt?
+  reviewed_at                                   DateTime? @db.Timestamptz(6)
+  created_at                                    DateTime  @default(now()) @db.Timestamptz(6)
+  business                                      business  @relation(fields: [business_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  app_user_business_claim_reviewed_byToapp_user app_user? @relation("business_claim_reviewed_byToapp_user", fields: [reviewed_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  app_user_business_claim_user_idToapp_user     app_user  @relation("business_claim_user_idToapp_user", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([business_id, user_id], map: "business_claim_pending_idx", where: raw("(status = 'pending'::text)"))
+}
+
+model business_closure {
+  business_id BigInt
+  closed_on   DateTime @db.Date
+  reason      String?
+  business    business @relation(fields: [business_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([business_id, closed_on])
+}
+
+model concept_attribute {
+  concept_id   Int
+  attribute_id Int
+  is_required  Boolean   @default(false)
+  sort_order   Int       @default(0)
+  attribute    attribute @relation(fields: [attribute_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  concept      concept   @relation(fields: [concept_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([concept_id, attribute_id])
+  @@index([attribute_id], map: "concept_attribute_attr_idx")
+}
+
+model lead_status_history {
+  id          BigInt    @id @default(autoincrement())
+  lead_id     BigInt
+  from_status String?
+  to_status   String
+  changed_by  BigInt?
+  note        String?
+  changed_at  DateTime  @default(now()) @db.Timestamptz(6)
+  app_user    app_user? @relation(fields: [changed_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  lead        lead      @relation(fields: [lead_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([lead_id, changed_at], map: "lead_status_history_idx")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model search_impression {
+  search_id   BigInt
+  position    Int        @db.SmallInt
+  business_id BigInt
+  layer       String     @default("organic")
+  business    business   @relation(fields: [business_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  search_log  search_log @relation(fields: [search_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([search_id, position])
+  @@index([business_id], map: "search_impression_business_idx")
 }

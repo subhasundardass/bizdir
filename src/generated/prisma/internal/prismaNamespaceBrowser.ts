@@ -69,7 +69,15 @@ export const ModelName = {
   payout: 'payout',
   review: 'review',
   search_log: 'search_log',
-  spatial_ref_sys: 'spatial_ref_sys'
+  spatial_ref_sys: 'spatial_ref_sys',
+  attribute_alias: 'attribute_alias',
+  attribute_option: 'attribute_option',
+  business_alias: 'business_alias',
+  business_claim: 'business_claim',
+  business_closure: 'business_closure',
+  concept_attribute: 'concept_attribute',
+  lead_status_history: 'lead_status_history',
+  search_impression: 'search_impression'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -95,7 +103,8 @@ export const App_userScalarFieldEnum = {
   email: 'email',
   role: 'role',
   is_active: 'is_active',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  phone_verified_at: 'phone_verified_at'
 } as const
 
 export type App_userScalarFieldEnum = (typeof App_userScalarFieldEnum)[keyof typeof App_userScalarFieldEnum]
@@ -105,7 +114,12 @@ export const AttributeScalarFieldEnum = {
   id: 'id',
   slug: 'slug',
   name: 'name',
-  is_active: 'is_active'
+  is_active: 'is_active',
+  value_type: 'value_type',
+  allow_multiple: 'allow_multiple',
+  unit: 'unit',
+  is_filterable: 'is_filterable',
+  sort_order: 'sort_order'
 } as const
 
 export type AttributeScalarFieldEnum = (typeof AttributeScalarFieldEnum)[keyof typeof AttributeScalarFieldEnum]
@@ -135,7 +149,10 @@ export const BusinessScalarFieldEnum = {
   status: 'status',
   source: 'source',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  source_ref: 'source_ref',
+  phone_verified_at: 'phone_verified_at',
+  name_local: 'name_local'
 } as const
 
 export type BusinessScalarFieldEnum = (typeof BusinessScalarFieldEnum)[keyof typeof BusinessScalarFieldEnum]
@@ -143,7 +160,10 @@ export type BusinessScalarFieldEnum = (typeof BusinessScalarFieldEnum)[keyof typ
 
 export const Business_attributeScalarFieldEnum = {
   business_id: 'business_id',
-  attribute_id: 'attribute_id'
+  attribute_id: 'attribute_id',
+  id: 'id',
+  value_number: 'value_number',
+  option_id: 'option_id'
 } as const
 
 export type Business_attributeScalarFieldEnum = (typeof Business_attributeScalarFieldEnum)[keyof typeof Business_attributeScalarFieldEnum]
@@ -215,7 +235,8 @@ export const ConceptScalarFieldEnum = {
   parent_id: 'parent_id',
   sort_order: 'sort_order',
   is_active: 'is_active',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  name_local: 'name_local'
 } as const
 
 export type ConceptScalarFieldEnum = (typeof ConceptScalarFieldEnum)[keyof typeof ConceptScalarFieldEnum]
@@ -264,7 +285,9 @@ export const LeadScalarFieldEnum = {
   commission_amount: 'commission_amount',
   payout_id: 'payout_id',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  contacted_at: 'contacted_at',
+  guest_confirmed_at: 'guest_confirmed_at'
 } as const
 
 export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
@@ -277,7 +300,9 @@ export const LocationScalarFieldEnum = {
   name: 'name',
   slug: 'slug',
   geom_verified: 'geom_verified',
-  is_active: 'is_active'
+  is_active: 'is_active',
+  default_radius_m: 'default_radius_m',
+  name_local: 'name_local'
 } as const
 
 export type LocationScalarFieldEnum = (typeof LocationScalarFieldEnum)[keyof typeof LocationScalarFieldEnum]
@@ -330,7 +355,9 @@ export const Search_logScalarFieldEnum = {
   city_id: 'city_id',
   result_count: 'result_count',
   took_ms: 'took_ms',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  user_lat: 'user_lat',
+  user_lng: 'user_lng'
 } as const
 
 export type Search_logScalarFieldEnum = (typeof Search_logScalarFieldEnum)[keyof typeof Search_logScalarFieldEnum]
@@ -345,6 +372,90 @@ export const Spatial_ref_sysScalarFieldEnum = {
 } as const
 
 export type Spatial_ref_sysScalarFieldEnum = (typeof Spatial_ref_sysScalarFieldEnum)[keyof typeof Spatial_ref_sysScalarFieldEnum]
+
+
+export const Attribute_aliasScalarFieldEnum = {
+  attribute_id: 'attribute_id',
+  text: 'text'
+} as const
+
+export type Attribute_aliasScalarFieldEnum = (typeof Attribute_aliasScalarFieldEnum)[keyof typeof Attribute_aliasScalarFieldEnum]
+
+
+export const Attribute_optionScalarFieldEnum = {
+  id: 'id',
+  attribute_id: 'attribute_id',
+  slug: 'slug',
+  name: 'name',
+  sort_order: 'sort_order'
+} as const
+
+export type Attribute_optionScalarFieldEnum = (typeof Attribute_optionScalarFieldEnum)[keyof typeof Attribute_optionScalarFieldEnum]
+
+
+export const Business_aliasScalarFieldEnum = {
+  business_id: 'business_id',
+  text: 'text',
+  kind: 'kind'
+} as const
+
+export type Business_aliasScalarFieldEnum = (typeof Business_aliasScalarFieldEnum)[keyof typeof Business_aliasScalarFieldEnum]
+
+
+export const Business_claimScalarFieldEnum = {
+  id: 'id',
+  business_id: 'business_id',
+  user_id: 'user_id',
+  status: 'status',
+  evidence_note: 'evidence_note',
+  reviewed_by: 'reviewed_by',
+  reviewed_at: 'reviewed_at',
+  created_at: 'created_at'
+} as const
+
+export type Business_claimScalarFieldEnum = (typeof Business_claimScalarFieldEnum)[keyof typeof Business_claimScalarFieldEnum]
+
+
+export const Business_closureScalarFieldEnum = {
+  business_id: 'business_id',
+  closed_on: 'closed_on',
+  reason: 'reason'
+} as const
+
+export type Business_closureScalarFieldEnum = (typeof Business_closureScalarFieldEnum)[keyof typeof Business_closureScalarFieldEnum]
+
+
+export const Concept_attributeScalarFieldEnum = {
+  concept_id: 'concept_id',
+  attribute_id: 'attribute_id',
+  is_required: 'is_required',
+  sort_order: 'sort_order'
+} as const
+
+export type Concept_attributeScalarFieldEnum = (typeof Concept_attributeScalarFieldEnum)[keyof typeof Concept_attributeScalarFieldEnum]
+
+
+export const Lead_status_historyScalarFieldEnum = {
+  id: 'id',
+  lead_id: 'lead_id',
+  from_status: 'from_status',
+  to_status: 'to_status',
+  changed_by: 'changed_by',
+  note: 'note',
+  changed_at: 'changed_at'
+} as const
+
+export type Lead_status_historyScalarFieldEnum = (typeof Lead_status_historyScalarFieldEnum)[keyof typeof Lead_status_historyScalarFieldEnum]
+
+
+export const Search_impressionScalarFieldEnum = {
+  search_id: 'search_id',
+  position: 'position',
+  business_id: 'business_id',
+  layer: 'layer'
+} as const
+
+export type Search_impressionScalarFieldEnum = (typeof Search_impressionScalarFieldEnum)[keyof typeof Search_impressionScalarFieldEnum]
 
 
 export const SortOrder = {

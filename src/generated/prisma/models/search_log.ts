@@ -31,6 +31,8 @@ export type Search_logAvgAggregateOutputType = {
   city_id: number | null
   result_count: number | null
   took_ms: number | null
+  user_lat: runtime.Decimal | null
+  user_lng: runtime.Decimal | null
 }
 
 export type Search_logSumAggregateOutputType = {
@@ -38,6 +40,8 @@ export type Search_logSumAggregateOutputType = {
   city_id: number | null
   result_count: number | null
   took_ms: number | null
+  user_lat: runtime.Decimal | null
+  user_lng: runtime.Decimal | null
 }
 
 export type Search_logMinAggregateOutputType = {
@@ -50,6 +54,8 @@ export type Search_logMinAggregateOutputType = {
   result_count: number | null
   took_ms: number | null
   created_at: Date | null
+  user_lat: runtime.Decimal | null
+  user_lng: runtime.Decimal | null
 }
 
 export type Search_logMaxAggregateOutputType = {
@@ -62,6 +68,8 @@ export type Search_logMaxAggregateOutputType = {
   result_count: number | null
   took_ms: number | null
   created_at: Date | null
+  user_lat: runtime.Decimal | null
+  user_lng: runtime.Decimal | null
 }
 
 export type Search_logCountAggregateOutputType = {
@@ -75,6 +83,8 @@ export type Search_logCountAggregateOutputType = {
   result_count: number
   took_ms: number
   created_at: number
+  user_lat: number
+  user_lng: number
   _all: number
 }
 
@@ -84,6 +94,8 @@ export type Search_logAvgAggregateInputType = {
   city_id?: true
   result_count?: true
   took_ms?: true
+  user_lat?: true
+  user_lng?: true
 }
 
 export type Search_logSumAggregateInputType = {
@@ -91,6 +103,8 @@ export type Search_logSumAggregateInputType = {
   city_id?: true
   result_count?: true
   took_ms?: true
+  user_lat?: true
+  user_lng?: true
 }
 
 export type Search_logMinAggregateInputType = {
@@ -103,6 +117,8 @@ export type Search_logMinAggregateInputType = {
   result_count?: true
   took_ms?: true
   created_at?: true
+  user_lat?: true
+  user_lng?: true
 }
 
 export type Search_logMaxAggregateInputType = {
@@ -115,6 +131,8 @@ export type Search_logMaxAggregateInputType = {
   result_count?: true
   took_ms?: true
   created_at?: true
+  user_lat?: true
+  user_lng?: true
 }
 
 export type Search_logCountAggregateInputType = {
@@ -128,6 +146,8 @@ export type Search_logCountAggregateInputType = {
   result_count?: true
   took_ms?: true
   created_at?: true
+  user_lat?: true
+  user_lng?: true
   _all?: true
 }
 
@@ -228,6 +248,8 @@ export type Search_logGroupByOutputType = {
   result_count: number | null
   took_ms: number | null
   created_at: Date
+  user_lat: runtime.Decimal | null
+  user_lng: runtime.Decimal | null
   _count: Search_logCountAggregateOutputType | null
   _avg: Search_logAvgAggregateOutputType | null
   _sum: Search_logSumAggregateOutputType | null
@@ -264,7 +286,10 @@ export type search_logWhereInput = {
   result_count?: Prisma.IntNullableFilter<"search_log"> | number | null
   took_ms?: Prisma.IntNullableFilter<"search_log"> | number | null
   created_at?: Prisma.DateTimeFilter<"search_log"> | Date | string
+  user_lat?: Prisma.DecimalNullableFilter<"search_log"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.DecimalNullableFilter<"search_log"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   click_log?: Prisma.Click_logListRelationFilter
+  search_impression?: Prisma.Search_impressionListRelationFilter
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.locationWhereInput> | null
 }
 
@@ -279,7 +304,10 @@ export type search_logOrderByWithRelationInput = {
   result_count?: Prisma.SortOrderInput | Prisma.SortOrder
   took_ms?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  user_lat?: Prisma.SortOrderInput | Prisma.SortOrder
+  user_lng?: Prisma.SortOrderInput | Prisma.SortOrder
   click_log?: Prisma.click_logOrderByRelationAggregateInput
+  search_impression?: Prisma.search_impressionOrderByRelationAggregateInput
   location?: Prisma.locationOrderByWithRelationInput
 }
 
@@ -297,7 +325,10 @@ export type search_logWhereUniqueInput = Prisma.AtLeast<{
   result_count?: Prisma.IntNullableFilter<"search_log"> | number | null
   took_ms?: Prisma.IntNullableFilter<"search_log"> | number | null
   created_at?: Prisma.DateTimeFilter<"search_log"> | Date | string
+  user_lat?: Prisma.DecimalNullableFilter<"search_log"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.DecimalNullableFilter<"search_log"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   click_log?: Prisma.Click_logListRelationFilter
+  search_impression?: Prisma.Search_impressionListRelationFilter
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.locationWhereInput> | null
 }, "id">
 
@@ -312,6 +343,8 @@ export type search_logOrderByWithAggregationInput = {
   result_count?: Prisma.SortOrderInput | Prisma.SortOrder
   took_ms?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  user_lat?: Prisma.SortOrderInput | Prisma.SortOrder
+  user_lng?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.search_logCountOrderByAggregateInput
   _avg?: Prisma.search_logAvgOrderByAggregateInput
   _max?: Prisma.search_logMaxOrderByAggregateInput
@@ -333,6 +366,8 @@ export type search_logScalarWhereWithAggregatesInput = {
   result_count?: Prisma.IntNullableWithAggregatesFilter<"search_log"> | number | null
   took_ms?: Prisma.IntNullableWithAggregatesFilter<"search_log"> | number | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"search_log"> | Date | string
+  user_lat?: Prisma.DecimalNullableWithAggregatesFilter<"search_log"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.DecimalNullableWithAggregatesFilter<"search_log"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type search_logCreateInput = {
@@ -345,7 +380,10 @@ export type search_logCreateInput = {
   result_count?: number | null
   took_ms?: number | null
   created_at?: Date | string
+  user_lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   click_log?: Prisma.click_logCreateNestedManyWithoutSearch_logInput
+  search_impression?: Prisma.search_impressionCreateNestedManyWithoutSearch_logInput
   location?: Prisma.locationCreateNestedOneWithoutSearch_logInput
 }
 
@@ -360,7 +398,10 @@ export type search_logUncheckedCreateInput = {
   result_count?: number | null
   took_ms?: number | null
   created_at?: Date | string
+  user_lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   click_log?: Prisma.click_logUncheckedCreateNestedManyWithoutSearch_logInput
+  search_impression?: Prisma.search_impressionUncheckedCreateNestedManyWithoutSearch_logInput
 }
 
 export type search_logUpdateInput = {
@@ -373,7 +414,10 @@ export type search_logUpdateInput = {
   result_count?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   took_ms?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   click_log?: Prisma.click_logUpdateManyWithoutSearch_logNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutSearch_logNestedInput
   location?: Prisma.locationUpdateOneWithoutSearch_logNestedInput
 }
 
@@ -388,7 +432,10 @@ export type search_logUncheckedUpdateInput = {
   result_count?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   took_ms?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutSearch_logNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutSearch_logNestedInput
 }
 
 export type search_logCreateManyInput = {
@@ -402,6 +449,8 @@ export type search_logCreateManyInput = {
   result_count?: number | null
   took_ms?: number | null
   created_at?: Date | string
+  user_lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type search_logUpdateManyMutationInput = {
@@ -414,6 +463,8 @@ export type search_logUpdateManyMutationInput = {
   result_count?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   took_ms?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type search_logUncheckedUpdateManyInput = {
@@ -427,6 +478,8 @@ export type search_logUncheckedUpdateManyInput = {
   result_count?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   took_ms?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type Search_logNullableScalarRelationFilter = {
@@ -455,6 +508,8 @@ export type search_logCountOrderByAggregateInput = {
   result_count?: Prisma.SortOrder
   took_ms?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  user_lat?: Prisma.SortOrder
+  user_lng?: Prisma.SortOrder
 }
 
 export type search_logAvgOrderByAggregateInput = {
@@ -462,6 +517,8 @@ export type search_logAvgOrderByAggregateInput = {
   city_id?: Prisma.SortOrder
   result_count?: Prisma.SortOrder
   took_ms?: Prisma.SortOrder
+  user_lat?: Prisma.SortOrder
+  user_lng?: Prisma.SortOrder
 }
 
 export type search_logMaxOrderByAggregateInput = {
@@ -474,6 +531,8 @@ export type search_logMaxOrderByAggregateInput = {
   result_count?: Prisma.SortOrder
   took_ms?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  user_lat?: Prisma.SortOrder
+  user_lng?: Prisma.SortOrder
 }
 
 export type search_logMinOrderByAggregateInput = {
@@ -486,6 +545,8 @@ export type search_logMinOrderByAggregateInput = {
   result_count?: Prisma.SortOrder
   took_ms?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  user_lat?: Prisma.SortOrder
+  user_lng?: Prisma.SortOrder
 }
 
 export type search_logSumOrderByAggregateInput = {
@@ -493,6 +554,13 @@ export type search_logSumOrderByAggregateInput = {
   city_id?: Prisma.SortOrder
   result_count?: Prisma.SortOrder
   took_ms?: Prisma.SortOrder
+  user_lat?: Prisma.SortOrder
+  user_lng?: Prisma.SortOrder
+}
+
+export type Search_logScalarRelationFilter = {
+  is?: Prisma.search_logWhereInput
+  isNot?: Prisma.search_logWhereInput
 }
 
 export type search_logCreateNestedOneWithoutClick_logInput = {
@@ -553,6 +621,20 @@ export type search_logUncheckedUpdateManyWithoutLocationNestedInput = {
   deleteMany?: Prisma.search_logScalarWhereInput | Prisma.search_logScalarWhereInput[]
 }
 
+export type search_logCreateNestedOneWithoutSearch_impressionInput = {
+  create?: Prisma.XOR<Prisma.search_logCreateWithoutSearch_impressionInput, Prisma.search_logUncheckedCreateWithoutSearch_impressionInput>
+  connectOrCreate?: Prisma.search_logCreateOrConnectWithoutSearch_impressionInput
+  connect?: Prisma.search_logWhereUniqueInput
+}
+
+export type search_logUpdateOneRequiredWithoutSearch_impressionNestedInput = {
+  create?: Prisma.XOR<Prisma.search_logCreateWithoutSearch_impressionInput, Prisma.search_logUncheckedCreateWithoutSearch_impressionInput>
+  connectOrCreate?: Prisma.search_logCreateOrConnectWithoutSearch_impressionInput
+  upsert?: Prisma.search_logUpsertWithoutSearch_impressionInput
+  connect?: Prisma.search_logWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.search_logUpdateToOneWithWhereWithoutSearch_impressionInput, Prisma.search_logUpdateWithoutSearch_impressionInput>, Prisma.search_logUncheckedUpdateWithoutSearch_impressionInput>
+}
+
 export type search_logCreateWithoutClick_logInput = {
   id?: bigint | number
   session_id?: string | null
@@ -563,6 +645,9 @@ export type search_logCreateWithoutClick_logInput = {
   result_count?: number | null
   took_ms?: number | null
   created_at?: Date | string
+  user_lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  search_impression?: Prisma.search_impressionCreateNestedManyWithoutSearch_logInput
   location?: Prisma.locationCreateNestedOneWithoutSearch_logInput
 }
 
@@ -577,6 +662,9 @@ export type search_logUncheckedCreateWithoutClick_logInput = {
   result_count?: number | null
   took_ms?: number | null
   created_at?: Date | string
+  user_lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  search_impression?: Prisma.search_impressionUncheckedCreateNestedManyWithoutSearch_logInput
 }
 
 export type search_logCreateOrConnectWithoutClick_logInput = {
@@ -605,6 +693,9 @@ export type search_logUpdateWithoutClick_logInput = {
   result_count?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   took_ms?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  search_impression?: Prisma.search_impressionUpdateManyWithoutSearch_logNestedInput
   location?: Prisma.locationUpdateOneWithoutSearch_logNestedInput
 }
 
@@ -619,6 +710,9 @@ export type search_logUncheckedUpdateWithoutClick_logInput = {
   result_count?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   took_ms?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutSearch_logNestedInput
 }
 
 export type search_logCreateWithoutLocationInput = {
@@ -631,7 +725,10 @@ export type search_logCreateWithoutLocationInput = {
   result_count?: number | null
   took_ms?: number | null
   created_at?: Date | string
+  user_lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   click_log?: Prisma.click_logCreateNestedManyWithoutSearch_logInput
+  search_impression?: Prisma.search_impressionCreateNestedManyWithoutSearch_logInput
 }
 
 export type search_logUncheckedCreateWithoutLocationInput = {
@@ -644,7 +741,10 @@ export type search_logUncheckedCreateWithoutLocationInput = {
   result_count?: number | null
   took_ms?: number | null
   created_at?: Date | string
+  user_lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   click_log?: Prisma.click_logUncheckedCreateNestedManyWithoutSearch_logInput
+  search_impression?: Prisma.search_impressionUncheckedCreateNestedManyWithoutSearch_logInput
 }
 
 export type search_logCreateOrConnectWithoutLocationInput = {
@@ -687,6 +787,88 @@ export type search_logScalarWhereInput = {
   result_count?: Prisma.IntNullableFilter<"search_log"> | number | null
   took_ms?: Prisma.IntNullableFilter<"search_log"> | number | null
   created_at?: Prisma.DateTimeFilter<"search_log"> | Date | string
+  user_lat?: Prisma.DecimalNullableFilter<"search_log"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.DecimalNullableFilter<"search_log"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type search_logCreateWithoutSearch_impressionInput = {
+  id?: bigint | number
+  session_id?: string | null
+  raw_query: string
+  normalized_query?: string | null
+  parsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  parser_tier?: string | null
+  result_count?: number | null
+  took_ms?: number | null
+  created_at?: Date | string
+  user_lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  click_log?: Prisma.click_logCreateNestedManyWithoutSearch_logInput
+  location?: Prisma.locationCreateNestedOneWithoutSearch_logInput
+}
+
+export type search_logUncheckedCreateWithoutSearch_impressionInput = {
+  id?: bigint | number
+  session_id?: string | null
+  raw_query: string
+  normalized_query?: string | null
+  parsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  parser_tier?: string | null
+  city_id?: number | null
+  result_count?: number | null
+  took_ms?: number | null
+  created_at?: Date | string
+  user_lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  click_log?: Prisma.click_logUncheckedCreateNestedManyWithoutSearch_logInput
+}
+
+export type search_logCreateOrConnectWithoutSearch_impressionInput = {
+  where: Prisma.search_logWhereUniqueInput
+  create: Prisma.XOR<Prisma.search_logCreateWithoutSearch_impressionInput, Prisma.search_logUncheckedCreateWithoutSearch_impressionInput>
+}
+
+export type search_logUpsertWithoutSearch_impressionInput = {
+  update: Prisma.XOR<Prisma.search_logUpdateWithoutSearch_impressionInput, Prisma.search_logUncheckedUpdateWithoutSearch_impressionInput>
+  create: Prisma.XOR<Prisma.search_logCreateWithoutSearch_impressionInput, Prisma.search_logUncheckedCreateWithoutSearch_impressionInput>
+  where?: Prisma.search_logWhereInput
+}
+
+export type search_logUpdateToOneWithWhereWithoutSearch_impressionInput = {
+  where?: Prisma.search_logWhereInput
+  data: Prisma.XOR<Prisma.search_logUpdateWithoutSearch_impressionInput, Prisma.search_logUncheckedUpdateWithoutSearch_impressionInput>
+}
+
+export type search_logUpdateWithoutSearch_impressionInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  session_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  raw_query?: Prisma.StringFieldUpdateOperationsInput | string
+  normalized_query?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  parser_tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  result_count?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  took_ms?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  click_log?: Prisma.click_logUpdateManyWithoutSearch_logNestedInput
+  location?: Prisma.locationUpdateOneWithoutSearch_logNestedInput
+}
+
+export type search_logUncheckedUpdateWithoutSearch_impressionInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  session_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  raw_query?: Prisma.StringFieldUpdateOperationsInput | string
+  normalized_query?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  parser_tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  result_count?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  took_ms?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  click_log?: Prisma.click_logUncheckedUpdateManyWithoutSearch_logNestedInput
 }
 
 export type search_logCreateManyLocationInput = {
@@ -699,6 +881,8 @@ export type search_logCreateManyLocationInput = {
   result_count?: number | null
   took_ms?: number | null
   created_at?: Date | string
+  user_lat?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type search_logUpdateWithoutLocationInput = {
@@ -711,7 +895,10 @@ export type search_logUpdateWithoutLocationInput = {
   result_count?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   took_ms?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   click_log?: Prisma.click_logUpdateManyWithoutSearch_logNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutSearch_logNestedInput
 }
 
 export type search_logUncheckedUpdateWithoutLocationInput = {
@@ -724,7 +911,10 @@ export type search_logUncheckedUpdateWithoutLocationInput = {
   result_count?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   took_ms?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutSearch_logNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutSearch_logNestedInput
 }
 
 export type search_logUncheckedUpdateManyWithoutLocationInput = {
@@ -737,6 +927,8 @@ export type search_logUncheckedUpdateManyWithoutLocationInput = {
   result_count?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   took_ms?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_lat?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user_lng?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 
@@ -746,10 +938,12 @@ export type search_logUncheckedUpdateManyWithoutLocationInput = {
 
 export type Search_logCountOutputType = {
   click_log: number
+  search_impression: number
 }
 
 export type Search_logCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   click_log?: boolean | Search_logCountOutputTypeCountClick_logArgs
+  search_impression?: boolean | Search_logCountOutputTypeCountSearch_impressionArgs
 }
 
 /**
@@ -769,6 +963,13 @@ export type Search_logCountOutputTypeCountClick_logArgs<ExtArgs extends runtime.
   where?: Prisma.click_logWhereInput
 }
 
+/**
+ * Search_logCountOutputType without action
+ */
+export type Search_logCountOutputTypeCountSearch_impressionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.search_impressionWhereInput
+}
+
 
 export type search_logSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -781,7 +982,10 @@ export type search_logSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   result_count?: boolean
   took_ms?: boolean
   created_at?: boolean
+  user_lat?: boolean
+  user_lng?: boolean
   click_log?: boolean | Prisma.search_log$click_logArgs<ExtArgs>
+  search_impression?: boolean | Prisma.search_log$search_impressionArgs<ExtArgs>
   location?: boolean | Prisma.search_log$locationArgs<ExtArgs>
   _count?: boolean | Prisma.Search_logCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["search_log"]>
@@ -797,6 +1001,8 @@ export type search_logSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   result_count?: boolean
   took_ms?: boolean
   created_at?: boolean
+  user_lat?: boolean
+  user_lng?: boolean
   location?: boolean | Prisma.search_log$locationArgs<ExtArgs>
 }, ExtArgs["result"]["search_log"]>
 
@@ -811,6 +1017,8 @@ export type search_logSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   result_count?: boolean
   took_ms?: boolean
   created_at?: boolean
+  user_lat?: boolean
+  user_lng?: boolean
   location?: boolean | Prisma.search_log$locationArgs<ExtArgs>
 }, ExtArgs["result"]["search_log"]>
 
@@ -825,11 +1033,14 @@ export type search_logSelectScalar = {
   result_count?: boolean
   took_ms?: boolean
   created_at?: boolean
+  user_lat?: boolean
+  user_lng?: boolean
 }
 
-export type search_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "session_id" | "raw_query" | "normalized_query" | "parsed" | "parser_tier" | "city_id" | "result_count" | "took_ms" | "created_at", ExtArgs["result"]["search_log"]>
+export type search_logOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "session_id" | "raw_query" | "normalized_query" | "parsed" | "parser_tier" | "city_id" | "result_count" | "took_ms" | "created_at" | "user_lat" | "user_lng", ExtArgs["result"]["search_log"]>
 export type search_logInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   click_log?: boolean | Prisma.search_log$click_logArgs<ExtArgs>
+  search_impression?: boolean | Prisma.search_log$search_impressionArgs<ExtArgs>
   location?: boolean | Prisma.search_log$locationArgs<ExtArgs>
   _count?: boolean | Prisma.Search_logCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -844,6 +1055,7 @@ export type $search_logPayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "search_log"
   objects: {
     click_log: Prisma.$click_logPayload<ExtArgs>[]
+    search_impression: Prisma.$search_impressionPayload<ExtArgs>[]
     location: Prisma.$locationPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -857,6 +1069,8 @@ export type $search_logPayload<ExtArgs extends runtime.Types.Extensions.Internal
     result_count: number | null
     took_ms: number | null
     created_at: Date
+    user_lat: runtime.Decimal | null
+    user_lng: runtime.Decimal | null
   }, ExtArgs["result"]["search_log"]>
   composites: {}
 }
@@ -1252,6 +1466,7 @@ readonly fields: search_logFieldRefs;
 export interface Prisma__search_logClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   click_log<T extends Prisma.search_log$click_logArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.search_log$click_logArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$click_logPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  search_impression<T extends Prisma.search_log$search_impressionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.search_log$search_impressionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$search_impressionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   location<T extends Prisma.search_log$locationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.search_log$locationArgs<ExtArgs>>): Prisma.Prisma__locationClient<runtime.Types.Result.GetResult<Prisma.$locationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1292,6 +1507,8 @@ export interface search_logFieldRefs {
   readonly result_count: Prisma.FieldRef<"search_log", 'Int'>
   readonly took_ms: Prisma.FieldRef<"search_log", 'Int'>
   readonly created_at: Prisma.FieldRef<"search_log", 'DateTime'>
+  readonly user_lat: Prisma.FieldRef<"search_log", 'Decimal'>
+  readonly user_lng: Prisma.FieldRef<"search_log", 'Decimal'>
 }
     
 
@@ -1714,6 +1931,30 @@ export type search_log$click_logArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.Click_logScalarFieldEnum | Prisma.Click_logScalarFieldEnum[]
+}
+
+/**
+ * search_log.search_impression
+ */
+export type search_log$search_impressionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the search_impression
+   */
+  select?: Prisma.search_impressionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the search_impression
+   */
+  omit?: Prisma.search_impressionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.search_impressionInclude<ExtArgs> | null
+  where?: Prisma.search_impressionWhereInput
+  orderBy?: Prisma.search_impressionOrderByWithRelationInput | Prisma.search_impressionOrderByWithRelationInput[]
+  cursor?: Prisma.search_impressionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Search_impressionScalarFieldEnum | Prisma.Search_impressionScalarFieldEnum[]
 }
 
 /**

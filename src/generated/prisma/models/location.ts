@@ -15,6 +15,7 @@ import type * as Prisma from "../internal/prismaNamespace.ts"
 /**
  * Model location
  * This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+ * This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
  */
 export type locationModel = runtime.Types.Result.DefaultSelection<Prisma.$locationPayload>
 
@@ -29,11 +30,13 @@ export type AggregateLocation = {
 export type LocationAvgAggregateOutputType = {
   id: number | null
   parent_id: number | null
+  default_radius_m: number | null
 }
 
 export type LocationSumAggregateOutputType = {
   id: number | null
   parent_id: number | null
+  default_radius_m: number | null
 }
 
 export type LocationMinAggregateOutputType = {
@@ -44,6 +47,8 @@ export type LocationMinAggregateOutputType = {
   slug: string | null
   geom_verified: boolean | null
   is_active: boolean | null
+  default_radius_m: number | null
+  name_local: string | null
 }
 
 export type LocationMaxAggregateOutputType = {
@@ -54,6 +59,8 @@ export type LocationMaxAggregateOutputType = {
   slug: string | null
   geom_verified: boolean | null
   is_active: boolean | null
+  default_radius_m: number | null
+  name_local: string | null
 }
 
 export type LocationCountAggregateOutputType = {
@@ -64,6 +71,8 @@ export type LocationCountAggregateOutputType = {
   slug: number
   geom_verified: number
   is_active: number
+  default_radius_m: number
+  name_local: number
   _all: number
 }
 
@@ -71,11 +80,13 @@ export type LocationCountAggregateOutputType = {
 export type LocationAvgAggregateInputType = {
   id?: true
   parent_id?: true
+  default_radius_m?: true
 }
 
 export type LocationSumAggregateInputType = {
   id?: true
   parent_id?: true
+  default_radius_m?: true
 }
 
 export type LocationMinAggregateInputType = {
@@ -86,6 +97,8 @@ export type LocationMinAggregateInputType = {
   slug?: true
   geom_verified?: true
   is_active?: true
+  default_radius_m?: true
+  name_local?: true
 }
 
 export type LocationMaxAggregateInputType = {
@@ -96,6 +109,8 @@ export type LocationMaxAggregateInputType = {
   slug?: true
   geom_verified?: true
   is_active?: true
+  default_radius_m?: true
+  name_local?: true
 }
 
 export type LocationCountAggregateInputType = {
@@ -106,6 +121,8 @@ export type LocationCountAggregateInputType = {
   slug?: true
   geom_verified?: true
   is_active?: true
+  default_radius_m?: true
+  name_local?: true
   _all?: true
 }
 
@@ -203,6 +220,8 @@ export type LocationGroupByOutputType = {
   slug: string
   geom_verified: boolean
   is_active: boolean
+  default_radius_m: number | null
+  name_local: string | null
   _count: LocationCountAggregateOutputType | null
   _avg: LocationAvgAggregateOutputType | null
   _sum: LocationSumAggregateOutputType | null
@@ -236,6 +255,8 @@ export type locationWhereInput = {
   slug?: Prisma.StringFilter<"location"> | string
   geom_verified?: Prisma.BoolFilter<"location"> | boolean
   is_active?: Prisma.BoolFilter<"location"> | boolean
+  default_radius_m?: Prisma.IntNullableFilter<"location"> | number | null
+  name_local?: Prisma.StringNullableFilter<"location"> | string | null
   business_business_city_idTolocation?: Prisma.BusinessListRelationFilter
   business_business_locality_idTolocation?: Prisma.BusinessListRelationFilter
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.locationWhereInput> | null
@@ -252,6 +273,8 @@ export type locationOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   geom_verified?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
+  default_radius_m?: Prisma.SortOrderInput | Prisma.SortOrder
+  name_local?: Prisma.SortOrderInput | Prisma.SortOrder
   business_business_city_idTolocation?: Prisma.businessOrderByRelationAggregateInput
   business_business_locality_idTolocation?: Prisma.businessOrderByRelationAggregateInput
   location?: Prisma.locationOrderByWithRelationInput
@@ -262,23 +285,24 @@ export type locationOrderByWithRelationInput = {
 
 export type locationWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  slug?: string
-  parent_id_slug?: Prisma.locationParent_idSlugCompoundUniqueInput
   AND?: Prisma.locationWhereInput | Prisma.locationWhereInput[]
   OR?: Prisma.locationWhereInput[]
   NOT?: Prisma.locationWhereInput | Prisma.locationWhereInput[]
   parent_id?: Prisma.IntNullableFilter<"location"> | number | null
   level?: Prisma.StringFilter<"location"> | string
   name?: Prisma.StringFilter<"location"> | string
+  slug?: Prisma.StringFilter<"location"> | string
   geom_verified?: Prisma.BoolFilter<"location"> | boolean
   is_active?: Prisma.BoolFilter<"location"> | boolean
+  default_radius_m?: Prisma.IntNullableFilter<"location"> | number | null
+  name_local?: Prisma.StringNullableFilter<"location"> | string | null
   business_business_city_idTolocation?: Prisma.BusinessListRelationFilter
   business_business_locality_idTolocation?: Prisma.BusinessListRelationFilter
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.locationWhereInput> | null
   other_location?: Prisma.LocationListRelationFilter
   location_alias?: Prisma.Location_aliasListRelationFilter
   search_log?: Prisma.Search_logListRelationFilter
-}, "id" | "slug" | "parent_id_slug">
+}, "id">
 
 export type locationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -288,6 +312,8 @@ export type locationOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   geom_verified?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
+  default_radius_m?: Prisma.SortOrderInput | Prisma.SortOrder
+  name_local?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.locationCountOrderByAggregateInput
   _avg?: Prisma.locationAvgOrderByAggregateInput
   _max?: Prisma.locationMaxOrderByAggregateInput
@@ -306,6 +332,8 @@ export type locationScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"location"> | string
   geom_verified?: Prisma.BoolWithAggregatesFilter<"location"> | boolean
   is_active?: Prisma.BoolWithAggregatesFilter<"location"> | boolean
+  default_radius_m?: Prisma.IntNullableWithAggregatesFilter<"location"> | number | null
+  name_local?: Prisma.StringNullableWithAggregatesFilter<"location"> | string | null
 }
 
 export type locationCreateInput = {
@@ -314,6 +342,8 @@ export type locationCreateInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_city_idTolocationInput
   business_business_locality_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   location?: Prisma.locationCreateNestedOneWithoutOther_locationInput
@@ -330,6 +360,8 @@ export type locationUncheckedCreateInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_city_idTolocationInput
   business_business_locality_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   other_location?: Prisma.locationUncheckedCreateNestedManyWithoutLocationInput
@@ -343,6 +375,8 @@ export type locationUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   business_business_locality_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   location?: Prisma.locationUpdateOneWithoutOther_locationNestedInput
@@ -359,6 +393,8 @@ export type locationUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   business_business_locality_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   other_location?: Prisma.locationUncheckedUpdateManyWithoutLocationNestedInput
@@ -374,6 +410,8 @@ export type locationCreateManyInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
 }
 
 export type locationUpdateManyMutationInput = {
@@ -382,6 +420,8 @@ export type locationUpdateManyMutationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type locationUncheckedUpdateManyInput = {
@@ -392,6 +432,8 @@ export type locationUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type LocationScalarRelationFilter = {
@@ -414,11 +456,6 @@ export type locationOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type locationParent_idSlugCompoundUniqueInput = {
-  parent_id: number
-  slug: string
-}
-
 export type locationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   parent_id?: Prisma.SortOrder
@@ -427,11 +464,14 @@ export type locationCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   geom_verified?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
+  default_radius_m?: Prisma.SortOrder
+  name_local?: Prisma.SortOrder
 }
 
 export type locationAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   parent_id?: Prisma.SortOrder
+  default_radius_m?: Prisma.SortOrder
 }
 
 export type locationMaxOrderByAggregateInput = {
@@ -442,6 +482,8 @@ export type locationMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   geom_verified?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
+  default_radius_m?: Prisma.SortOrder
+  name_local?: Prisma.SortOrder
 }
 
 export type locationMinOrderByAggregateInput = {
@@ -452,11 +494,14 @@ export type locationMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   geom_verified?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
+  default_radius_m?: Prisma.SortOrder
+  name_local?: Prisma.SortOrder
 }
 
 export type locationSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   parent_id?: Prisma.SortOrder
+  default_radius_m?: Prisma.SortOrder
 }
 
 export type locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput = {
@@ -571,6 +616,8 @@ export type locationCreateWithoutBusiness_business_city_idTolocationInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_locality_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   location?: Prisma.locationCreateNestedOneWithoutOther_locationInput
   other_location?: Prisma.locationCreateNestedManyWithoutLocationInput
@@ -586,6 +633,8 @@ export type locationUncheckedCreateWithoutBusiness_business_city_idTolocationInp
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_locality_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   other_location?: Prisma.locationUncheckedCreateNestedManyWithoutLocationInput
   location_alias?: Prisma.location_aliasUncheckedCreateNestedManyWithoutLocationInput
@@ -614,6 +663,8 @@ export type locationUpdateWithoutBusiness_business_city_idTolocationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_locality_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   location?: Prisma.locationUpdateOneWithoutOther_locationNestedInput
   other_location?: Prisma.locationUpdateManyWithoutLocationNestedInput
@@ -629,6 +680,8 @@ export type locationUncheckedUpdateWithoutBusiness_business_city_idTolocationInp
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_locality_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   other_location?: Prisma.locationUncheckedUpdateManyWithoutLocationNestedInput
   location_alias?: Prisma.location_aliasUncheckedUpdateManyWithoutLocationNestedInput
@@ -641,6 +694,8 @@ export type locationCreateWithoutBusiness_business_locality_idTolocationInput = 
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_city_idTolocationInput
   location?: Prisma.locationCreateNestedOneWithoutOther_locationInput
   other_location?: Prisma.locationCreateNestedManyWithoutLocationInput
@@ -656,6 +711,8 @@ export type locationUncheckedCreateWithoutBusiness_business_locality_idTolocatio
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_city_idTolocationInput
   other_location?: Prisma.locationUncheckedCreateNestedManyWithoutLocationInput
   location_alias?: Prisma.location_aliasUncheckedCreateNestedManyWithoutLocationInput
@@ -684,6 +741,8 @@ export type locationUpdateWithoutBusiness_business_locality_idTolocationInput = 
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   location?: Prisma.locationUpdateOneWithoutOther_locationNestedInput
   other_location?: Prisma.locationUpdateManyWithoutLocationNestedInput
@@ -699,6 +758,8 @@ export type locationUncheckedUpdateWithoutBusiness_business_locality_idTolocatio
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   other_location?: Prisma.locationUncheckedUpdateManyWithoutLocationNestedInput
   location_alias?: Prisma.location_aliasUncheckedUpdateManyWithoutLocationNestedInput
@@ -711,6 +772,8 @@ export type locationCreateWithoutOther_locationInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_city_idTolocationInput
   business_business_locality_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   location?: Prisma.locationCreateNestedOneWithoutOther_locationInput
@@ -726,6 +789,8 @@ export type locationUncheckedCreateWithoutOther_locationInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_city_idTolocationInput
   business_business_locality_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   location_alias?: Prisma.location_aliasUncheckedCreateNestedManyWithoutLocationInput
@@ -743,6 +808,8 @@ export type locationCreateWithoutLocationInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_city_idTolocationInput
   business_business_locality_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   other_location?: Prisma.locationCreateNestedManyWithoutLocationInput
@@ -757,6 +824,8 @@ export type locationUncheckedCreateWithoutLocationInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_city_idTolocationInput
   business_business_locality_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   other_location?: Prisma.locationUncheckedCreateNestedManyWithoutLocationInput
@@ -791,6 +860,8 @@ export type locationUpdateWithoutOther_locationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   business_business_locality_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   location?: Prisma.locationUpdateOneWithoutOther_locationNestedInput
@@ -806,6 +877,8 @@ export type locationUncheckedUpdateWithoutOther_locationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   business_business_locality_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   location_alias?: Prisma.location_aliasUncheckedUpdateManyWithoutLocationNestedInput
@@ -839,6 +912,8 @@ export type locationScalarWhereInput = {
   slug?: Prisma.StringFilter<"location"> | string
   geom_verified?: Prisma.BoolFilter<"location"> | boolean
   is_active?: Prisma.BoolFilter<"location"> | boolean
+  default_radius_m?: Prisma.IntNullableFilter<"location"> | number | null
+  name_local?: Prisma.StringNullableFilter<"location"> | string | null
 }
 
 export type locationCreateWithoutLocation_aliasInput = {
@@ -847,6 +922,8 @@ export type locationCreateWithoutLocation_aliasInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_city_idTolocationInput
   business_business_locality_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   location?: Prisma.locationCreateNestedOneWithoutOther_locationInput
@@ -862,6 +939,8 @@ export type locationUncheckedCreateWithoutLocation_aliasInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_city_idTolocationInput
   business_business_locality_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   other_location?: Prisma.locationUncheckedCreateNestedManyWithoutLocationInput
@@ -890,6 +969,8 @@ export type locationUpdateWithoutLocation_aliasInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   business_business_locality_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   location?: Prisma.locationUpdateOneWithoutOther_locationNestedInput
@@ -905,6 +986,8 @@ export type locationUncheckedUpdateWithoutLocation_aliasInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   business_business_locality_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   other_location?: Prisma.locationUncheckedUpdateManyWithoutLocationNestedInput
@@ -917,6 +1000,8 @@ export type locationCreateWithoutSearch_logInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_city_idTolocationInput
   business_business_locality_idTolocation?: Prisma.businessCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   location?: Prisma.locationCreateNestedOneWithoutOther_locationInput
@@ -932,6 +1017,8 @@ export type locationUncheckedCreateWithoutSearch_logInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_city_idTolocationInput
   business_business_locality_idTolocation?: Prisma.businessUncheckedCreateNestedManyWithoutLocation_business_locality_idTolocationInput
   other_location?: Prisma.locationUncheckedCreateNestedManyWithoutLocationInput
@@ -960,6 +1047,8 @@ export type locationUpdateWithoutSearch_logInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   business_business_locality_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   location?: Prisma.locationUpdateOneWithoutOther_locationNestedInput
@@ -975,6 +1064,8 @@ export type locationUncheckedUpdateWithoutSearch_logInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   business_business_locality_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   other_location?: Prisma.locationUncheckedUpdateManyWithoutLocationNestedInput
@@ -988,6 +1079,8 @@ export type locationCreateManyLocationInput = {
   slug: string
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: number | null
+  name_local?: string | null
 }
 
 export type locationUpdateWithoutLocationInput = {
@@ -996,6 +1089,8 @@ export type locationUpdateWithoutLocationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   business_business_locality_idTolocation?: Prisma.businessUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   other_location?: Prisma.locationUpdateManyWithoutLocationNestedInput
@@ -1010,6 +1105,8 @@ export type locationUncheckedUpdateWithoutLocationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   business_business_city_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_city_idTolocationNestedInput
   business_business_locality_idTolocation?: Prisma.businessUncheckedUpdateManyWithoutLocation_business_locality_idTolocationNestedInput
   other_location?: Prisma.locationUncheckedUpdateManyWithoutLocationNestedInput
@@ -1024,6 +1121,8 @@ export type locationUncheckedUpdateManyWithoutLocationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   geom_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  default_radius_m?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -1101,6 +1200,8 @@ export type locationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   slug?: boolean
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: boolean
+  name_local?: boolean
   business_business_city_idTolocation?: boolean | Prisma.location$business_business_city_idTolocationArgs<ExtArgs>
   business_business_locality_idTolocation?: boolean | Prisma.location$business_business_locality_idTolocationArgs<ExtArgs>
   location?: boolean | Prisma.location$locationArgs<ExtArgs>
@@ -1118,6 +1219,8 @@ export type locationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   slug?: boolean
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: boolean
+  name_local?: boolean
   location?: boolean | Prisma.location$locationArgs<ExtArgs>
 }, ExtArgs["result"]["location"]>
 
@@ -1129,6 +1232,8 @@ export type locationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   slug?: boolean
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: boolean
+  name_local?: boolean
   location?: boolean | Prisma.location$locationArgs<ExtArgs>
 }, ExtArgs["result"]["location"]>
 
@@ -1140,9 +1245,11 @@ export type locationSelectScalar = {
   slug?: boolean
   geom_verified?: boolean
   is_active?: boolean
+  default_radius_m?: boolean
+  name_local?: boolean
 }
 
-export type locationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "parent_id" | "level" | "name" | "slug" | "geom_verified" | "is_active", ExtArgs["result"]["location"]>
+export type locationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "parent_id" | "level" | "name" | "slug" | "geom_verified" | "is_active" | "default_radius_m" | "name_local", ExtArgs["result"]["location"]>
 export type locationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   business_business_city_idTolocation?: boolean | Prisma.location$business_business_city_idTolocationArgs<ExtArgs>
   business_business_locality_idTolocation?: boolean | Prisma.location$business_business_locality_idTolocationArgs<ExtArgs>
@@ -1177,6 +1284,8 @@ export type $locationPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     slug: string
     geom_verified: boolean
     is_active: boolean
+    default_radius_m: number | null
+    name_local: string | null
   }, ExtArgs["result"]["location"]>
   composites: {}
 }
@@ -1613,6 +1722,8 @@ export interface locationFieldRefs {
   readonly slug: Prisma.FieldRef<"location", 'String'>
   readonly geom_verified: Prisma.FieldRef<"location", 'Boolean'>
   readonly is_active: Prisma.FieldRef<"location", 'Boolean'>
+  readonly default_radius_m: Prisma.FieldRef<"location", 'Int'>
+  readonly name_local: Prisma.FieldRef<"location", 'String'>
 }
     
 

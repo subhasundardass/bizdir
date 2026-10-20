@@ -73,6 +73,9 @@ export type BusinessMinAggregateOutputType = {
   source: string | null
   created_at: Date | null
   updated_at: Date | null
+  source_ref: string | null
+  phone_verified_at: Date | null
+  name_local: string | null
 }
 
 export type BusinessMaxAggregateOutputType = {
@@ -100,6 +103,9 @@ export type BusinessMaxAggregateOutputType = {
   source: string | null
   created_at: Date | null
   updated_at: Date | null
+  source_ref: string | null
+  phone_verified_at: Date | null
+  name_local: string | null
 }
 
 export type BusinessCountAggregateOutputType = {
@@ -127,6 +133,9 @@ export type BusinessCountAggregateOutputType = {
   source: number
   created_at: number
   updated_at: number
+  source_ref: number
+  phone_verified_at: number
+  name_local: number
   _all: number
 }
 
@@ -178,6 +187,9 @@ export type BusinessMinAggregateInputType = {
   source?: true
   created_at?: true
   updated_at?: true
+  source_ref?: true
+  phone_verified_at?: true
+  name_local?: true
 }
 
 export type BusinessMaxAggregateInputType = {
@@ -205,6 +217,9 @@ export type BusinessMaxAggregateInputType = {
   source?: true
   created_at?: true
   updated_at?: true
+  source_ref?: true
+  phone_verified_at?: true
+  name_local?: true
 }
 
 export type BusinessCountAggregateInputType = {
@@ -232,6 +247,9 @@ export type BusinessCountAggregateInputType = {
   source?: true
   created_at?: true
   updated_at?: true
+  source_ref?: true
+  phone_verified_at?: true
+  name_local?: true
   _all?: true
 }
 
@@ -346,6 +364,9 @@ export type BusinessGroupByOutputType = {
   source: string
   created_at: Date
   updated_at: Date
+  source_ref: string | null
+  phone_verified_at: Date | null
+  name_local: string | null
   _count: BusinessCountAggregateOutputType | null
   _avg: BusinessAvgAggregateOutputType | null
   _sum: BusinessSumAggregateOutputType | null
@@ -396,10 +417,16 @@ export type businessWhereInput = {
   source?: Prisma.StringFilter<"business"> | string
   created_at?: Prisma.DateTimeFilter<"business"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"business"> | Date | string
+  source_ref?: Prisma.StringNullableFilter<"business"> | string | null
+  phone_verified_at?: Prisma.DateTimeNullableFilter<"business"> | Date | string | null
+  name_local?: Prisma.StringNullableFilter<"business"> | string | null
   location_business_city_idTolocation?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.locationWhereInput>
   location_business_locality_idTolocation?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.locationWhereInput> | null
   app_user?: Prisma.XOR<Prisma.App_userNullableScalarRelationFilter, Prisma.app_userWhereInput> | null
+  business_alias?: Prisma.Business_aliasListRelationFilter
   business_attribute?: Prisma.Business_attributeListRelationFilter
+  business_claim?: Prisma.Business_claimListRelationFilter
+  business_closure?: Prisma.Business_closureListRelationFilter
   business_concept?: Prisma.XOR<Prisma.Business_conceptNullableScalarRelationFilter, Prisma.business_conceptWhereInput> | null
   business_hours?: Prisma.Business_hoursListRelationFilter
   business_media?: Prisma.Business_mediaListRelationFilter
@@ -407,6 +434,7 @@ export type businessWhereInput = {
   click_log?: Prisma.Click_logListRelationFilter
   lead?: Prisma.LeadListRelationFilter
   review?: Prisma.ReviewListRelationFilter
+  search_impression?: Prisma.Search_impressionListRelationFilter
 }
 
 export type businessOrderByWithRelationInput = {
@@ -434,10 +462,16 @@ export type businessOrderByWithRelationInput = {
   source?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  source_ref?: Prisma.SortOrderInput | Prisma.SortOrder
+  phone_verified_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  name_local?: Prisma.SortOrderInput | Prisma.SortOrder
   location_business_city_idTolocation?: Prisma.locationOrderByWithRelationInput
   location_business_locality_idTolocation?: Prisma.locationOrderByWithRelationInput
   app_user?: Prisma.app_userOrderByWithRelationInput
+  business_alias?: Prisma.business_aliasOrderByRelationAggregateInput
   business_attribute?: Prisma.business_attributeOrderByRelationAggregateInput
+  business_claim?: Prisma.business_claimOrderByRelationAggregateInput
+  business_closure?: Prisma.business_closureOrderByRelationAggregateInput
   business_concept?: Prisma.business_conceptOrderByWithRelationInput
   business_hours?: Prisma.business_hoursOrderByRelationAggregateInput
   business_media?: Prisma.business_mediaOrderByRelationAggregateInput
@@ -445,11 +479,13 @@ export type businessOrderByWithRelationInput = {
   click_log?: Prisma.click_logOrderByRelationAggregateInput
   lead?: Prisma.leadOrderByRelationAggregateInput
   review?: Prisma.reviewOrderByRelationAggregateInput
+  search_impression?: Prisma.search_impressionOrderByRelationAggregateInput
 }
 
 export type businessWhereUniqueInput = Prisma.AtLeast<{
   id?: bigint | number
   slug?: string
+  source_source_ref?: Prisma.businessSourceSource_refCompoundUniqueInput
   AND?: Prisma.businessWhereInput | Prisma.businessWhereInput[]
   OR?: Prisma.businessWhereInput[]
   NOT?: Prisma.businessWhereInput | Prisma.businessWhereInput[]
@@ -475,10 +511,16 @@ export type businessWhereUniqueInput = Prisma.AtLeast<{
   source?: Prisma.StringFilter<"business"> | string
   created_at?: Prisma.DateTimeFilter<"business"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"business"> | Date | string
+  source_ref?: Prisma.StringNullableFilter<"business"> | string | null
+  phone_verified_at?: Prisma.DateTimeNullableFilter<"business"> | Date | string | null
+  name_local?: Prisma.StringNullableFilter<"business"> | string | null
   location_business_city_idTolocation?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.locationWhereInput>
   location_business_locality_idTolocation?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.locationWhereInput> | null
   app_user?: Prisma.XOR<Prisma.App_userNullableScalarRelationFilter, Prisma.app_userWhereInput> | null
+  business_alias?: Prisma.Business_aliasListRelationFilter
   business_attribute?: Prisma.Business_attributeListRelationFilter
+  business_claim?: Prisma.Business_claimListRelationFilter
+  business_closure?: Prisma.Business_closureListRelationFilter
   business_concept?: Prisma.XOR<Prisma.Business_conceptNullableScalarRelationFilter, Prisma.business_conceptWhereInput> | null
   business_hours?: Prisma.Business_hoursListRelationFilter
   business_media?: Prisma.Business_mediaListRelationFilter
@@ -486,7 +528,8 @@ export type businessWhereUniqueInput = Prisma.AtLeast<{
   click_log?: Prisma.Click_logListRelationFilter
   lead?: Prisma.LeadListRelationFilter
   review?: Prisma.ReviewListRelationFilter
-}, "id" | "slug">
+  search_impression?: Prisma.Search_impressionListRelationFilter
+}, "id" | "slug" | "source_source_ref">
 
 export type businessOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -513,6 +556,9 @@ export type businessOrderByWithAggregationInput = {
   source?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  source_ref?: Prisma.SortOrderInput | Prisma.SortOrder
+  phone_verified_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  name_local?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.businessCountOrderByAggregateInput
   _avg?: Prisma.businessAvgOrderByAggregateInput
   _max?: Prisma.businessMaxOrderByAggregateInput
@@ -548,6 +594,9 @@ export type businessScalarWhereWithAggregatesInput = {
   source?: Prisma.StringWithAggregatesFilter<"business"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"business"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"business"> | Date | string
+  source_ref?: Prisma.StringNullableWithAggregatesFilter<"business"> | string | null
+  phone_verified_at?: Prisma.DateTimeNullableWithAggregatesFilter<"business"> | Date | string | null
+  name_local?: Prisma.StringNullableWithAggregatesFilter<"business"> | string | null
 }
 
 export type businessUpdateInput = {
@@ -572,10 +621,16 @@ export type businessUpdateInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
   location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
   app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
@@ -583,6 +638,7 @@ export type businessUpdateInput = {
   click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateInput = {
@@ -610,7 +666,13 @@ export type businessUncheckedUpdateInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
@@ -618,6 +680,7 @@ export type businessUncheckedUpdateInput = {
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUpdateManyMutationInput = {
@@ -642,6 +705,9 @@ export type businessUpdateManyMutationInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type businessUncheckedUpdateManyInput = {
@@ -669,6 +735,9 @@ export type businessUncheckedUpdateManyInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type BusinessListRelationFilter = {
@@ -679,6 +748,11 @@ export type BusinessListRelationFilter = {
 
 export type businessOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type businessSourceSource_refCompoundUniqueInput = {
+  source: string
+  source_ref: string
 }
 
 export type businessCountOrderByAggregateInput = {
@@ -706,6 +780,9 @@ export type businessCountOrderByAggregateInput = {
   source?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  source_ref?: Prisma.SortOrder
+  phone_verified_at?: Prisma.SortOrder
+  name_local?: Prisma.SortOrder
 }
 
 export type businessAvgOrderByAggregateInput = {
@@ -744,6 +821,9 @@ export type businessMaxOrderByAggregateInput = {
   source?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  source_ref?: Prisma.SortOrder
+  phone_verified_at?: Prisma.SortOrder
+  name_local?: Prisma.SortOrder
 }
 
 export type businessMinOrderByAggregateInput = {
@@ -771,6 +851,9 @@ export type businessMinOrderByAggregateInput = {
   source?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  source_ref?: Prisma.SortOrder
+  phone_verified_at?: Prisma.SortOrder
+  name_local?: Prisma.SortOrder
 }
 
 export type businessSumOrderByAggregateInput = {
@@ -969,6 +1052,42 @@ export type businessUpdateOneRequiredWithoutReviewNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.businessUpdateToOneWithWhereWithoutReviewInput, Prisma.businessUpdateWithoutReviewInput>, Prisma.businessUncheckedUpdateWithoutReviewInput>
 }
 
+export type businessCreateNestedOneWithoutBusiness_aliasInput = {
+  connect?: Prisma.businessWhereUniqueInput
+}
+
+export type businessUpdateOneRequiredWithoutBusiness_aliasNestedInput = {
+  connect?: Prisma.businessWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.businessUpdateToOneWithWhereWithoutBusiness_aliasInput, Prisma.businessUpdateWithoutBusiness_aliasInput>, Prisma.businessUncheckedUpdateWithoutBusiness_aliasInput>
+}
+
+export type businessCreateNestedOneWithoutBusiness_claimInput = {
+  connect?: Prisma.businessWhereUniqueInput
+}
+
+export type businessUpdateOneRequiredWithoutBusiness_claimNestedInput = {
+  connect?: Prisma.businessWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.businessUpdateToOneWithWhereWithoutBusiness_claimInput, Prisma.businessUpdateWithoutBusiness_claimInput>, Prisma.businessUncheckedUpdateWithoutBusiness_claimInput>
+}
+
+export type businessCreateNestedOneWithoutBusiness_closureInput = {
+  connect?: Prisma.businessWhereUniqueInput
+}
+
+export type businessUpdateOneRequiredWithoutBusiness_closureNestedInput = {
+  connect?: Prisma.businessWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.businessUpdateToOneWithWhereWithoutBusiness_closureInput, Prisma.businessUpdateWithoutBusiness_closureInput>, Prisma.businessUncheckedUpdateWithoutBusiness_closureInput>
+}
+
+export type businessCreateNestedOneWithoutSearch_impressionInput = {
+  connect?: Prisma.businessWhereUniqueInput
+}
+
+export type businessUpdateOneRequiredWithoutSearch_impressionNestedInput = {
+  connect?: Prisma.businessWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.businessUpdateToOneWithWhereWithoutSearch_impressionInput, Prisma.businessUpdateWithoutSearch_impressionInput>, Prisma.businessUncheckedUpdateWithoutSearch_impressionInput>
+}
+
 export type businessUpdateWithWhereUniqueWithoutApp_userInput = {
   where: Prisma.businessWhereUniqueInput
   data: Prisma.XOR<Prisma.businessUpdateWithoutApp_userInput, Prisma.businessUncheckedUpdateWithoutApp_userInput>
@@ -1007,6 +1126,9 @@ export type businessScalarWhereInput = {
   source?: Prisma.StringFilter<"business"> | string
   created_at?: Prisma.DateTimeFilter<"business"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"business"> | Date | string
+  source_ref?: Prisma.StringNullableFilter<"business"> | string | null
+  phone_verified_at?: Prisma.DateTimeNullableFilter<"business"> | Date | string | null
+  name_local?: Prisma.StringNullableFilter<"business"> | string | null
 }
 
 export type businessUpdateToOneWithWhereWithoutBusiness_attributeInput = {
@@ -1036,9 +1158,15 @@ export type businessUpdateWithoutBusiness_attributeInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
   location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
   app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
@@ -1046,6 +1174,7 @@ export type businessUpdateWithoutBusiness_attributeInput = {
   click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateWithoutBusiness_attributeInput = {
@@ -1073,6 +1202,12 @@ export type businessUncheckedUpdateWithoutBusiness_attributeInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
@@ -1080,6 +1215,7 @@ export type businessUncheckedUpdateWithoutBusiness_attributeInput = {
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUpdateToOneWithWhereWithoutBusiness_conceptInput = {
@@ -1109,16 +1245,23 @@ export type businessUpdateWithoutBusiness_conceptInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
   location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
   app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateWithoutBusiness_conceptInput = {
@@ -1146,13 +1289,20 @@ export type businessUncheckedUpdateWithoutBusiness_conceptInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUncheckedUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUpdateToOneWithWhereWithoutBusiness_hoursInput = {
@@ -1182,16 +1332,23 @@ export type businessUpdateWithoutBusiness_hoursInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
   location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
   app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateWithoutBusiness_hoursInput = {
@@ -1219,13 +1376,20 @@ export type businessUncheckedUpdateWithoutBusiness_hoursInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUncheckedUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUpdateToOneWithWhereWithoutBusiness_mediaInput = {
@@ -1255,16 +1419,23 @@ export type businessUpdateWithoutBusiness_mediaInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
   location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
   app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateWithoutBusiness_mediaInput = {
@@ -1292,13 +1463,20 @@ export type businessUncheckedUpdateWithoutBusiness_mediaInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUncheckedUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUpdateToOneWithWhereWithoutBusiness_subscriptionInput = {
@@ -1328,16 +1506,23 @@ export type businessUpdateWithoutBusiness_subscriptionInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
   location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
   app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateWithoutBusiness_subscriptionInput = {
@@ -1365,13 +1550,20 @@ export type businessUncheckedUpdateWithoutBusiness_subscriptionInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUpdateToOneWithWhereWithoutClick_logInput = {
@@ -1401,16 +1593,23 @@ export type businessUpdateWithoutClick_logInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
   location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
   app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateWithoutClick_logInput = {
@@ -1438,13 +1637,20 @@ export type businessUncheckedUpdateWithoutClick_logInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUncheckedUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUpdateToOneWithWhereWithoutLeadInput = {
@@ -1474,16 +1680,23 @@ export type businessUpdateWithoutLeadInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
   location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
   app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateWithoutLeadInput = {
@@ -1511,13 +1724,20 @@ export type businessUncheckedUpdateWithoutLeadInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUncheckedUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUpdateWithWhereUniqueWithoutLocation_business_city_idTolocationInput = {
@@ -1567,16 +1787,23 @@ export type businessUpdateWithoutReviewInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
   location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
   app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateWithoutReviewInput = {
@@ -1604,13 +1831,368 @@ export type businessUncheckedUpdateWithoutReviewInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
   business_subscription?: Prisma.business_subscriptionUncheckedUpdateManyWithoutBusinessNestedInput
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
+}
+
+export type businessUpdateToOneWithWhereWithoutBusiness_aliasInput = {
+  where?: Prisma.businessWhereInput
+  data: Prisma.XOR<Prisma.businessUpdateWithoutBusiness_aliasInput, Prisma.businessUncheckedUpdateWithoutBusiness_aliasInput>
+}
+
+export type businessUpdateWithoutBusiness_aliasInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name_norm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pincode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  year_established?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  price_level?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_24x7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  review_count?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
+  location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
+  app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
+  business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
+  business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
+  business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
+  business_subscription?: Prisma.business_subscriptionUpdateManyWithoutBusinessNestedInput
+  click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
+  lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
+  review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
+}
+
+export type businessUncheckedUpdateWithoutBusiness_aliasInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name_norm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  owner_user_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  locality_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pincode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  year_established?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  price_level?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_24x7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  review_count?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
+  business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
+  business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
+  business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
+  business_subscription?: Prisma.business_subscriptionUncheckedUpdateManyWithoutBusinessNestedInput
+  click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
+  lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
+  review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
+}
+
+export type businessUpdateToOneWithWhereWithoutBusiness_claimInput = {
+  where?: Prisma.businessWhereInput
+  data: Prisma.XOR<Prisma.businessUpdateWithoutBusiness_claimInput, Prisma.businessUncheckedUpdateWithoutBusiness_claimInput>
+}
+
+export type businessUpdateWithoutBusiness_claimInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name_norm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pincode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  year_established?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  price_level?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_24x7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  review_count?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
+  location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
+  app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
+  business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
+  business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
+  business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
+  business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
+  business_subscription?: Prisma.business_subscriptionUpdateManyWithoutBusinessNestedInput
+  click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
+  lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
+  review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
+}
+
+export type businessUncheckedUpdateWithoutBusiness_claimInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name_norm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  owner_user_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  locality_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pincode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  year_established?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  price_level?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_24x7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  review_count?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
+  business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
+  business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
+  business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
+  business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
+  business_subscription?: Prisma.business_subscriptionUncheckedUpdateManyWithoutBusinessNestedInput
+  click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
+  lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
+  review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
+}
+
+export type businessUpdateToOneWithWhereWithoutBusiness_closureInput = {
+  where?: Prisma.businessWhereInput
+  data: Prisma.XOR<Prisma.businessUpdateWithoutBusiness_closureInput, Prisma.businessUncheckedUpdateWithoutBusiness_closureInput>
+}
+
+export type businessUpdateWithoutBusiness_closureInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name_norm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pincode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  year_established?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  price_level?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_24x7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  review_count?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
+  location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
+  app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
+  business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
+  business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
+  business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
+  business_subscription?: Prisma.business_subscriptionUpdateManyWithoutBusinessNestedInput
+  click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
+  lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
+  review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
+}
+
+export type businessUncheckedUpdateWithoutBusiness_closureInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name_norm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  owner_user_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  locality_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pincode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  year_established?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  price_level?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_24x7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  review_count?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
+  business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
+  business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
+  business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
+  business_subscription?: Prisma.business_subscriptionUncheckedUpdateManyWithoutBusinessNestedInput
+  click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
+  lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
+  review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
+}
+
+export type businessUpdateToOneWithWhereWithoutSearch_impressionInput = {
+  where?: Prisma.businessWhereInput
+  data: Prisma.XOR<Prisma.businessUpdateWithoutSearch_impressionInput, Prisma.businessUncheckedUpdateWithoutSearch_impressionInput>
+}
+
+export type businessUpdateWithoutSearch_impressionInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name_norm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pincode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  year_established?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  price_level?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_24x7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  review_count?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
+  location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
+  app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
+  business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
+  business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
+  business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
+  business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
+  business_subscription?: Prisma.business_subscriptionUpdateManyWithoutBusinessNestedInput
+  click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
+  lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
+  review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+}
+
+export type businessUncheckedUpdateWithoutSearch_impressionInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name_norm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  owner_user_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city_id?: Prisma.IntFieldUpdateOperationsInput | number
+  locality_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pincode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  year_established?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  price_level?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  is_24x7?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  review_count?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
+  business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
+  business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
+  business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
+  business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
+  business_subscription?: Prisma.business_subscriptionUncheckedUpdateManyWithoutBusinessNestedInput
+  click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
+  lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
+  review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUpdateWithoutApp_userInput = {
@@ -1635,9 +2217,15 @@ export type businessUpdateWithoutApp_userInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
   location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
@@ -1645,6 +2233,7 @@ export type businessUpdateWithoutApp_userInput = {
   click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateWithoutApp_userInput = {
@@ -1671,7 +2260,13 @@ export type businessUncheckedUpdateWithoutApp_userInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
@@ -1679,6 +2274,7 @@ export type businessUncheckedUpdateWithoutApp_userInput = {
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateManyWithoutApp_userInput = {
@@ -1705,6 +2301,9 @@ export type businessUncheckedUpdateManyWithoutApp_userInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type businessUpdateWithoutLocation_business_city_idTolocationInput = {
@@ -1729,9 +2328,15 @@ export type businessUpdateWithoutLocation_business_city_idTolocationInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_locality_idTolocation?: Prisma.locationUpdateOneWithoutBusiness_business_locality_idTolocationNestedInput
   app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
@@ -1739,6 +2344,7 @@ export type businessUpdateWithoutLocation_business_city_idTolocationInput = {
   click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateWithoutLocation_business_city_idTolocationInput = {
@@ -1765,7 +2371,13 @@ export type businessUncheckedUpdateWithoutLocation_business_city_idTolocationInp
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
@@ -1773,6 +2385,7 @@ export type businessUncheckedUpdateWithoutLocation_business_city_idTolocationInp
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateManyWithoutLocation_business_city_idTolocationInput = {
@@ -1799,6 +2412,9 @@ export type businessUncheckedUpdateManyWithoutLocation_business_city_idTolocatio
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type businessUpdateWithoutLocation_business_locality_idTolocationInput = {
@@ -1823,9 +2439,15 @@ export type businessUpdateWithoutLocation_business_locality_idTolocationInput = 
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location_business_city_idTolocation?: Prisma.locationUpdateOneRequiredWithoutBusiness_business_city_idTolocationNestedInput
   app_user?: Prisma.app_userUpdateOneWithoutBusinessNestedInput
+  business_alias?: Prisma.business_aliasUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUpdateManyWithoutBusinessNestedInput
@@ -1833,6 +2455,7 @@ export type businessUpdateWithoutLocation_business_locality_idTolocationInput = 
   click_log?: Prisma.click_logUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateWithoutLocation_business_locality_idTolocationInput = {
@@ -1859,7 +2482,13 @@ export type businessUncheckedUpdateWithoutLocation_business_locality_idTolocatio
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  business_alias?: Prisma.business_aliasUncheckedUpdateManyWithoutBusinessNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutBusinessNestedInput
+  business_claim?: Prisma.business_claimUncheckedUpdateManyWithoutBusinessNestedInput
+  business_closure?: Prisma.business_closureUncheckedUpdateManyWithoutBusinessNestedInput
   business_concept?: Prisma.business_conceptUncheckedUpdateOneWithoutBusinessNestedInput
   business_hours?: Prisma.business_hoursUncheckedUpdateManyWithoutBusinessNestedInput
   business_media?: Prisma.business_mediaUncheckedUpdateManyWithoutBusinessNestedInput
@@ -1867,6 +2496,7 @@ export type businessUncheckedUpdateWithoutLocation_business_locality_idTolocatio
   click_log?: Prisma.click_logUncheckedUpdateManyWithoutBusinessNestedInput
   lead?: Prisma.leadUncheckedUpdateManyWithoutBusinessNestedInput
   review?: Prisma.reviewUncheckedUpdateManyWithoutBusinessNestedInput
+  search_impression?: Prisma.search_impressionUncheckedUpdateManyWithoutBusinessNestedInput
 }
 
 export type businessUncheckedUpdateManyWithoutLocation_business_locality_idTolocationInput = {
@@ -1893,6 +2523,9 @@ export type businessUncheckedUpdateManyWithoutLocation_business_locality_idToloc
   source?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source_ref?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone_verified_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name_local?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -1901,23 +2534,31 @@ export type businessUncheckedUpdateManyWithoutLocation_business_locality_idToloc
  */
 
 export type BusinessCountOutputType = {
+  business_alias: number
   business_attribute: number
+  business_claim: number
+  business_closure: number
   business_hours: number
   business_media: number
   business_subscription: number
   click_log: number
   lead: number
   review: number
+  search_impression: number
 }
 
 export type BusinessCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  business_alias?: boolean | BusinessCountOutputTypeCountBusiness_aliasArgs
   business_attribute?: boolean | BusinessCountOutputTypeCountBusiness_attributeArgs
+  business_claim?: boolean | BusinessCountOutputTypeCountBusiness_claimArgs
+  business_closure?: boolean | BusinessCountOutputTypeCountBusiness_closureArgs
   business_hours?: boolean | BusinessCountOutputTypeCountBusiness_hoursArgs
   business_media?: boolean | BusinessCountOutputTypeCountBusiness_mediaArgs
   business_subscription?: boolean | BusinessCountOutputTypeCountBusiness_subscriptionArgs
   click_log?: boolean | BusinessCountOutputTypeCountClick_logArgs
   lead?: boolean | BusinessCountOutputTypeCountLeadArgs
   review?: boolean | BusinessCountOutputTypeCountReviewArgs
+  search_impression?: boolean | BusinessCountOutputTypeCountSearch_impressionArgs
 }
 
 /**
@@ -1933,8 +2574,29 @@ export type BusinessCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ext
 /**
  * BusinessCountOutputType without action
  */
+export type BusinessCountOutputTypeCountBusiness_aliasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.business_aliasWhereInput
+}
+
+/**
+ * BusinessCountOutputType without action
+ */
 export type BusinessCountOutputTypeCountBusiness_attributeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.business_attributeWhereInput
+}
+
+/**
+ * BusinessCountOutputType without action
+ */
+export type BusinessCountOutputTypeCountBusiness_claimArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.business_claimWhereInput
+}
+
+/**
+ * BusinessCountOutputType without action
+ */
+export type BusinessCountOutputTypeCountBusiness_closureArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.business_closureWhereInput
 }
 
 /**
@@ -1979,6 +2641,13 @@ export type BusinessCountOutputTypeCountReviewArgs<ExtArgs extends runtime.Types
   where?: Prisma.reviewWhereInput
 }
 
+/**
+ * BusinessCountOutputType without action
+ */
+export type BusinessCountOutputTypeCountSearch_impressionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.search_impressionWhereInput
+}
+
 
 export type businessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2005,10 +2674,16 @@ export type businessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   source?: boolean
   created_at?: boolean
   updated_at?: boolean
+  source_ref?: boolean
+  phone_verified_at?: boolean
+  name_local?: boolean
   location_business_city_idTolocation?: boolean | Prisma.locationDefaultArgs<ExtArgs>
   location_business_locality_idTolocation?: boolean | Prisma.business$location_business_locality_idTolocationArgs<ExtArgs>
   app_user?: boolean | Prisma.business$app_userArgs<ExtArgs>
+  business_alias?: boolean | Prisma.business$business_aliasArgs<ExtArgs>
   business_attribute?: boolean | Prisma.business$business_attributeArgs<ExtArgs>
+  business_claim?: boolean | Prisma.business$business_claimArgs<ExtArgs>
+  business_closure?: boolean | Prisma.business$business_closureArgs<ExtArgs>
   business_concept?: boolean | Prisma.business$business_conceptArgs<ExtArgs>
   business_hours?: boolean | Prisma.business$business_hoursArgs<ExtArgs>
   business_media?: boolean | Prisma.business$business_mediaArgs<ExtArgs>
@@ -2016,6 +2691,7 @@ export type businessSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   click_log?: boolean | Prisma.business$click_logArgs<ExtArgs>
   lead?: boolean | Prisma.business$leadArgs<ExtArgs>
   review?: boolean | Prisma.business$reviewArgs<ExtArgs>
+  search_impression?: boolean | Prisma.business$search_impressionArgs<ExtArgs>
   _count?: boolean | Prisma.BusinessCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["business"]>
 
@@ -2045,6 +2721,9 @@ export type businessSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   source?: boolean
   created_at?: boolean
   updated_at?: boolean
+  source_ref?: boolean
+  phone_verified_at?: boolean
+  name_local?: boolean
   location_business_city_idTolocation?: boolean | Prisma.locationDefaultArgs<ExtArgs>
   location_business_locality_idTolocation?: boolean | Prisma.business$location_business_locality_idTolocationArgs<ExtArgs>
   app_user?: boolean | Prisma.business$app_userArgs<ExtArgs>
@@ -2075,14 +2754,20 @@ export type businessSelectScalar = {
   source?: boolean
   created_at?: boolean
   updated_at?: boolean
+  source_ref?: boolean
+  phone_verified_at?: boolean
+  name_local?: boolean
 }
 
-export type businessOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "name_norm" | "owner_user_id" | "address" | "city_id" | "locality_id" | "pincode" | "phone" | "whatsapp" | "email" | "website" | "description" | "year_established" | "price_level" | "is_24x7" | "verified" | "rating" | "review_count" | "status" | "source" | "created_at" | "updated_at", ExtArgs["result"]["business"]>
+export type businessOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "name_norm" | "owner_user_id" | "address" | "city_id" | "locality_id" | "pincode" | "phone" | "whatsapp" | "email" | "website" | "description" | "year_established" | "price_level" | "is_24x7" | "verified" | "rating" | "review_count" | "status" | "source" | "created_at" | "updated_at" | "source_ref" | "phone_verified_at" | "name_local", ExtArgs["result"]["business"]>
 export type businessInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   location_business_city_idTolocation?: boolean | Prisma.locationDefaultArgs<ExtArgs>
   location_business_locality_idTolocation?: boolean | Prisma.business$location_business_locality_idTolocationArgs<ExtArgs>
   app_user?: boolean | Prisma.business$app_userArgs<ExtArgs>
+  business_alias?: boolean | Prisma.business$business_aliasArgs<ExtArgs>
   business_attribute?: boolean | Prisma.business$business_attributeArgs<ExtArgs>
+  business_claim?: boolean | Prisma.business$business_claimArgs<ExtArgs>
+  business_closure?: boolean | Prisma.business$business_closureArgs<ExtArgs>
   business_concept?: boolean | Prisma.business$business_conceptArgs<ExtArgs>
   business_hours?: boolean | Prisma.business$business_hoursArgs<ExtArgs>
   business_media?: boolean | Prisma.business$business_mediaArgs<ExtArgs>
@@ -2090,6 +2775,7 @@ export type businessInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   click_log?: boolean | Prisma.business$click_logArgs<ExtArgs>
   lead?: boolean | Prisma.business$leadArgs<ExtArgs>
   review?: boolean | Prisma.business$reviewArgs<ExtArgs>
+  search_impression?: boolean | Prisma.business$search_impressionArgs<ExtArgs>
   _count?: boolean | Prisma.BusinessCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type businessIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2104,7 +2790,10 @@ export type $businessPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     location_business_city_idTolocation: Prisma.$locationPayload<ExtArgs>
     location_business_locality_idTolocation: Prisma.$locationPayload<ExtArgs> | null
     app_user: Prisma.$app_userPayload<ExtArgs> | null
+    business_alias: Prisma.$business_aliasPayload<ExtArgs>[]
     business_attribute: Prisma.$business_attributePayload<ExtArgs>[]
+    business_claim: Prisma.$business_claimPayload<ExtArgs>[]
+    business_closure: Prisma.$business_closurePayload<ExtArgs>[]
     business_concept: Prisma.$business_conceptPayload<ExtArgs> | null
     business_hours: Prisma.$business_hoursPayload<ExtArgs>[]
     business_media: Prisma.$business_mediaPayload<ExtArgs>[]
@@ -2112,6 +2801,7 @@ export type $businessPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     click_log: Prisma.$click_logPayload<ExtArgs>[]
     lead: Prisma.$leadPayload<ExtArgs>[]
     review: Prisma.$reviewPayload<ExtArgs>[]
+    search_impression: Prisma.$search_impressionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: bigint
@@ -2138,6 +2828,9 @@ export type $businessPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     source: string
     created_at: Date
     updated_at: Date
+    source_ref: string | null
+    phone_verified_at: Date | null
+    name_local: string | null
   }, ExtArgs["result"]["business"]>
   composites: {}
 }
@@ -2464,7 +3157,10 @@ export interface Prisma__businessClient<T, Null = never, ExtArgs extends runtime
   location_business_city_idTolocation<T extends Prisma.locationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.locationDefaultArgs<ExtArgs>>): Prisma.Prisma__locationClient<runtime.Types.Result.GetResult<Prisma.$locationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   location_business_locality_idTolocation<T extends Prisma.business$location_business_locality_idTolocationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$location_business_locality_idTolocationArgs<ExtArgs>>): Prisma.Prisma__locationClient<runtime.Types.Result.GetResult<Prisma.$locationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   app_user<T extends Prisma.business$app_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$app_userArgs<ExtArgs>>): Prisma.Prisma__app_userClient<runtime.Types.Result.GetResult<Prisma.$app_userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  business_alias<T extends Prisma.business$business_aliasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$business_aliasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$business_aliasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   business_attribute<T extends Prisma.business$business_attributeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$business_attributeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$business_attributePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  business_claim<T extends Prisma.business$business_claimArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$business_claimArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$business_claimPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  business_closure<T extends Prisma.business$business_closureArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$business_closureArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$business_closurePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   business_concept<T extends Prisma.business$business_conceptArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$business_conceptArgs<ExtArgs>>): Prisma.Prisma__business_conceptClient<runtime.Types.Result.GetResult<Prisma.$business_conceptPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   business_hours<T extends Prisma.business$business_hoursArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$business_hoursArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$business_hoursPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   business_media<T extends Prisma.business$business_mediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$business_mediaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$business_mediaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2472,6 +3168,7 @@ export interface Prisma__businessClient<T, Null = never, ExtArgs extends runtime
   click_log<T extends Prisma.business$click_logArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$click_logArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$click_logPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   lead<T extends Prisma.business$leadArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$leadArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$leadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   review<T extends Prisma.business$reviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$reviewArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$reviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  search_impression<T extends Prisma.business$search_impressionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business$search_impressionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$search_impressionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2525,6 +3222,9 @@ export interface businessFieldRefs {
   readonly source: Prisma.FieldRef<"business", 'String'>
   readonly created_at: Prisma.FieldRef<"business", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"business", 'DateTime'>
+  readonly source_ref: Prisma.FieldRef<"business", 'String'>
+  readonly phone_verified_at: Prisma.FieldRef<"business", 'DateTime'>
+  readonly name_local: Prisma.FieldRef<"business", 'String'>
 }
     
 
@@ -2878,6 +3578,30 @@ export type business$app_userArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
+ * business.business_alias
+ */
+export type business$business_aliasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the business_alias
+   */
+  select?: Prisma.business_aliasSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the business_alias
+   */
+  omit?: Prisma.business_aliasOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.business_aliasInclude<ExtArgs> | null
+  where?: Prisma.business_aliasWhereInput
+  orderBy?: Prisma.business_aliasOrderByWithRelationInput | Prisma.business_aliasOrderByWithRelationInput[]
+  cursor?: Prisma.business_aliasWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Business_aliasScalarFieldEnum | Prisma.Business_aliasScalarFieldEnum[]
+}
+
+/**
  * business.business_attribute
  */
 export type business$business_attributeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2899,6 +3623,54 @@ export type business$business_attributeArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.Business_attributeScalarFieldEnum | Prisma.Business_attributeScalarFieldEnum[]
+}
+
+/**
+ * business.business_claim
+ */
+export type business$business_claimArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the business_claim
+   */
+  select?: Prisma.business_claimSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the business_claim
+   */
+  omit?: Prisma.business_claimOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.business_claimInclude<ExtArgs> | null
+  where?: Prisma.business_claimWhereInput
+  orderBy?: Prisma.business_claimOrderByWithRelationInput | Prisma.business_claimOrderByWithRelationInput[]
+  cursor?: Prisma.business_claimWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Business_claimScalarFieldEnum | Prisma.Business_claimScalarFieldEnum[]
+}
+
+/**
+ * business.business_closure
+ */
+export type business$business_closureArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the business_closure
+   */
+  select?: Prisma.business_closureSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the business_closure
+   */
+  omit?: Prisma.business_closureOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.business_closureInclude<ExtArgs> | null
+  where?: Prisma.business_closureWhereInput
+  orderBy?: Prisma.business_closureOrderByWithRelationInput | Prisma.business_closureOrderByWithRelationInput[]
+  cursor?: Prisma.business_closureWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Business_closureScalarFieldEnum | Prisma.Business_closureScalarFieldEnum[]
 }
 
 /**
@@ -3062,6 +3834,30 @@ export type business$reviewArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
+}
+
+/**
+ * business.search_impression
+ */
+export type business$search_impressionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the search_impression
+   */
+  select?: Prisma.search_impressionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the search_impression
+   */
+  omit?: Prisma.search_impressionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.search_impressionInclude<ExtArgs> | null
+  where?: Prisma.search_impressionWhereInput
+  orderBy?: Prisma.search_impressionOrderByWithRelationInput | Prisma.search_impressionOrderByWithRelationInput[]
+  cursor?: Prisma.search_impressionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Search_impressionScalarFieldEnum | Prisma.Search_impressionScalarFieldEnum[]
 }
 
 /**

@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.ts"
 
 /**
  * Model business_attribute
- * 
+ * This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
  */
 export type business_attributeModel = runtime.Types.Result.DefaultSelection<Prisma.$business_attributePayload>
 
@@ -29,26 +29,41 @@ export type AggregateBusiness_attribute = {
 export type Business_attributeAvgAggregateOutputType = {
   business_id: number | null
   attribute_id: number | null
+  id: number | null
+  value_number: runtime.Decimal | null
+  option_id: number | null
 }
 
 export type Business_attributeSumAggregateOutputType = {
   business_id: bigint | null
   attribute_id: number | null
+  id: bigint | null
+  value_number: runtime.Decimal | null
+  option_id: number | null
 }
 
 export type Business_attributeMinAggregateOutputType = {
   business_id: bigint | null
   attribute_id: number | null
+  id: bigint | null
+  value_number: runtime.Decimal | null
+  option_id: number | null
 }
 
 export type Business_attributeMaxAggregateOutputType = {
   business_id: bigint | null
   attribute_id: number | null
+  id: bigint | null
+  value_number: runtime.Decimal | null
+  option_id: number | null
 }
 
 export type Business_attributeCountAggregateOutputType = {
   business_id: number
   attribute_id: number
+  id: number
+  value_number: number
+  option_id: number
   _all: number
 }
 
@@ -56,26 +71,41 @@ export type Business_attributeCountAggregateOutputType = {
 export type Business_attributeAvgAggregateInputType = {
   business_id?: true
   attribute_id?: true
+  id?: true
+  value_number?: true
+  option_id?: true
 }
 
 export type Business_attributeSumAggregateInputType = {
   business_id?: true
   attribute_id?: true
+  id?: true
+  value_number?: true
+  option_id?: true
 }
 
 export type Business_attributeMinAggregateInputType = {
   business_id?: true
   attribute_id?: true
+  id?: true
+  value_number?: true
+  option_id?: true
 }
 
 export type Business_attributeMaxAggregateInputType = {
   business_id?: true
   attribute_id?: true
+  id?: true
+  value_number?: true
+  option_id?: true
 }
 
 export type Business_attributeCountAggregateInputType = {
   business_id?: true
   attribute_id?: true
+  id?: true
+  value_number?: true
+  option_id?: true
   _all?: true
 }
 
@@ -168,6 +198,9 @@ export type business_attributeGroupByArgs<ExtArgs extends runtime.Types.Extensio
 export type Business_attributeGroupByOutputType = {
   business_id: bigint
   attribute_id: number
+  id: bigint
+  value_number: runtime.Decimal | null
+  option_id: number | null
   _count: Business_attributeCountAggregateOutputType | null
   _avg: Business_attributeAvgAggregateOutputType | null
   _sum: Business_attributeSumAggregateOutputType | null
@@ -196,31 +229,48 @@ export type business_attributeWhereInput = {
   NOT?: Prisma.business_attributeWhereInput | Prisma.business_attributeWhereInput[]
   business_id?: Prisma.BigIntFilter<"business_attribute"> | bigint | number
   attribute_id?: Prisma.IntFilter<"business_attribute"> | number
+  id?: Prisma.BigIntFilter<"business_attribute"> | bigint | number
+  value_number?: Prisma.DecimalNullableFilter<"business_attribute"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: Prisma.IntNullableFilter<"business_attribute"> | number | null
   attribute?: Prisma.XOR<Prisma.AttributeScalarRelationFilter, Prisma.attributeWhereInput>
   business?: Prisma.XOR<Prisma.BusinessScalarRelationFilter, Prisma.businessWhereInput>
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: Prisma.XOR<Prisma.Attribute_optionNullableScalarRelationFilter, Prisma.attribute_optionWhereInput> | null
+  attribute_option_business_attribute_option_idToattribute_option?: Prisma.XOR<Prisma.Attribute_optionNullableScalarRelationFilter, Prisma.attribute_optionWhereInput> | null
 }
 
 export type business_attributeOrderByWithRelationInput = {
   business_id?: Prisma.SortOrder
   attribute_id?: Prisma.SortOrder
+  id?: Prisma.SortOrder
+  value_number?: Prisma.SortOrderInput | Prisma.SortOrder
+  option_id?: Prisma.SortOrderInput | Prisma.SortOrder
   attribute?: Prisma.attributeOrderByWithRelationInput
   business?: Prisma.businessOrderByWithRelationInput
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: Prisma.attribute_optionOrderByWithRelationInput
+  attribute_option_business_attribute_option_idToattribute_option?: Prisma.attribute_optionOrderByWithRelationInput
 }
 
 export type business_attributeWhereUniqueInput = Prisma.AtLeast<{
-  business_id_attribute_id?: Prisma.business_attributeBusiness_idAttribute_idCompoundUniqueInput
+  id?: bigint | number
   AND?: Prisma.business_attributeWhereInput | Prisma.business_attributeWhereInput[]
   OR?: Prisma.business_attributeWhereInput[]
   NOT?: Prisma.business_attributeWhereInput | Prisma.business_attributeWhereInput[]
   business_id?: Prisma.BigIntFilter<"business_attribute"> | bigint | number
   attribute_id?: Prisma.IntFilter<"business_attribute"> | number
+  value_number?: Prisma.DecimalNullableFilter<"business_attribute"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: Prisma.IntNullableFilter<"business_attribute"> | number | null
   attribute?: Prisma.XOR<Prisma.AttributeScalarRelationFilter, Prisma.attributeWhereInput>
   business?: Prisma.XOR<Prisma.BusinessScalarRelationFilter, Prisma.businessWhereInput>
-}, "business_id_attribute_id">
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: Prisma.XOR<Prisma.Attribute_optionNullableScalarRelationFilter, Prisma.attribute_optionWhereInput> | null
+  attribute_option_business_attribute_option_idToattribute_option?: Prisma.XOR<Prisma.Attribute_optionNullableScalarRelationFilter, Prisma.attribute_optionWhereInput> | null
+}, "id">
 
 export type business_attributeOrderByWithAggregationInput = {
   business_id?: Prisma.SortOrder
   attribute_id?: Prisma.SortOrder
+  id?: Prisma.SortOrder
+  value_number?: Prisma.SortOrderInput | Prisma.SortOrder
+  option_id?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.business_attributeCountOrderByAggregateInput
   _avg?: Prisma.business_attributeAvgOrderByAggregateInput
   _max?: Prisma.business_attributeMaxOrderByAggregateInput
@@ -234,40 +284,64 @@ export type business_attributeScalarWhereWithAggregatesInput = {
   NOT?: Prisma.business_attributeScalarWhereWithAggregatesInput | Prisma.business_attributeScalarWhereWithAggregatesInput[]
   business_id?: Prisma.BigIntWithAggregatesFilter<"business_attribute"> | bigint | number
   attribute_id?: Prisma.IntWithAggregatesFilter<"business_attribute"> | number
+  id?: Prisma.BigIntWithAggregatesFilter<"business_attribute"> | bigint | number
+  value_number?: Prisma.DecimalNullableWithAggregatesFilter<"business_attribute"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: Prisma.IntNullableWithAggregatesFilter<"business_attribute"> | number | null
 }
 
 export type business_attributeCreateInput = {
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   attribute: Prisma.attributeCreateNestedOneWithoutBusiness_attributeInput
   business: Prisma.businessCreateNestedOneWithoutBusiness_attributeInput
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: Prisma.attribute_optionCreateNestedOneWithoutBusiness_attribute_business_attribute_option_id_attribute_idToattribute_optionInput
+  attribute_option_business_attribute_option_idToattribute_option?: Prisma.attribute_optionCreateNestedOneWithoutBusiness_attribute_business_attribute_option_idToattribute_optionInput
 }
 
 export type business_attributeUncheckedCreateInput = {
   business_id: bigint | number
   attribute_id: number
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: number | null
 }
 
 export type business_attributeUpdateInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   attribute?: Prisma.attributeUpdateOneRequiredWithoutBusiness_attributeNestedInput
   business?: Prisma.businessUpdateOneRequiredWithoutBusiness_attributeNestedInput
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: Prisma.attribute_optionUpdateOneWithoutBusiness_attribute_business_attribute_option_id_attribute_idToattribute_optionNestedInput
+  attribute_option_business_attribute_option_idToattribute_option?: Prisma.attribute_optionUpdateOneWithoutBusiness_attribute_business_attribute_option_idToattribute_optionNestedInput
 }
 
 export type business_attributeUncheckedUpdateInput = {
   business_id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   attribute_id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type business_attributeCreateManyInput = {
   business_id: bigint | number
   attribute_id: number
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: number | null
 }
 
 export type business_attributeUpdateManyMutationInput = {
-
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type business_attributeUncheckedUpdateManyInput = {
   business_id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   attribute_id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type Business_attributeListRelationFilter = {
@@ -280,34 +354,44 @@ export type business_attributeOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type business_attributeBusiness_idAttribute_idCompoundUniqueInput = {
-  business_id: bigint | number
-  attribute_id: number
-}
-
 export type business_attributeCountOrderByAggregateInput = {
   business_id?: Prisma.SortOrder
   attribute_id?: Prisma.SortOrder
+  id?: Prisma.SortOrder
+  value_number?: Prisma.SortOrder
+  option_id?: Prisma.SortOrder
 }
 
 export type business_attributeAvgOrderByAggregateInput = {
   business_id?: Prisma.SortOrder
   attribute_id?: Prisma.SortOrder
+  id?: Prisma.SortOrder
+  value_number?: Prisma.SortOrder
+  option_id?: Prisma.SortOrder
 }
 
 export type business_attributeMaxOrderByAggregateInput = {
   business_id?: Prisma.SortOrder
   attribute_id?: Prisma.SortOrder
+  id?: Prisma.SortOrder
+  value_number?: Prisma.SortOrder
+  option_id?: Prisma.SortOrder
 }
 
 export type business_attributeMinOrderByAggregateInput = {
   business_id?: Prisma.SortOrder
   attribute_id?: Prisma.SortOrder
+  id?: Prisma.SortOrder
+  value_number?: Prisma.SortOrder
+  option_id?: Prisma.SortOrder
 }
 
 export type business_attributeSumOrderByAggregateInput = {
   business_id?: Prisma.SortOrder
   attribute_id?: Prisma.SortOrder
+  id?: Prisma.SortOrder
+  value_number?: Prisma.SortOrder
+  option_id?: Prisma.SortOrder
 }
 
 export type business_attributeCreateNestedManyWithoutAttributeInput = {
@@ -380,12 +464,111 @@ export type business_attributeUncheckedUpdateManyWithoutBusinessNestedInput = {
   deleteMany?: Prisma.business_attributeScalarWhereInput | Prisma.business_attributeScalarWhereInput[]
 }
 
+export type NullableDecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type business_attributeCreateNestedManyWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  create?: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput> | Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[] | Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  connectOrCreate?: Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput | Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  createMany?: Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInputEnvelope
+  connect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+}
+
+export type business_attributeCreateNestedManyWithoutAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  create?: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput> | Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[] | Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  connectOrCreate?: Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_idToattribute_optionInput | Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  createMany?: Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_idToattribute_optionInputEnvelope
+  connect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+}
+
+export type business_attributeUncheckedCreateNestedManyWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  create?: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput> | Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[] | Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  connectOrCreate?: Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput | Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  createMany?: Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInputEnvelope
+  connect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+}
+
+export type business_attributeUncheckedCreateNestedManyWithoutAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  create?: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput> | Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[] | Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  connectOrCreate?: Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_idToattribute_optionInput | Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  createMany?: Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_idToattribute_optionInputEnvelope
+  connect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+}
+
+export type business_attributeUpdateManyWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionNestedInput = {
+  create?: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput> | Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[] | Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  connectOrCreate?: Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput | Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  upsert?: Prisma.business_attributeUpsertWithWhereUniqueWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput | Prisma.business_attributeUpsertWithWhereUniqueWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  createMany?: Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInputEnvelope
+  set?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  disconnect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  delete?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  connect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  update?: Prisma.business_attributeUpdateWithWhereUniqueWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput | Prisma.business_attributeUpdateWithWhereUniqueWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  updateMany?: Prisma.business_attributeUpdateManyWithWhereWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput | Prisma.business_attributeUpdateManyWithWhereWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  deleteMany?: Prisma.business_attributeScalarWhereInput | Prisma.business_attributeScalarWhereInput[]
+}
+
+export type business_attributeUpdateManyWithoutAttribute_option_business_attribute_option_idToattribute_optionNestedInput = {
+  create?: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput> | Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[] | Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  connectOrCreate?: Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_idToattribute_optionInput | Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  upsert?: Prisma.business_attributeUpsertWithWhereUniqueWithoutAttribute_option_business_attribute_option_idToattribute_optionInput | Prisma.business_attributeUpsertWithWhereUniqueWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  createMany?: Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_idToattribute_optionInputEnvelope
+  set?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  disconnect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  delete?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  connect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  update?: Prisma.business_attributeUpdateWithWhereUniqueWithoutAttribute_option_business_attribute_option_idToattribute_optionInput | Prisma.business_attributeUpdateWithWhereUniqueWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  updateMany?: Prisma.business_attributeUpdateManyWithWhereWithoutAttribute_option_business_attribute_option_idToattribute_optionInput | Prisma.business_attributeUpdateManyWithWhereWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  deleteMany?: Prisma.business_attributeScalarWhereInput | Prisma.business_attributeScalarWhereInput[]
+}
+
+export type business_attributeUncheckedUpdateManyWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionNestedInput = {
+  create?: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput> | Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[] | Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  connectOrCreate?: Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput | Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  upsert?: Prisma.business_attributeUpsertWithWhereUniqueWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput | Prisma.business_attributeUpsertWithWhereUniqueWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  createMany?: Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInputEnvelope
+  set?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  disconnect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  delete?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  connect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  update?: Prisma.business_attributeUpdateWithWhereUniqueWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput | Prisma.business_attributeUpdateWithWhereUniqueWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  updateMany?: Prisma.business_attributeUpdateManyWithWhereWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput | Prisma.business_attributeUpdateManyWithWhereWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  deleteMany?: Prisma.business_attributeScalarWhereInput | Prisma.business_attributeScalarWhereInput[]
+}
+
+export type business_attributeUncheckedUpdateManyWithoutAttribute_option_business_attribute_option_idToattribute_optionNestedInput = {
+  create?: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput> | Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[] | Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  connectOrCreate?: Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_idToattribute_optionInput | Prisma.business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  upsert?: Prisma.business_attributeUpsertWithWhereUniqueWithoutAttribute_option_business_attribute_option_idToattribute_optionInput | Prisma.business_attributeUpsertWithWhereUniqueWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  createMany?: Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_idToattribute_optionInputEnvelope
+  set?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  disconnect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  delete?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  connect?: Prisma.business_attributeWhereUniqueInput | Prisma.business_attributeWhereUniqueInput[]
+  update?: Prisma.business_attributeUpdateWithWhereUniqueWithoutAttribute_option_business_attribute_option_idToattribute_optionInput | Prisma.business_attributeUpdateWithWhereUniqueWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  updateMany?: Prisma.business_attributeUpdateManyWithWhereWithoutAttribute_option_business_attribute_option_idToattribute_optionInput | Prisma.business_attributeUpdateManyWithWhereWithoutAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  deleteMany?: Prisma.business_attributeScalarWhereInput | Prisma.business_attributeScalarWhereInput[]
+}
+
 export type business_attributeCreateWithoutAttributeInput = {
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   business: Prisma.businessCreateNestedOneWithoutBusiness_attributeInput
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: Prisma.attribute_optionCreateNestedOneWithoutBusiness_attribute_business_attribute_option_id_attribute_idToattribute_optionInput
+  attribute_option_business_attribute_option_idToattribute_option?: Prisma.attribute_optionCreateNestedOneWithoutBusiness_attribute_business_attribute_option_idToattribute_optionInput
 }
 
 export type business_attributeUncheckedCreateWithoutAttributeInput = {
   business_id: bigint | number
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: number | null
 }
 
 export type business_attributeCreateOrConnectWithoutAttributeInput = {
@@ -420,14 +603,24 @@ export type business_attributeScalarWhereInput = {
   NOT?: Prisma.business_attributeScalarWhereInput | Prisma.business_attributeScalarWhereInput[]
   business_id?: Prisma.BigIntFilter<"business_attribute"> | bigint | number
   attribute_id?: Prisma.IntFilter<"business_attribute"> | number
+  id?: Prisma.BigIntFilter<"business_attribute"> | bigint | number
+  value_number?: Prisma.DecimalNullableFilter<"business_attribute"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: Prisma.IntNullableFilter<"business_attribute"> | number | null
 }
 
 export type business_attributeCreateWithoutBusinessInput = {
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   attribute: Prisma.attributeCreateNestedOneWithoutBusiness_attributeInput
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: Prisma.attribute_optionCreateNestedOneWithoutBusiness_attribute_business_attribute_option_id_attribute_idToattribute_optionInput
+  attribute_option_business_attribute_option_idToattribute_option?: Prisma.attribute_optionCreateNestedOneWithoutBusiness_attribute_business_attribute_option_idToattribute_optionInput
 }
 
 export type business_attributeUncheckedCreateWithoutBusinessInput = {
   attribute_id: number
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: number | null
 }
 
 export type business_attributeCreateOrConnectWithoutBusinessInput = {
@@ -456,36 +649,198 @@ export type business_attributeUpdateManyWithWhereWithoutBusinessInput = {
   data: Prisma.XOR<Prisma.business_attributeUpdateManyMutationInput, Prisma.business_attributeUncheckedUpdateManyWithoutBusinessInput>
 }
 
+export type business_attributeCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  attribute: Prisma.attributeCreateNestedOneWithoutBusiness_attributeInput
+  business: Prisma.businessCreateNestedOneWithoutBusiness_attributeInput
+  attribute_option_business_attribute_option_idToattribute_option?: Prisma.attribute_optionCreateNestedOneWithoutBusiness_attribute_business_attribute_option_idToattribute_optionInput
+}
+
+export type business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  business_id: bigint | number
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  where: Prisma.business_attributeWhereUniqueInput
+  create: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput>
+}
+
+export type business_attributeCreateManyAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInputEnvelope = {
+  data: Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput | Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput[]
+  skipDuplicates?: boolean
+}
+
+export type business_attributeCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  attribute: Prisma.attributeCreateNestedOneWithoutBusiness_attributeInput
+  business: Prisma.businessCreateNestedOneWithoutBusiness_attributeInput
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: Prisma.attribute_optionCreateNestedOneWithoutBusiness_attribute_business_attribute_option_id_attribute_idToattribute_optionInput
+}
+
+export type business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  business_id: bigint | number
+  attribute_id: number
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type business_attributeCreateOrConnectWithoutAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  where: Prisma.business_attributeWhereUniqueInput
+  create: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput>
+}
+
+export type business_attributeCreateManyAttribute_option_business_attribute_option_idToattribute_optionInputEnvelope = {
+  data: Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_idToattribute_optionInput | Prisma.business_attributeCreateManyAttribute_option_business_attribute_option_idToattribute_optionInput[]
+  skipDuplicates?: boolean
+}
+
+export type business_attributeUpsertWithWhereUniqueWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  where: Prisma.business_attributeWhereUniqueInput
+  update: Prisma.XOR<Prisma.business_attributeUpdateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput, Prisma.business_attributeUncheckedUpdateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput>
+  create: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput>
+}
+
+export type business_attributeUpdateWithWhereUniqueWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  where: Prisma.business_attributeWhereUniqueInput
+  data: Prisma.XOR<Prisma.business_attributeUpdateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput, Prisma.business_attributeUncheckedUpdateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput>
+}
+
+export type business_attributeUpdateManyWithWhereWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  where: Prisma.business_attributeScalarWhereInput
+  data: Prisma.XOR<Prisma.business_attributeUpdateManyMutationInput, Prisma.business_attributeUncheckedUpdateManyWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput>
+}
+
+export type business_attributeUpsertWithWhereUniqueWithoutAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  where: Prisma.business_attributeWhereUniqueInput
+  update: Prisma.XOR<Prisma.business_attributeUpdateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput, Prisma.business_attributeUncheckedUpdateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput>
+  create: Prisma.XOR<Prisma.business_attributeCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput, Prisma.business_attributeUncheckedCreateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput>
+}
+
+export type business_attributeUpdateWithWhereUniqueWithoutAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  where: Prisma.business_attributeWhereUniqueInput
+  data: Prisma.XOR<Prisma.business_attributeUpdateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput, Prisma.business_attributeUncheckedUpdateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput>
+}
+
+export type business_attributeUpdateManyWithWhereWithoutAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  where: Prisma.business_attributeScalarWhereInput
+  data: Prisma.XOR<Prisma.business_attributeUpdateManyMutationInput, Prisma.business_attributeUncheckedUpdateManyWithoutAttribute_option_business_attribute_option_idToattribute_optionInput>
+}
+
 export type business_attributeCreateManyAttributeInput = {
   business_id: bigint | number
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: number | null
 }
 
 export type business_attributeUpdateWithoutAttributeInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   business?: Prisma.businessUpdateOneRequiredWithoutBusiness_attributeNestedInput
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: Prisma.attribute_optionUpdateOneWithoutBusiness_attribute_business_attribute_option_id_attribute_idToattribute_optionNestedInput
+  attribute_option_business_attribute_option_idToattribute_option?: Prisma.attribute_optionUpdateOneWithoutBusiness_attribute_business_attribute_option_idToattribute_optionNestedInput
 }
 
 export type business_attributeUncheckedUpdateWithoutAttributeInput = {
   business_id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type business_attributeUncheckedUpdateManyWithoutAttributeInput = {
   business_id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type business_attributeUpdateWithoutBusinessInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   attribute?: Prisma.attributeUpdateOneRequiredWithoutBusiness_attributeNestedInput
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: Prisma.attribute_optionUpdateOneWithoutBusiness_attribute_business_attribute_option_id_attribute_idToattribute_optionNestedInput
+  attribute_option_business_attribute_option_idToattribute_option?: Prisma.attribute_optionUpdateOneWithoutBusiness_attribute_business_attribute_option_idToattribute_optionNestedInput
 }
 
 export type business_attributeUncheckedUpdateWithoutBusinessInput = {
   attribute_id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type business_attributeCreateManyBusinessInput = {
   attribute_id: number
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: number | null
 }
 
 export type business_attributeUncheckedUpdateManyWithoutBusinessInput = {
   attribute_id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  option_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type business_attributeCreateManyAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  business_id: bigint | number
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type business_attributeCreateManyAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  business_id: bigint | number
+  attribute_id: number
+  id?: bigint | number
+  value_number?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type business_attributeUpdateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  attribute?: Prisma.attributeUpdateOneRequiredWithoutBusiness_attributeNestedInput
+  business?: Prisma.businessUpdateOneRequiredWithoutBusiness_attributeNestedInput
+  attribute_option_business_attribute_option_idToattribute_option?: Prisma.attribute_optionUpdateOneWithoutBusiness_attribute_business_attribute_option_idToattribute_optionNestedInput
+}
+
+export type business_attributeUncheckedUpdateWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  business_id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type business_attributeUncheckedUpdateManyWithoutAttribute_option_business_attribute_option_id_attribute_idToattribute_optionInput = {
+  business_id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type business_attributeUpdateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  attribute?: Prisma.attributeUpdateOneRequiredWithoutBusiness_attributeNestedInput
+  business?: Prisma.businessUpdateOneRequiredWithoutBusiness_attributeNestedInput
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: Prisma.attribute_optionUpdateOneWithoutBusiness_attribute_business_attribute_option_id_attribute_idToattribute_optionNestedInput
+}
+
+export type business_attributeUncheckedUpdateWithoutAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  business_id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  attribute_id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type business_attributeUncheckedUpdateManyWithoutAttribute_option_business_attribute_option_idToattribute_optionInput = {
+  business_id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  attribute_id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  value_number?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 
@@ -493,41 +848,65 @@ export type business_attributeUncheckedUpdateManyWithoutBusinessInput = {
 export type business_attributeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   business_id?: boolean
   attribute_id?: boolean
+  id?: boolean
+  value_number?: boolean
+  option_id?: boolean
   attribute?: boolean | Prisma.attributeDefaultArgs<ExtArgs>
   business?: boolean | Prisma.businessDefaultArgs<ExtArgs>
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_id_attribute_idToattribute_optionArgs<ExtArgs>
+  attribute_option_business_attribute_option_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_idToattribute_optionArgs<ExtArgs>
 }, ExtArgs["result"]["business_attribute"]>
 
 export type business_attributeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   business_id?: boolean
   attribute_id?: boolean
+  id?: boolean
+  value_number?: boolean
+  option_id?: boolean
   attribute?: boolean | Prisma.attributeDefaultArgs<ExtArgs>
   business?: boolean | Prisma.businessDefaultArgs<ExtArgs>
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_id_attribute_idToattribute_optionArgs<ExtArgs>
+  attribute_option_business_attribute_option_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_idToattribute_optionArgs<ExtArgs>
 }, ExtArgs["result"]["business_attribute"]>
 
 export type business_attributeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   business_id?: boolean
   attribute_id?: boolean
+  id?: boolean
+  value_number?: boolean
+  option_id?: boolean
   attribute?: boolean | Prisma.attributeDefaultArgs<ExtArgs>
   business?: boolean | Prisma.businessDefaultArgs<ExtArgs>
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_id_attribute_idToattribute_optionArgs<ExtArgs>
+  attribute_option_business_attribute_option_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_idToattribute_optionArgs<ExtArgs>
 }, ExtArgs["result"]["business_attribute"]>
 
 export type business_attributeSelectScalar = {
   business_id?: boolean
   attribute_id?: boolean
+  id?: boolean
+  value_number?: boolean
+  option_id?: boolean
 }
 
-export type business_attributeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"business_id" | "attribute_id", ExtArgs["result"]["business_attribute"]>
+export type business_attributeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"business_id" | "attribute_id" | "id" | "value_number" | "option_id", ExtArgs["result"]["business_attribute"]>
 export type business_attributeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attribute?: boolean | Prisma.attributeDefaultArgs<ExtArgs>
   business?: boolean | Prisma.businessDefaultArgs<ExtArgs>
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_id_attribute_idToattribute_optionArgs<ExtArgs>
+  attribute_option_business_attribute_option_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_idToattribute_optionArgs<ExtArgs>
 }
 export type business_attributeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attribute?: boolean | Prisma.attributeDefaultArgs<ExtArgs>
   business?: boolean | Prisma.businessDefaultArgs<ExtArgs>
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_id_attribute_idToattribute_optionArgs<ExtArgs>
+  attribute_option_business_attribute_option_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_idToattribute_optionArgs<ExtArgs>
 }
 export type business_attributeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attribute?: boolean | Prisma.attributeDefaultArgs<ExtArgs>
   business?: boolean | Prisma.businessDefaultArgs<ExtArgs>
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_id_attribute_idToattribute_optionArgs<ExtArgs>
+  attribute_option_business_attribute_option_idToattribute_option?: boolean | Prisma.business_attribute$attribute_option_business_attribute_option_idToattribute_optionArgs<ExtArgs>
 }
 
 export type $business_attributePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -535,10 +914,15 @@ export type $business_attributePayload<ExtArgs extends runtime.Types.Extensions.
   objects: {
     attribute: Prisma.$attributePayload<ExtArgs>
     business: Prisma.$businessPayload<ExtArgs>
+    attribute_option_business_attribute_option_id_attribute_idToattribute_option: Prisma.$attribute_optionPayload<ExtArgs> | null
+    attribute_option_business_attribute_option_idToattribute_option: Prisma.$attribute_optionPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     business_id: bigint
     attribute_id: number
+    id: bigint
+    value_number: runtime.Decimal | null
+    option_id: number | null
   }, ExtArgs["result"]["business_attribute"]>
   composites: {}
 }
@@ -935,6 +1319,8 @@ export interface Prisma__business_attributeClient<T, Null = never, ExtArgs exten
   readonly [Symbol.toStringTag]: "PrismaPromise"
   attribute<T extends Prisma.attributeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.attributeDefaultArgs<ExtArgs>>): Prisma.Prisma__attributeClient<runtime.Types.Result.GetResult<Prisma.$attributePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   business<T extends Prisma.businessDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.businessDefaultArgs<ExtArgs>>): Prisma.Prisma__businessClient<runtime.Types.Result.GetResult<Prisma.$businessPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  attribute_option_business_attribute_option_id_attribute_idToattribute_option<T extends Prisma.business_attribute$attribute_option_business_attribute_option_id_attribute_idToattribute_optionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business_attribute$attribute_option_business_attribute_option_id_attribute_idToattribute_optionArgs<ExtArgs>>): Prisma.Prisma__attribute_optionClient<runtime.Types.Result.GetResult<Prisma.$attribute_optionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  attribute_option_business_attribute_option_idToattribute_option<T extends Prisma.business_attribute$attribute_option_business_attribute_option_idToattribute_optionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.business_attribute$attribute_option_business_attribute_option_idToattribute_optionArgs<ExtArgs>>): Prisma.Prisma__attribute_optionClient<runtime.Types.Result.GetResult<Prisma.$attribute_optionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -966,6 +1352,9 @@ export interface Prisma__business_attributeClient<T, Null = never, ExtArgs exten
 export interface business_attributeFieldRefs {
   readonly business_id: Prisma.FieldRef<"business_attribute", 'BigInt'>
   readonly attribute_id: Prisma.FieldRef<"business_attribute", 'Int'>
+  readonly id: Prisma.FieldRef<"business_attribute", 'BigInt'>
+  readonly value_number: Prisma.FieldRef<"business_attribute", 'Decimal'>
+  readonly option_id: Prisma.FieldRef<"business_attribute", 'Int'>
 }
     
 
@@ -1364,6 +1753,44 @@ export type business_attributeDeleteManyArgs<ExtArgs extends runtime.Types.Exten
    * Limit how many business_attributes to delete.
    */
   limit?: number
+}
+
+/**
+ * business_attribute.attribute_option_business_attribute_option_id_attribute_idToattribute_option
+ */
+export type business_attribute$attribute_option_business_attribute_option_id_attribute_idToattribute_optionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the attribute_option
+   */
+  select?: Prisma.attribute_optionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the attribute_option
+   */
+  omit?: Prisma.attribute_optionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.attribute_optionInclude<ExtArgs> | null
+  where?: Prisma.attribute_optionWhereInput
+}
+
+/**
+ * business_attribute.attribute_option_business_attribute_option_idToattribute_option
+ */
+export type business_attribute$attribute_option_business_attribute_option_idToattribute_optionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the attribute_option
+   */
+  select?: Prisma.attribute_optionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the attribute_option
+   */
+  omit?: Prisma.attribute_optionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.attribute_optionInclude<ExtArgs> | null
+  where?: Prisma.attribute_optionWhereInput
 }
 
 /**

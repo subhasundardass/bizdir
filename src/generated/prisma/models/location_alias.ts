@@ -15,6 +15,7 @@ import type * as Prisma from "../internal/prismaNamespace.ts"
 /**
  * Model location_alias
  * This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+ * This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
  */
 export type location_aliasModel = runtime.Types.Result.DefaultSelection<Prisma.$location_aliasPayload>
 

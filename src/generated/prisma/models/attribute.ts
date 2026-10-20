@@ -28,10 +28,12 @@ export type AggregateAttribute = {
 
 export type AttributeAvgAggregateOutputType = {
   id: number | null
+  sort_order: number | null
 }
 
 export type AttributeSumAggregateOutputType = {
   id: number | null
+  sort_order: number | null
 }
 
 export type AttributeMinAggregateOutputType = {
@@ -39,6 +41,11 @@ export type AttributeMinAggregateOutputType = {
   slug: string | null
   name: string | null
   is_active: boolean | null
+  value_type: string | null
+  allow_multiple: boolean | null
+  unit: string | null
+  is_filterable: boolean | null
+  sort_order: number | null
 }
 
 export type AttributeMaxAggregateOutputType = {
@@ -46,6 +53,11 @@ export type AttributeMaxAggregateOutputType = {
   slug: string | null
   name: string | null
   is_active: boolean | null
+  value_type: string | null
+  allow_multiple: boolean | null
+  unit: string | null
+  is_filterable: boolean | null
+  sort_order: number | null
 }
 
 export type AttributeCountAggregateOutputType = {
@@ -53,16 +65,23 @@ export type AttributeCountAggregateOutputType = {
   slug: number
   name: number
   is_active: number
+  value_type: number
+  allow_multiple: number
+  unit: number
+  is_filterable: number
+  sort_order: number
   _all: number
 }
 
 
 export type AttributeAvgAggregateInputType = {
   id?: true
+  sort_order?: true
 }
 
 export type AttributeSumAggregateInputType = {
   id?: true
+  sort_order?: true
 }
 
 export type AttributeMinAggregateInputType = {
@@ -70,6 +89,11 @@ export type AttributeMinAggregateInputType = {
   slug?: true
   name?: true
   is_active?: true
+  value_type?: true
+  allow_multiple?: true
+  unit?: true
+  is_filterable?: true
+  sort_order?: true
 }
 
 export type AttributeMaxAggregateInputType = {
@@ -77,6 +101,11 @@ export type AttributeMaxAggregateInputType = {
   slug?: true
   name?: true
   is_active?: true
+  value_type?: true
+  allow_multiple?: true
+  unit?: true
+  is_filterable?: true
+  sort_order?: true
 }
 
 export type AttributeCountAggregateInputType = {
@@ -84,6 +113,11 @@ export type AttributeCountAggregateInputType = {
   slug?: true
   name?: true
   is_active?: true
+  value_type?: true
+  allow_multiple?: true
+  unit?: true
+  is_filterable?: true
+  sort_order?: true
   _all?: true
 }
 
@@ -178,6 +212,11 @@ export type AttributeGroupByOutputType = {
   slug: string
   name: string
   is_active: boolean
+  value_type: string
+  allow_multiple: boolean
+  unit: string | null
+  is_filterable: boolean
+  sort_order: number
   _count: AttributeCountAggregateOutputType | null
   _avg: AttributeAvgAggregateOutputType | null
   _sum: AttributeSumAggregateOutputType | null
@@ -208,7 +247,15 @@ export type attributeWhereInput = {
   slug?: Prisma.StringFilter<"attribute"> | string
   name?: Prisma.StringFilter<"attribute"> | string
   is_active?: Prisma.BoolFilter<"attribute"> | boolean
+  value_type?: Prisma.StringFilter<"attribute"> | string
+  allow_multiple?: Prisma.BoolFilter<"attribute"> | boolean
+  unit?: Prisma.StringNullableFilter<"attribute"> | string | null
+  is_filterable?: Prisma.BoolFilter<"attribute"> | boolean
+  sort_order?: Prisma.IntFilter<"attribute"> | number
+  attribute_alias?: Prisma.Attribute_aliasListRelationFilter
+  attribute_option?: Prisma.Attribute_optionListRelationFilter
   business_attribute?: Prisma.Business_attributeListRelationFilter
+  concept_attribute?: Prisma.Concept_attributeListRelationFilter
 }
 
 export type attributeOrderByWithRelationInput = {
@@ -216,7 +263,15 @@ export type attributeOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
+  value_type?: Prisma.SortOrder
+  allow_multiple?: Prisma.SortOrder
+  unit?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_filterable?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
+  attribute_alias?: Prisma.attribute_aliasOrderByRelationAggregateInput
+  attribute_option?: Prisma.attribute_optionOrderByRelationAggregateInput
   business_attribute?: Prisma.business_attributeOrderByRelationAggregateInput
+  concept_attribute?: Prisma.concept_attributeOrderByRelationAggregateInput
 }
 
 export type attributeWhereUniqueInput = Prisma.AtLeast<{
@@ -227,7 +282,15 @@ export type attributeWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.attributeWhereInput | Prisma.attributeWhereInput[]
   name?: Prisma.StringFilter<"attribute"> | string
   is_active?: Prisma.BoolFilter<"attribute"> | boolean
+  value_type?: Prisma.StringFilter<"attribute"> | string
+  allow_multiple?: Prisma.BoolFilter<"attribute"> | boolean
+  unit?: Prisma.StringNullableFilter<"attribute"> | string | null
+  is_filterable?: Prisma.BoolFilter<"attribute"> | boolean
+  sort_order?: Prisma.IntFilter<"attribute"> | number
+  attribute_alias?: Prisma.Attribute_aliasListRelationFilter
+  attribute_option?: Prisma.Attribute_optionListRelationFilter
   business_attribute?: Prisma.Business_attributeListRelationFilter
+  concept_attribute?: Prisma.Concept_attributeListRelationFilter
 }, "id" | "slug">
 
 export type attributeOrderByWithAggregationInput = {
@@ -235,6 +298,11 @@ export type attributeOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
+  value_type?: Prisma.SortOrder
+  allow_multiple?: Prisma.SortOrder
+  unit?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_filterable?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
   _count?: Prisma.attributeCountOrderByAggregateInput
   _avg?: Prisma.attributeAvgOrderByAggregateInput
   _max?: Prisma.attributeMaxOrderByAggregateInput
@@ -250,13 +318,26 @@ export type attributeScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"attribute"> | string
   name?: Prisma.StringWithAggregatesFilter<"attribute"> | string
   is_active?: Prisma.BoolWithAggregatesFilter<"attribute"> | boolean
+  value_type?: Prisma.StringWithAggregatesFilter<"attribute"> | string
+  allow_multiple?: Prisma.BoolWithAggregatesFilter<"attribute"> | boolean
+  unit?: Prisma.StringNullableWithAggregatesFilter<"attribute"> | string | null
+  is_filterable?: Prisma.BoolWithAggregatesFilter<"attribute"> | boolean
+  sort_order?: Prisma.IntWithAggregatesFilter<"attribute"> | number
 }
 
 export type attributeCreateInput = {
   slug: string
   name: string
   is_active?: boolean
+  value_type?: string
+  allow_multiple?: boolean
+  unit?: string | null
+  is_filterable?: boolean
+  sort_order?: number
+  attribute_alias?: Prisma.attribute_aliasCreateNestedManyWithoutAttributeInput
+  attribute_option?: Prisma.attribute_optionCreateNestedManyWithoutAttributeInput
   business_attribute?: Prisma.business_attributeCreateNestedManyWithoutAttributeInput
+  concept_attribute?: Prisma.concept_attributeCreateNestedManyWithoutAttributeInput
 }
 
 export type attributeUncheckedCreateInput = {
@@ -264,14 +345,30 @@ export type attributeUncheckedCreateInput = {
   slug: string
   name: string
   is_active?: boolean
+  value_type?: string
+  allow_multiple?: boolean
+  unit?: string | null
+  is_filterable?: boolean
+  sort_order?: number
+  attribute_alias?: Prisma.attribute_aliasUncheckedCreateNestedManyWithoutAttributeInput
+  attribute_option?: Prisma.attribute_optionUncheckedCreateNestedManyWithoutAttributeInput
   business_attribute?: Prisma.business_attributeUncheckedCreateNestedManyWithoutAttributeInput
+  concept_attribute?: Prisma.concept_attributeUncheckedCreateNestedManyWithoutAttributeInput
 }
 
 export type attributeUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  attribute_alias?: Prisma.attribute_aliasUpdateManyWithoutAttributeNestedInput
+  attribute_option?: Prisma.attribute_optionUpdateManyWithoutAttributeNestedInput
   business_attribute?: Prisma.business_attributeUpdateManyWithoutAttributeNestedInput
+  concept_attribute?: Prisma.concept_attributeUpdateManyWithoutAttributeNestedInput
 }
 
 export type attributeUncheckedUpdateInput = {
@@ -279,7 +376,15 @@ export type attributeUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  attribute_alias?: Prisma.attribute_aliasUncheckedUpdateManyWithoutAttributeNestedInput
+  attribute_option?: Prisma.attribute_optionUncheckedUpdateManyWithoutAttributeNestedInput
   business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutAttributeNestedInput
+  concept_attribute?: Prisma.concept_attributeUncheckedUpdateManyWithoutAttributeNestedInput
 }
 
 export type attributeCreateManyInput = {
@@ -287,12 +392,22 @@ export type attributeCreateManyInput = {
   slug: string
   name: string
   is_active?: boolean
+  value_type?: string
+  allow_multiple?: boolean
+  unit?: string | null
+  is_filterable?: boolean
+  sort_order?: number
 }
 
 export type attributeUpdateManyMutationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type attributeUncheckedUpdateManyInput = {
@@ -300,6 +415,11 @@ export type attributeUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type attributeCountOrderByAggregateInput = {
@@ -307,10 +427,16 @@ export type attributeCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
+  value_type?: Prisma.SortOrder
+  allow_multiple?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  is_filterable?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
 }
 
 export type attributeAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
 }
 
 export type attributeMaxOrderByAggregateInput = {
@@ -318,6 +444,11 @@ export type attributeMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
+  value_type?: Prisma.SortOrder
+  allow_multiple?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  is_filterable?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
 }
 
 export type attributeMinOrderByAggregateInput = {
@@ -325,10 +456,16 @@ export type attributeMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
   is_active?: Prisma.SortOrder
+  value_type?: Prisma.SortOrder
+  allow_multiple?: Prisma.SortOrder
+  unit?: Prisma.SortOrder
+  is_filterable?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
 }
 
 export type attributeSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
 }
 
 export type AttributeScalarRelationFilter = {
@@ -358,10 +495,60 @@ export type attributeUpdateOneRequiredWithoutBusiness_attributeNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.attributeUpdateToOneWithWhereWithoutBusiness_attributeInput, Prisma.attributeUpdateWithoutBusiness_attributeInput>, Prisma.attributeUncheckedUpdateWithoutBusiness_attributeInput>
 }
 
+export type attributeCreateNestedOneWithoutAttribute_aliasInput = {
+  create?: Prisma.XOR<Prisma.attributeCreateWithoutAttribute_aliasInput, Prisma.attributeUncheckedCreateWithoutAttribute_aliasInput>
+  connectOrCreate?: Prisma.attributeCreateOrConnectWithoutAttribute_aliasInput
+  connect?: Prisma.attributeWhereUniqueInput
+}
+
+export type attributeUpdateOneRequiredWithoutAttribute_aliasNestedInput = {
+  create?: Prisma.XOR<Prisma.attributeCreateWithoutAttribute_aliasInput, Prisma.attributeUncheckedCreateWithoutAttribute_aliasInput>
+  connectOrCreate?: Prisma.attributeCreateOrConnectWithoutAttribute_aliasInput
+  upsert?: Prisma.attributeUpsertWithoutAttribute_aliasInput
+  connect?: Prisma.attributeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.attributeUpdateToOneWithWhereWithoutAttribute_aliasInput, Prisma.attributeUpdateWithoutAttribute_aliasInput>, Prisma.attributeUncheckedUpdateWithoutAttribute_aliasInput>
+}
+
+export type attributeCreateNestedOneWithoutAttribute_optionInput = {
+  create?: Prisma.XOR<Prisma.attributeCreateWithoutAttribute_optionInput, Prisma.attributeUncheckedCreateWithoutAttribute_optionInput>
+  connectOrCreate?: Prisma.attributeCreateOrConnectWithoutAttribute_optionInput
+  connect?: Prisma.attributeWhereUniqueInput
+}
+
+export type attributeUpdateOneRequiredWithoutAttribute_optionNestedInput = {
+  create?: Prisma.XOR<Prisma.attributeCreateWithoutAttribute_optionInput, Prisma.attributeUncheckedCreateWithoutAttribute_optionInput>
+  connectOrCreate?: Prisma.attributeCreateOrConnectWithoutAttribute_optionInput
+  upsert?: Prisma.attributeUpsertWithoutAttribute_optionInput
+  connect?: Prisma.attributeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.attributeUpdateToOneWithWhereWithoutAttribute_optionInput, Prisma.attributeUpdateWithoutAttribute_optionInput>, Prisma.attributeUncheckedUpdateWithoutAttribute_optionInput>
+}
+
+export type attributeCreateNestedOneWithoutConcept_attributeInput = {
+  create?: Prisma.XOR<Prisma.attributeCreateWithoutConcept_attributeInput, Prisma.attributeUncheckedCreateWithoutConcept_attributeInput>
+  connectOrCreate?: Prisma.attributeCreateOrConnectWithoutConcept_attributeInput
+  connect?: Prisma.attributeWhereUniqueInput
+}
+
+export type attributeUpdateOneRequiredWithoutConcept_attributeNestedInput = {
+  create?: Prisma.XOR<Prisma.attributeCreateWithoutConcept_attributeInput, Prisma.attributeUncheckedCreateWithoutConcept_attributeInput>
+  connectOrCreate?: Prisma.attributeCreateOrConnectWithoutConcept_attributeInput
+  upsert?: Prisma.attributeUpsertWithoutConcept_attributeInput
+  connect?: Prisma.attributeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.attributeUpdateToOneWithWhereWithoutConcept_attributeInput, Prisma.attributeUpdateWithoutConcept_attributeInput>, Prisma.attributeUncheckedUpdateWithoutConcept_attributeInput>
+}
+
 export type attributeCreateWithoutBusiness_attributeInput = {
   slug: string
   name: string
   is_active?: boolean
+  value_type?: string
+  allow_multiple?: boolean
+  unit?: string | null
+  is_filterable?: boolean
+  sort_order?: number
+  attribute_alias?: Prisma.attribute_aliasCreateNestedManyWithoutAttributeInput
+  attribute_option?: Prisma.attribute_optionCreateNestedManyWithoutAttributeInput
+  concept_attribute?: Prisma.concept_attributeCreateNestedManyWithoutAttributeInput
 }
 
 export type attributeUncheckedCreateWithoutBusiness_attributeInput = {
@@ -369,6 +556,14 @@ export type attributeUncheckedCreateWithoutBusiness_attributeInput = {
   slug: string
   name: string
   is_active?: boolean
+  value_type?: string
+  allow_multiple?: boolean
+  unit?: string | null
+  is_filterable?: boolean
+  sort_order?: number
+  attribute_alias?: Prisma.attribute_aliasUncheckedCreateNestedManyWithoutAttributeInput
+  attribute_option?: Prisma.attribute_optionUncheckedCreateNestedManyWithoutAttributeInput
+  concept_attribute?: Prisma.concept_attributeUncheckedCreateNestedManyWithoutAttributeInput
 }
 
 export type attributeCreateOrConnectWithoutBusiness_attributeInput = {
@@ -391,6 +586,14 @@ export type attributeUpdateWithoutBusiness_attributeInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  attribute_alias?: Prisma.attribute_aliasUpdateManyWithoutAttributeNestedInput
+  attribute_option?: Prisma.attribute_optionUpdateManyWithoutAttributeNestedInput
+  concept_attribute?: Prisma.concept_attributeUpdateManyWithoutAttributeNestedInput
 }
 
 export type attributeUncheckedUpdateWithoutBusiness_attributeInput = {
@@ -398,6 +601,236 @@ export type attributeUncheckedUpdateWithoutBusiness_attributeInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  attribute_alias?: Prisma.attribute_aliasUncheckedUpdateManyWithoutAttributeNestedInput
+  attribute_option?: Prisma.attribute_optionUncheckedUpdateManyWithoutAttributeNestedInput
+  concept_attribute?: Prisma.concept_attributeUncheckedUpdateManyWithoutAttributeNestedInput
+}
+
+export type attributeCreateWithoutAttribute_aliasInput = {
+  slug: string
+  name: string
+  is_active?: boolean
+  value_type?: string
+  allow_multiple?: boolean
+  unit?: string | null
+  is_filterable?: boolean
+  sort_order?: number
+  attribute_option?: Prisma.attribute_optionCreateNestedManyWithoutAttributeInput
+  business_attribute?: Prisma.business_attributeCreateNestedManyWithoutAttributeInput
+  concept_attribute?: Prisma.concept_attributeCreateNestedManyWithoutAttributeInput
+}
+
+export type attributeUncheckedCreateWithoutAttribute_aliasInput = {
+  id?: number
+  slug: string
+  name: string
+  is_active?: boolean
+  value_type?: string
+  allow_multiple?: boolean
+  unit?: string | null
+  is_filterable?: boolean
+  sort_order?: number
+  attribute_option?: Prisma.attribute_optionUncheckedCreateNestedManyWithoutAttributeInput
+  business_attribute?: Prisma.business_attributeUncheckedCreateNestedManyWithoutAttributeInput
+  concept_attribute?: Prisma.concept_attributeUncheckedCreateNestedManyWithoutAttributeInput
+}
+
+export type attributeCreateOrConnectWithoutAttribute_aliasInput = {
+  where: Prisma.attributeWhereUniqueInput
+  create: Prisma.XOR<Prisma.attributeCreateWithoutAttribute_aliasInput, Prisma.attributeUncheckedCreateWithoutAttribute_aliasInput>
+}
+
+export type attributeUpsertWithoutAttribute_aliasInput = {
+  update: Prisma.XOR<Prisma.attributeUpdateWithoutAttribute_aliasInput, Prisma.attributeUncheckedUpdateWithoutAttribute_aliasInput>
+  create: Prisma.XOR<Prisma.attributeCreateWithoutAttribute_aliasInput, Prisma.attributeUncheckedCreateWithoutAttribute_aliasInput>
+  where?: Prisma.attributeWhereInput
+}
+
+export type attributeUpdateToOneWithWhereWithoutAttribute_aliasInput = {
+  where?: Prisma.attributeWhereInput
+  data: Prisma.XOR<Prisma.attributeUpdateWithoutAttribute_aliasInput, Prisma.attributeUncheckedUpdateWithoutAttribute_aliasInput>
+}
+
+export type attributeUpdateWithoutAttribute_aliasInput = {
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  attribute_option?: Prisma.attribute_optionUpdateManyWithoutAttributeNestedInput
+  business_attribute?: Prisma.business_attributeUpdateManyWithoutAttributeNestedInput
+  concept_attribute?: Prisma.concept_attributeUpdateManyWithoutAttributeNestedInput
+}
+
+export type attributeUncheckedUpdateWithoutAttribute_aliasInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  attribute_option?: Prisma.attribute_optionUncheckedUpdateManyWithoutAttributeNestedInput
+  business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutAttributeNestedInput
+  concept_attribute?: Prisma.concept_attributeUncheckedUpdateManyWithoutAttributeNestedInput
+}
+
+export type attributeCreateWithoutAttribute_optionInput = {
+  slug: string
+  name: string
+  is_active?: boolean
+  value_type?: string
+  allow_multiple?: boolean
+  unit?: string | null
+  is_filterable?: boolean
+  sort_order?: number
+  attribute_alias?: Prisma.attribute_aliasCreateNestedManyWithoutAttributeInput
+  business_attribute?: Prisma.business_attributeCreateNestedManyWithoutAttributeInput
+  concept_attribute?: Prisma.concept_attributeCreateNestedManyWithoutAttributeInput
+}
+
+export type attributeUncheckedCreateWithoutAttribute_optionInput = {
+  id?: number
+  slug: string
+  name: string
+  is_active?: boolean
+  value_type?: string
+  allow_multiple?: boolean
+  unit?: string | null
+  is_filterable?: boolean
+  sort_order?: number
+  attribute_alias?: Prisma.attribute_aliasUncheckedCreateNestedManyWithoutAttributeInput
+  business_attribute?: Prisma.business_attributeUncheckedCreateNestedManyWithoutAttributeInput
+  concept_attribute?: Prisma.concept_attributeUncheckedCreateNestedManyWithoutAttributeInput
+}
+
+export type attributeCreateOrConnectWithoutAttribute_optionInput = {
+  where: Prisma.attributeWhereUniqueInput
+  create: Prisma.XOR<Prisma.attributeCreateWithoutAttribute_optionInput, Prisma.attributeUncheckedCreateWithoutAttribute_optionInput>
+}
+
+export type attributeUpsertWithoutAttribute_optionInput = {
+  update: Prisma.XOR<Prisma.attributeUpdateWithoutAttribute_optionInput, Prisma.attributeUncheckedUpdateWithoutAttribute_optionInput>
+  create: Prisma.XOR<Prisma.attributeCreateWithoutAttribute_optionInput, Prisma.attributeUncheckedCreateWithoutAttribute_optionInput>
+  where?: Prisma.attributeWhereInput
+}
+
+export type attributeUpdateToOneWithWhereWithoutAttribute_optionInput = {
+  where?: Prisma.attributeWhereInput
+  data: Prisma.XOR<Prisma.attributeUpdateWithoutAttribute_optionInput, Prisma.attributeUncheckedUpdateWithoutAttribute_optionInput>
+}
+
+export type attributeUpdateWithoutAttribute_optionInput = {
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  attribute_alias?: Prisma.attribute_aliasUpdateManyWithoutAttributeNestedInput
+  business_attribute?: Prisma.business_attributeUpdateManyWithoutAttributeNestedInput
+  concept_attribute?: Prisma.concept_attributeUpdateManyWithoutAttributeNestedInput
+}
+
+export type attributeUncheckedUpdateWithoutAttribute_optionInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  attribute_alias?: Prisma.attribute_aliasUncheckedUpdateManyWithoutAttributeNestedInput
+  business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutAttributeNestedInput
+  concept_attribute?: Prisma.concept_attributeUncheckedUpdateManyWithoutAttributeNestedInput
+}
+
+export type attributeCreateWithoutConcept_attributeInput = {
+  slug: string
+  name: string
+  is_active?: boolean
+  value_type?: string
+  allow_multiple?: boolean
+  unit?: string | null
+  is_filterable?: boolean
+  sort_order?: number
+  attribute_alias?: Prisma.attribute_aliasCreateNestedManyWithoutAttributeInput
+  attribute_option?: Prisma.attribute_optionCreateNestedManyWithoutAttributeInput
+  business_attribute?: Prisma.business_attributeCreateNestedManyWithoutAttributeInput
+}
+
+export type attributeUncheckedCreateWithoutConcept_attributeInput = {
+  id?: number
+  slug: string
+  name: string
+  is_active?: boolean
+  value_type?: string
+  allow_multiple?: boolean
+  unit?: string | null
+  is_filterable?: boolean
+  sort_order?: number
+  attribute_alias?: Prisma.attribute_aliasUncheckedCreateNestedManyWithoutAttributeInput
+  attribute_option?: Prisma.attribute_optionUncheckedCreateNestedManyWithoutAttributeInput
+  business_attribute?: Prisma.business_attributeUncheckedCreateNestedManyWithoutAttributeInput
+}
+
+export type attributeCreateOrConnectWithoutConcept_attributeInput = {
+  where: Prisma.attributeWhereUniqueInput
+  create: Prisma.XOR<Prisma.attributeCreateWithoutConcept_attributeInput, Prisma.attributeUncheckedCreateWithoutConcept_attributeInput>
+}
+
+export type attributeUpsertWithoutConcept_attributeInput = {
+  update: Prisma.XOR<Prisma.attributeUpdateWithoutConcept_attributeInput, Prisma.attributeUncheckedUpdateWithoutConcept_attributeInput>
+  create: Prisma.XOR<Prisma.attributeCreateWithoutConcept_attributeInput, Prisma.attributeUncheckedCreateWithoutConcept_attributeInput>
+  where?: Prisma.attributeWhereInput
+}
+
+export type attributeUpdateToOneWithWhereWithoutConcept_attributeInput = {
+  where?: Prisma.attributeWhereInput
+  data: Prisma.XOR<Prisma.attributeUpdateWithoutConcept_attributeInput, Prisma.attributeUncheckedUpdateWithoutConcept_attributeInput>
+}
+
+export type attributeUpdateWithoutConcept_attributeInput = {
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  attribute_alias?: Prisma.attribute_aliasUpdateManyWithoutAttributeNestedInput
+  attribute_option?: Prisma.attribute_optionUpdateManyWithoutAttributeNestedInput
+  business_attribute?: Prisma.business_attributeUpdateManyWithoutAttributeNestedInput
+}
+
+export type attributeUncheckedUpdateWithoutConcept_attributeInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  is_active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  value_type?: Prisma.StringFieldUpdateOperationsInput | string
+  allow_multiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_filterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  attribute_alias?: Prisma.attribute_aliasUncheckedUpdateManyWithoutAttributeNestedInput
+  attribute_option?: Prisma.attribute_optionUncheckedUpdateManyWithoutAttributeNestedInput
+  business_attribute?: Prisma.business_attributeUncheckedUpdateManyWithoutAttributeNestedInput
 }
 
 
@@ -406,11 +839,17 @@ export type attributeUncheckedUpdateWithoutBusiness_attributeInput = {
  */
 
 export type AttributeCountOutputType = {
+  attribute_alias: number
+  attribute_option: number
   business_attribute: number
+  concept_attribute: number
 }
 
 export type AttributeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  attribute_alias?: boolean | AttributeCountOutputTypeCountAttribute_aliasArgs
+  attribute_option?: boolean | AttributeCountOutputTypeCountAttribute_optionArgs
   business_attribute?: boolean | AttributeCountOutputTypeCountBusiness_attributeArgs
+  concept_attribute?: boolean | AttributeCountOutputTypeCountConcept_attributeArgs
 }
 
 /**
@@ -426,8 +865,29 @@ export type AttributeCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ex
 /**
  * AttributeCountOutputType without action
  */
+export type AttributeCountOutputTypeCountAttribute_aliasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.attribute_aliasWhereInput
+}
+
+/**
+ * AttributeCountOutputType without action
+ */
+export type AttributeCountOutputTypeCountAttribute_optionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.attribute_optionWhereInput
+}
+
+/**
+ * AttributeCountOutputType without action
+ */
 export type AttributeCountOutputTypeCountBusiness_attributeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.business_attributeWhereInput
+}
+
+/**
+ * AttributeCountOutputType without action
+ */
+export type AttributeCountOutputTypeCountConcept_attributeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.concept_attributeWhereInput
 }
 
 
@@ -436,7 +896,15 @@ export type attributeSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   slug?: boolean
   name?: boolean
   is_active?: boolean
+  value_type?: boolean
+  allow_multiple?: boolean
+  unit?: boolean
+  is_filterable?: boolean
+  sort_order?: boolean
+  attribute_alias?: boolean | Prisma.attribute$attribute_aliasArgs<ExtArgs>
+  attribute_option?: boolean | Prisma.attribute$attribute_optionArgs<ExtArgs>
   business_attribute?: boolean | Prisma.attribute$business_attributeArgs<ExtArgs>
+  concept_attribute?: boolean | Prisma.attribute$concept_attributeArgs<ExtArgs>
   _count?: boolean | Prisma.AttributeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["attribute"]>
 
@@ -445,6 +913,11 @@ export type attributeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   slug?: boolean
   name?: boolean
   is_active?: boolean
+  value_type?: boolean
+  allow_multiple?: boolean
+  unit?: boolean
+  is_filterable?: boolean
+  sort_order?: boolean
 }, ExtArgs["result"]["attribute"]>
 
 export type attributeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -452,6 +925,11 @@ export type attributeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   slug?: boolean
   name?: boolean
   is_active?: boolean
+  value_type?: boolean
+  allow_multiple?: boolean
+  unit?: boolean
+  is_filterable?: boolean
+  sort_order?: boolean
 }, ExtArgs["result"]["attribute"]>
 
 export type attributeSelectScalar = {
@@ -459,11 +937,19 @@ export type attributeSelectScalar = {
   slug?: boolean
   name?: boolean
   is_active?: boolean
+  value_type?: boolean
+  allow_multiple?: boolean
+  unit?: boolean
+  is_filterable?: boolean
+  sort_order?: boolean
 }
 
-export type attributeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "is_active", ExtArgs["result"]["attribute"]>
+export type attributeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "is_active" | "value_type" | "allow_multiple" | "unit" | "is_filterable" | "sort_order", ExtArgs["result"]["attribute"]>
 export type attributeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  attribute_alias?: boolean | Prisma.attribute$attribute_aliasArgs<ExtArgs>
+  attribute_option?: boolean | Prisma.attribute$attribute_optionArgs<ExtArgs>
   business_attribute?: boolean | Prisma.attribute$business_attributeArgs<ExtArgs>
+  concept_attribute?: boolean | Prisma.attribute$concept_attributeArgs<ExtArgs>
   _count?: boolean | Prisma.AttributeCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type attributeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -472,13 +958,21 @@ export type attributeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
 export type $attributePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "attribute"
   objects: {
+    attribute_alias: Prisma.$attribute_aliasPayload<ExtArgs>[]
+    attribute_option: Prisma.$attribute_optionPayload<ExtArgs>[]
     business_attribute: Prisma.$business_attributePayload<ExtArgs>[]
+    concept_attribute: Prisma.$concept_attributePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     slug: string
     name: string
     is_active: boolean
+    value_type: string
+    allow_multiple: boolean
+    unit: string | null
+    is_filterable: boolean
+    sort_order: number
   }, ExtArgs["result"]["attribute"]>
   composites: {}
 }
@@ -873,7 +1367,10 @@ readonly fields: attributeFieldRefs;
  */
 export interface Prisma__attributeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  attribute_alias<T extends Prisma.attribute$attribute_aliasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.attribute$attribute_aliasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$attribute_aliasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attribute_option<T extends Prisma.attribute$attribute_optionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.attribute$attribute_optionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$attribute_optionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   business_attribute<T extends Prisma.attribute$business_attributeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.attribute$business_attributeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$business_attributePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  concept_attribute<T extends Prisma.attribute$concept_attributeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.attribute$concept_attributeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$concept_attributePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -907,6 +1404,11 @@ export interface attributeFieldRefs {
   readonly slug: Prisma.FieldRef<"attribute", 'String'>
   readonly name: Prisma.FieldRef<"attribute", 'String'>
   readonly is_active: Prisma.FieldRef<"attribute", 'Boolean'>
+  readonly value_type: Prisma.FieldRef<"attribute", 'String'>
+  readonly allow_multiple: Prisma.FieldRef<"attribute", 'Boolean'>
+  readonly unit: Prisma.FieldRef<"attribute", 'String'>
+  readonly is_filterable: Prisma.FieldRef<"attribute", 'Boolean'>
+  readonly sort_order: Prisma.FieldRef<"attribute", 'Int'>
 }
     
 
@@ -1300,6 +1802,54 @@ export type attributeDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
+ * attribute.attribute_alias
+ */
+export type attribute$attribute_aliasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the attribute_alias
+   */
+  select?: Prisma.attribute_aliasSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the attribute_alias
+   */
+  omit?: Prisma.attribute_aliasOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.attribute_aliasInclude<ExtArgs> | null
+  where?: Prisma.attribute_aliasWhereInput
+  orderBy?: Prisma.attribute_aliasOrderByWithRelationInput | Prisma.attribute_aliasOrderByWithRelationInput[]
+  cursor?: Prisma.attribute_aliasWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Attribute_aliasScalarFieldEnum | Prisma.Attribute_aliasScalarFieldEnum[]
+}
+
+/**
+ * attribute.attribute_option
+ */
+export type attribute$attribute_optionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the attribute_option
+   */
+  select?: Prisma.attribute_optionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the attribute_option
+   */
+  omit?: Prisma.attribute_optionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.attribute_optionInclude<ExtArgs> | null
+  where?: Prisma.attribute_optionWhereInput
+  orderBy?: Prisma.attribute_optionOrderByWithRelationInput | Prisma.attribute_optionOrderByWithRelationInput[]
+  cursor?: Prisma.attribute_optionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Attribute_optionScalarFieldEnum | Prisma.Attribute_optionScalarFieldEnum[]
+}
+
+/**
  * attribute.business_attribute
  */
 export type attribute$business_attributeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1321,6 +1871,30 @@ export type attribute$business_attributeArgs<ExtArgs extends runtime.Types.Exten
   take?: number
   skip?: number
   distinct?: Prisma.Business_attributeScalarFieldEnum | Prisma.Business_attributeScalarFieldEnum[]
+}
+
+/**
+ * attribute.concept_attribute
+ */
+export type attribute$concept_attributeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the concept_attribute
+   */
+  select?: Prisma.concept_attributeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the concept_attribute
+   */
+  omit?: Prisma.concept_attributeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.concept_attributeInclude<ExtArgs> | null
+  where?: Prisma.concept_attributeWhereInput
+  orderBy?: Prisma.concept_attributeOrderByWithRelationInput | Prisma.concept_attributeOrderByWithRelationInput[]
+  cursor?: Prisma.concept_attributeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Concept_attributeScalarFieldEnum | Prisma.Concept_attributeScalarFieldEnum[]
 }
 
 /**

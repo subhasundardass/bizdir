@@ -284,6 +284,7 @@ export type reviewOrderByWithRelationInput = {
 
 export type reviewWhereUniqueInput = Prisma.AtLeast<{
   id?: bigint | number
+  business_id_user_id?: Prisma.reviewBusiness_idUser_idCompoundUniqueInput
   AND?: Prisma.reviewWhereInput | Prisma.reviewWhereInput[]
   OR?: Prisma.reviewWhereInput[]
   NOT?: Prisma.reviewWhereInput | Prisma.reviewWhereInput[]
@@ -297,7 +298,7 @@ export type reviewWhereUniqueInput = Prisma.AtLeast<{
   created_at?: Prisma.DateTimeFilter<"review"> | Date | string
   business?: Prisma.XOR<Prisma.BusinessScalarRelationFilter, Prisma.businessWhereInput>
   app_user?: Prisma.XOR<Prisma.App_userNullableScalarRelationFilter, Prisma.app_userWhereInput> | null
-}, "id">
+}, "id" | "business_id_user_id">
 
 export type reviewOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -421,6 +422,11 @@ export type ReviewListRelationFilter = {
 
 export type reviewOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type reviewBusiness_idUser_idCompoundUniqueInput = {
+  business_id: bigint | number
+  user_id: bigint | number
 }
 
 export type reviewCountOrderByAggregateInput = {
