@@ -1,19 +1,20 @@
-import { Categories } from "#/components/Categories";
-import { ExploreCity } from "#/components/ExploreCity";
-import { FeaturedListings } from "#/components/FeaturedListings";
-import Header from "#/components/Header";
-import { HeroSection } from "#/components/HeroSection";
-import { TrendingSearch } from "#/components/TrendingSearch";
-import { TrustStrip } from "#/components/TrustStrip";
-import { createFileRoute } from "@tanstack/react-router";
+import Footer from '@/client-app/components/Footer';
+import { Categories } from '@/client-app/components/Categories';
+import { ExploreCity } from '@/client-app/components/ExploreCity';
+import { FeaturedListings } from '@/client-app/components/FeaturedListings';
+import Header from '@/client-app/components/Header';
+import { HeroSection } from '@/client-app/components/HeroSection';
+import { TrendingSearch } from '@/client-app/components/TrendingSearch';
+import { TrustStrip } from '@/client-app/components/TrustStrip';
+import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute("/")({ component: App });
+export const Route = createFileRoute('/')({ component: App });
 
 function App() {
   return (
     <>
       <Header />
-      <main className="px-0 pb-8 pt-0">
+      <main className='px-0 pb-8 pt-0'>
         {/* <!-- HERO --> */}
         <HeroSection />
         {/* <!-- TRUST STRIP --> */}
@@ -26,6 +27,7 @@ function App() {
         <TrendingSearch />
         {/* <!-- EXPLORE CITIES --> */}
         <ExploreCity />
+        <Footer />
       </main>
     </>
   );
