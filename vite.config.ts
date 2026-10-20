@@ -1,21 +1,21 @@
-import { defineConfig } from 'vite'
-import { devtools } from '@tanstack/devtools-vite'
+import tailwindcss from '@tailwindcss/vite';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import viteReact from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { nitro } from 'nitro/vite';
 
-import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-
-import viteReact from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import { nitro } from 'nitro/vite'
-
-const config = defineConfig({
-  resolve: { tsconfigPaths: true },
+export default defineConfig({
+  server: { port: 3000, strictPort: true },
   plugins: [
-    devtools(),
-    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+    tsconfigPaths(),
     tailwindcss(),
     tanstackStart(),
-    viteReact(),
-  ],
-})
-
-export default config
+    // Nitro auto-detects the deploy target: Vercel/Cloudflare/Netlify in their
+    // CI (zero-config), and the Node.js server preset locally (.output/server,
+    // matching the `start` script). Override with SERVER_PRESET to force one,
+    // e.g. SERVER_PRESET=node-server / cloudflare-module / bun.
+    nitro({ preset: process.env.SERVER_PRESET }),
+    viteReact()
+  ]
+});

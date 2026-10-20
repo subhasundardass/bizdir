@@ -1,6 +1,0 @@
-allowBuilds:
-  '@prisma/engines': set this to true or false
-  prisma: set this to true or false
-minimumReleaseAgeExclude:
-  - prisma@8.0.0-rc.21
-  - solid-js@1.9.17
