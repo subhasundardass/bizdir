@@ -1,14 +1,11 @@
-import { parseSearchFilters, type SearchFilters } from "@/shared/searchFilters";
-import { normalizeSearchQuery } from "./parser/normalizeSearchQuery";
-import { tokenizeSearchQuery } from "./parser/tokenizeSearchQuery";
-import {
-  parseSearchQuery,
-  type ParsedSearchQuery,
-} from "./parser/parseSearchQuery";
-import { conceptResolver } from "./resolver/conceptResolver";
-import { locationResolver } from "./resolver/locationResolver";
-import { searchMatchingBusinesses } from "@/server/repositories/search/businessSearchRepository";
-import type { ResolvedLocation } from "./resolver/locationResolver";
+import { parseSearchFilters, type SearchFilters } from '@/client-app/shared/searchFilters';
+import { normalizeSearchQuery } from './parser/normalizeSearchQuery';
+import { tokenizeSearchQuery } from './parser/tokenizeSearchQuery';
+import { parseSearchQuery, type ParsedSearchQuery } from './parser/parseSearchQuery';
+import { conceptResolver } from './resolver/conceptResolver';
+import { locationResolver } from './resolver/locationResolver';
+import { searchMatchingBusinesses } from '@/client-app/server/repositories/search/businessSearchRepository';
+import type { ResolvedLocation } from './resolver/locationResolver';
 
 export type SearchInput = SearchFilters & {
   query: string;
@@ -56,7 +53,7 @@ export type SearchResult = {
     rawQuery: string;
     normalizedQuery: string;
     tokens: string[];
-    parsed: SearchContext["parsed"];
+    parsed: SearchContext['parsed'];
     resolved: any;
   };
 };
@@ -65,7 +62,7 @@ export type SearchSuggestion = {
   id: number;
   text: string;
   label: string;
-  type: "concept" | "location" | "business";
+  type: 'concept' | 'location' | 'business';
 };
 
 export class SearchService {
@@ -96,27 +93,21 @@ export class SearchService {
   /**
    * Search businesses.
    */
-  async searchBusinesses(
-    input: SearchInput | SearchContext,
-  ): Promise<SearchResult> {
-    const context = this.isSearchContext(input)
-      ? input
-      : await this.createSearchContext(input);
+  async searchBusinesses(input: SearchInput | SearchContext): Promise<SearchResult> {
+    const context = this.isSearchContext(input) ? input : await this.createSearchContext(input);
 
     const resolved = await this.resolveSearch(context);
 
     const result = await searchMatchingBusinesses({
       ...parseSearchFilters(context),
       conceptIds: resolved.concepts.map((concept) => concept.id),
-      query: context.parsed.concepts.join(" ") || context.normalizedQuery,
-      locationId: resolved.locations
-        ? Number(resolved.locations.id)
-        : undefined,
+      query: context.parsed.concepts.join(' ') || context.normalizedQuery,
+      locationId: resolved.locations ? Number(resolved.locations.id) : undefined,
       locationUnresolved: resolved.locationUnresolved,
       page: context.page,
       perPage: context.perPage,
       userLocation: context.userLocation,
-      locationOnly: resolved.locationOnly,
+      locationOnly: resolved.locationOnly
     });
     return {
       ...result,
@@ -125,7 +116,7 @@ export class SearchService {
       location: resolved.locations
         ? { id: Number(resolved.locations.id), name: resolved.locations.name }
         : null,
-      locationUnresolved: resolved.locationUnresolved,
+      locationUnresolved: resolved.locationUnresolved
     };
   }
 
@@ -143,7 +134,7 @@ export class SearchService {
 
     const parsed = await parseSearchQuery({
       query: normalizedQuery,
-      tokens,
+      tokens
     });
 
     return {
@@ -156,7 +147,7 @@ export class SearchService {
       perPage: data.perPage,
       location: data.location,
       locationId: data.locationId,
-      userLocation: data.userLocation,
+      userLocation: data.userLocation
     };
   }
 
@@ -165,34 +156,26 @@ export class SearchService {
    */
 
   private async resolveSearch(context: SearchContext) {
-    const locationText = context.location || context.parsed.locations.join(" ");
+    const locationText = context.location || context.parsed.locations.join(' ');
     let locations: ResolvedLocation | null = null;
     if (context.locationId) {
-      locations = await locationResolver.resolveById(
-        BigInt(context.locationId),
-      );
+      locations = await locationResolver.resolveById(BigInt(context.locationId));
     } else if (locationText) {
       locations = await locationResolver.resolve({ text: locationText });
     }
     const matches = await conceptResolver.resolve({
       query: context.normalizedQuery,
       tokens: context.tokens,
-      parsed: context.parsed,
+      parsed: context.parsed
     });
     // Strong phrase matches take precedence over loosely related concepts.
     const best = matches[0]?.score ?? 0;
-    let concepts = matches.filter(
-      (match) => match.score >= Math.max(0.3, best - 0.08),
-    );
+    let concepts = matches.filter((match) => match.score >= Math.max(0.3, best - 0.08));
     let locationOnly = false;
     // A bare place name searches all services in that place.
-    if (
-      !locationText &&
-      !context.locationId &&
-      (matches[0]?.score ?? 0) < 0.9
-    ) {
+    if (!locationText && !context.locationId && (matches[0]?.score ?? 0) < 0.9) {
       const place = await locationResolver.resolve({
-        text: context.normalizedQuery,
+        text: context.normalizedQuery
       });
       if (place && place.score >= 0.98) {
         locations = place;
@@ -206,8 +189,7 @@ export class SearchService {
       locationOnly,
       concepts,
       locations,
-      locationUnresolved:
-        Boolean(locationText || context.locationId) && !locations,
+      locationUnresolved: Boolean(locationText || context.locationId) && !locations
     };
   }
 
@@ -215,14 +197,14 @@ export class SearchService {
    * Search suggestions.
    */
   async suggestSearch(input: unknown): Promise<SearchSuggestion[]> {
-    if (!input || typeof input !== "object") {
-      throw new Error("Invalid suggestion input");
+    if (!input || typeof input !== 'object') {
+      throw new Error('Invalid suggestion input');
     }
 
     const value = input as Record<string, unknown>;
 
-    if (typeof value.query !== "string") {
-      throw new Error("Search query must be a string");
+    if (typeof value.query !== 'string') {
+      throw new Error('Search query must be a string');
     }
 
     const query = normalizeSearchQuery(value.query);
@@ -231,15 +213,13 @@ export class SearchService {
       return [];
     }
 
-    if (value.type === "location") {
+    if (value.type === 'location') {
       const matches = await locationResolver.findLocationCandidates(query, {
-        limit: 8,
+        limit: 8
       });
       return Promise.all(
         matches.map(async (match) => {
-          const ancestors = await locationResolver.resolveLocationHierarchy(
-            match.id,
-          );
+          const ancestors = await locationResolver.resolveLocationHierarchy(match.id);
           const parentNames = ancestors
             .filter((node) => node.id !== match.id)
             .reverse()
@@ -248,20 +228,20 @@ export class SearchService {
           return {
             id: Number(match.id),
             text: match.name,
-            label: [match.name, ...parentNames].join(", "),
-            type: "location" as const,
+            label: [match.name, ...parentNames].join(', '),
+            type: 'location' as const
           };
-        }),
+        })
       );
     }
     const parsed = await parseSearchQuery({
       query,
-      tokens: tokenizeSearchQuery(query),
+      tokens: tokenizeSearchQuery(query)
     });
     const concepts = await conceptResolver.resolve({
       query,
       tokens: tokenizeSearchQuery(query),
-      parsed,
+      parsed
     });
     return concepts
       .filter((match) => match.score >= 0.3)
@@ -270,7 +250,7 @@ export class SearchService {
         id: match.id,
         text: match.name,
         label: match.name,
-        type: "concept" as const,
+        type: 'concept' as const
       }));
   }
 
@@ -278,18 +258,18 @@ export class SearchService {
    * Get a previously generated search result.
    */
   async getSearchResult(input: unknown) {
-    if (!input || typeof input !== "object") {
-      throw new Error("Invalid search result input");
+    if (!input || typeof input !== 'object') {
+      throw new Error('Invalid search result input');
     }
 
     const value = input as Record<string, unknown>;
 
     if (
-      typeof value.searchId !== "number" ||
+      typeof value.searchId !== 'number' ||
       !Number.isInteger(value.searchId) ||
       value.searchId < 1
     ) {
-      throw new Error("searchId must be a positive integer");
+      throw new Error('searchId must be a positive integer');
     }
 
     /*
@@ -304,8 +284,8 @@ export class SearchService {
    * Record a search result click.
    */
   async recordSearchClick(input: unknown) {
-    if (!input || typeof input !== "object") {
-      throw new Error("Invalid search click input");
+    if (!input || typeof input !== 'object') {
+      throw new Error('Invalid search click input');
     }
 
     /*
@@ -315,7 +295,7 @@ export class SearchService {
      */
 
     return {
-      success: true,
+      success: true
     };
   }
 
@@ -323,8 +303,8 @@ export class SearchService {
    * Record an action originating from search.
    */
   async recordSearchAction(input: unknown) {
-    if (!input || typeof input !== "object") {
-      throw new Error("Invalid search action input");
+    if (!input || typeof input !== 'object') {
+      throw new Error('Invalid search action input');
     }
 
     /*
@@ -338,7 +318,7 @@ export class SearchService {
      */
 
     return {
-      success: true,
+      success: true
     };
   }
 
@@ -346,67 +326,67 @@ export class SearchService {
    * Validate search input.
    */
   private validateSearchInput(input: unknown): SearchInput {
-    if (!input || typeof input !== "object") {
-      throw new Error("Invalid search input");
+    if (!input || typeof input !== 'object') {
+      throw new Error('Invalid search input');
     }
 
     const value = input as Record<string, unknown>;
 
-    if (typeof value.query !== "string") {
-      throw new Error("Search query must be a string");
+    if (typeof value.query !== 'string') {
+      throw new Error('Search query must be a string');
     }
 
     const query = value.query.trim();
 
     if (query.length < 2) {
-      throw new Error("Search query must contain at least 2 characters");
+      throw new Error('Search query must contain at least 2 characters');
     }
 
     if (query.length > 300) {
-      throw new Error("Search query must not exceed 300 characters");
+      throw new Error('Search query must not exceed 300 characters');
     }
 
-    const page = this.getPositiveInteger(value.page, 1, "page");
+    const page = this.getPositiveInteger(value.page, 1, 'page');
 
-    const perPage = this.getPositiveInteger(value.perPage, 20, "perPage");
+    const perPage = this.getPositiveInteger(value.perPage, 20, 'perPage');
 
     if (perPage > 100) {
-      throw new Error("perPage must not exceed 100");
+      throw new Error('perPage must not exceed 100');
     }
 
     if (
       value.location !== undefined &&
-      (typeof value.location !== "string" || value.location.length > 200)
+      (typeof value.location !== 'string' || value.location.length > 200)
     ) {
-      throw new Error("Location must be a string of at most 200 characters");
+      throw new Error('Location must be a string of at most 200 characters');
     }
     const locationId =
       value.locationId === undefined
         ? undefined
-        : this.getPositiveInteger(value.locationId, 1, "locationId");
+        : this.getPositiveInteger(value.locationId, 1, 'locationId');
     let userLocation: { lat: number; lng: number } | undefined;
     if (value.userLocation !== undefined) {
-      if (!value.userLocation || typeof value.userLocation !== "object")
-        throw new Error("Invalid user location");
+      if (!value.userLocation || typeof value.userLocation !== 'object')
+        throw new Error('Invalid user location');
       const coordinates = value.userLocation as Record<string, unknown>;
       const { lat, lng } = coordinates;
       if (
-        typeof lat !== "number" ||
+        typeof lat !== 'number' ||
         !Number.isFinite(lat) ||
         lat < -90 ||
         lat > 90 ||
-        typeof lng !== "number" ||
+        typeof lng !== 'number' ||
         !Number.isFinite(lng) ||
         lng < -180 ||
         lng > 180
       ) {
-        throw new Error("Invalid user location coordinates");
+        throw new Error('Invalid user location coordinates');
       }
       userLocation = { lat, lng };
     }
     const filters = parseSearchFilters(value);
-    if ((filters.distance || filters.sort === "distance") && !userLocation) {
-      throw new Error("Enable your location to filter or sort by distance");
+    if ((filters.distance || filters.sort === 'distance') && !userLocation) {
+      throw new Error('Enable your location to filter or sort by distance');
     }
     return {
       ...filters,
@@ -415,27 +395,19 @@ export class SearchService {
       page,
       perPage,
       location: (value.location as string | undefined)?.trim(),
-      locationId,
+      locationId
     };
   }
 
   /**
    * Convert an unknown value into a positive integer.
    */
-  private getPositiveInteger(
-    value: unknown,
-    defaultValue: number,
-    fieldName: string,
-  ): number {
+  private getPositiveInteger(value: unknown, defaultValue: number, fieldName: string): number {
     if (value === undefined) {
       return defaultValue;
     }
 
-    if (
-      typeof value !== "number" ||
-      !Number.isSafeInteger(value) ||
-      value < 1
-    ) {
+    if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 1) {
       throw new Error(`${fieldName} must be a positive integer`);
     }
 
@@ -445,10 +417,8 @@ export class SearchService {
   /**
    * Type guard for SearchContext.
    */
-  private isSearchContext(
-    input: SearchInput | SearchContext,
-  ): input is SearchContext {
-    return "normalizedQuery" in input && "tokens" in input && "parsed" in input;
+  private isSearchContext(input: SearchInput | SearchContext): input is SearchContext {
+    return 'normalizedQuery' in input && 'tokens' in input && 'parsed' in input;
   }
 
   //
