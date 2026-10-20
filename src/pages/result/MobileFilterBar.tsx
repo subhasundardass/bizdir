@@ -1,35 +1,24 @@
 import { Button } from "@/components/ui/button";
-export function MobileFilterBar() {
+import { SortSelect, type FilterProps } from "./Filters";
+export function MobileFilterBar({
+  open,
+  onToggle,
+  ...props
+}: FilterProps & { open: boolean; onToggle: () => void }) {
   return (
-    <div className="sticky top-16 z-30 border-b border-jd-line bg-white sm:hidden">
-      <div className="flex h-12 items-center divide-x divide-jd-line">
+    <div className="sticky top-16 z-30 border-b border-jd-line bg-white lg:hidden">
+      <div className="flex min-h-12 items-center justify-between gap-2 px-4">
         <Button
           variant="unstyled"
           size="unstyled"
           type="button"
-          className="flex flex-1 items-center justify-center gap-2 text-xs font-semibold text-ink transition-all duration-200 hover:bg-jd-light"
+          aria-expanded={open}
+          onClick={onToggle}
+          className="text-xs font-semibold text-jd-orange"
         >
-          <i className="fa-solid fa-sliders text-jd-orange" />
-          Filters
+          {open ? "Hide filters" : "Filters"}
         </Button>
-        <Button
-          variant="unstyled"
-          size="unstyled"
-          type="button"
-          className="flex flex-1 items-center justify-center gap-2 text-xs font-semibold text-ink transition-all duration-200 hover:bg-jd-light"
-        >
-          <i className="fa-solid fa-arrow-down-wide-short text-jd-orange" />
-          Sort
-        </Button>
-        <Button
-          variant="unstyled"
-          size="unstyled"
-          type="button"
-          className="flex flex-1 items-center justify-center gap-2 text-xs font-semibold text-ink transition-all duration-200 hover:bg-jd-light"
-        >
-          <i className="fa-solid fa-map text-jd-orange" />
-          Map
-        </Button>
+        <SortSelect {...props} />
       </div>
     </div>
   );
