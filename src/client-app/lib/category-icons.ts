@@ -10,8 +10,8 @@ import {
   ShoppingBag,
   Car,
   Building2,
-  type LucideIcon,
-} from "lucide-react";
+  type LucideIcon
+} from 'lucide-react';
 
 const ICONS: Record<string, LucideIcon> = {
   utensils: Utensils,
@@ -20,10 +20,9 @@ const ICONS: Record<string, LucideIcon> = {
   dumbbell: Dumbbell,
   scissors: Scissors,
   wrench: Wrench,
-  "graduation-cap": GraduationCap,
-  "shopping-bag": ShoppingBag,
-  car: Car,
+  'graduation-cap': GraduationCap,
+  'shopping-bag': ShoppingBag,
+  car: Car
 };
 
-export const getCategoryIcon = (key?: string): LucideIcon =>
-  (key && ICONS[key]) || Building2; // safe fallback
+export const getCategoryIcon = (key?: string): LucideIcon => (key && ICONS[key]) || Building2; // safe fallback
