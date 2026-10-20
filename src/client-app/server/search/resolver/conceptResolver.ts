@@ -1,14 +1,14 @@
-import type { ParsedSearchQuery } from "../parser/parseSearchQuery";
+import type { ParsedSearchQuery } from '../parser/parseSearchQuery';
 import {
   conceptSearchRepository,
-  type ConceptSearchMatch,
-} from "@/server/repositories/search/conceptSearchRepository";
+  type ConceptSearchMatch
+} from '@/client-app/server/repositories/search/conceptSearchRepository';
 
 export type ResolvedConcept = {
   id: number;
   name: string;
   slug: string;
-  type: "category" | "service";
+  type: 'category' | 'service';
   score: number;
 };
 
@@ -41,15 +41,13 @@ export class ConceptResolver {
   /**
    * Find possible concepts from the database.
    */
-  private async findConceptMatches(
-    input: ConceptResolveInput,
-  ): Promise<ConceptSearchMatch[]> {
+  private async findConceptMatches(input: ConceptResolveInput): Promise<ConceptSearchMatch[]> {
     const concepts = [
       ...new Set(
         input.parsed.concepts
-          .map((concept) => concept.trim().toLocaleLowerCase("en-IN"))
-          .filter(Boolean),
-      ),
+          .map((concept) => concept.trim().toLocaleLowerCase('en-IN'))
+          .filter(Boolean)
+      )
     ];
 
     if (concepts.length === 0) {
@@ -67,7 +65,7 @@ export class ConceptResolver {
      *
      * "ac repair"
      */
-    const searchText = concepts.join(" ").trim();
+    const searchText = concepts.join(' ').trim();
 
     if (!searchText) {
       return [];
@@ -75,7 +73,7 @@ export class ConceptResolver {
 
     return conceptSearchRepository.search({
       query: searchText,
-      tokens: concepts,
+      tokens: concepts
     });
   }
 
@@ -98,7 +96,7 @@ export class ConceptResolver {
         name: match.name,
         slug: match.slug,
         type: match.type,
-        score: match.score,
+        score: match.score
       }))
       .sort((a, b) => b.score - a.score);
   }
