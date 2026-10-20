@@ -1,6 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import '@fontsource-variable/inter';
 @import 'tailwindcss';
-@plugin '@tailwindcss/typography';
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
@@ -77,8 +76,8 @@
   /* Text and surfaces
      (renamed: "secondary" and "muted" collide with shadcn's tokens) */
   --color-ink: #181818;
-  --color-sub: #5e6f7e;     /* was secondary */
-  --color-faint: #9aa6b2;   /* was muted */
+  --color-sub: #5e6f7e; /* was secondary */
+  --color-faint: #9aa6b2; /* was muted */
   --color-line: #eef1f5;
   --color-alt: #f9fafc;
 
@@ -88,7 +87,7 @@
   --color-trust: #3b82f6;
   --color-danger: #dc2626;
 
-  --font-sans: 'Inter', 'Segoe UI', Arial, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', 'Segoe UI', Arial, sans-serif;
 
   --shadow-soft: 0 8px 30px rgba(24, 24, 24, 0.07);
   --shadow-card: 0 8px 24px rgba(24, 24, 24, 0.06);
@@ -310,4 +309,25 @@ body,
   * {
     transition: none !important;
   }
+}
+
+.app-brand-name {
+  color: var(--color-ink);
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  white-space: nowrap;
+}
+.app-brand-name > span {
+  color: var(--color-jd-orange);
+}
+.app-brand-tag {
+  color: var(--color-jd-hover);
+  background: var(--color-jd-light);
+  border: 1px solid var(--color-jd-border);
+  border-radius: 5px;
+  padding: 3px 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
