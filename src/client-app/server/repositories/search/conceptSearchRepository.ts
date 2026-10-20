@@ -1,10 +1,10 @@
-import { db } from "@/lib/db";
+import { db } from '@/client-app/lib/db';
 
 export type ConceptSearchMatch = {
   id: number;
   name: string;
   slug: string;
-  type: "category" | "service";
+  type: 'category' | 'service';
   score: number;
 };
 
@@ -22,7 +22,7 @@ class ConceptSearchRepository {
    * Search interpretation belongs to ConceptResolver.
    */
   async search(input: ConceptSearchInput): Promise<ConceptSearchMatch[]> {
-    const query = input.query.trim().toLocaleLowerCase("en-IN");
+    const query = input.query.trim().toLocaleLowerCase('en-IN');
 
     if (!query) {
       return [];
@@ -79,7 +79,7 @@ class ConceptSearchRepository {
           OR a.text = ${query}
           OR a.text LIKE ${query} || '%'
           OR c.slug LIKE ${query} || '%'
-          OR LOWER(TRIM(c.name)) LIKE ${"%" + query + "%"}
+          OR LOWER(TRIM(c.name)) LIKE ${'%' + query + '%'}
           OR a.text % ${query}
           OR similarity(LOWER(TRIM(c.name)), ${query}) >= 0.3
         )
